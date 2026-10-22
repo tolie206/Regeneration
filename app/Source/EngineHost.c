@@ -82,6 +82,16 @@ void pg_log(const char *message) {
     if (!(n & (n + 1)) && n >= 1023) { char line[128]; snprintf(line, sizeof line, "[scene] %llu \"ENTITY SET FOUND\" lines so far, left out of the log", (unsigned long long)n + 1); pg_log(line); }
     return;
   }
+  // Vehicle suspension diagnostics and per-device queue chatter are informational.
+  // Bound their log/UI dispatch cost while retaining all errors and health reports.
+  if (!strncmp(message,"[modelinfo] ",12) || !strncmp(message,"Warning: [streaming] [wasm] streaming dev ",40)) {
+    static _Atomic uint64_t noisyLines;
+    uint64_t n=atomic_fetch_add(&noisyLines,1)+1;
+    if(n>16) {
+      if((n & (n-1))==0){char line[128];snprintf(line,sizeof line,"Diagnostic log: %llu verbose model/streaming lines sampled.",(unsigned long long)n);pg_log(line);}
+      return;
+    }
+  }
   size_t length = strlen(message);
   while (length && (message[length-1] == '\n' || message[length-1] == ' ')) length--;
   if (!length || (length == 6 && !memcmp(message, "Error:", 6)) || (length == 8 && !memcmp(message, "Warning:", 8)) ||

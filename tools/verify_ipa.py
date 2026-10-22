@@ -3,7 +3,7 @@ with zipfile.ZipFile(sys.argv[1]) as z, tempfile.TemporaryDirectory() as folder:
  z.extractall(folder);apps=list((pathlib.Path(folder)/"Payload").glob("*.app"));assert len(apps)==1
  app=apps[0];info=plistlib.loads((app/"Info.plist").read_bytes())
  assert info['CFBundleIdentifier']=='vn.hutaolee264.gtanewgen'
- assert info['CFBundleShortVersionString']=='1.4.4' and info['CFBundleVersion']=='1001'
+ assert info['CFBundleShortVersionString']=='1.4.4' and info['CFBundleVersion']=='1002'
  assert (app/'VietnameseAccented.zip').is_file() and (app/'VietnamesePlain.zip').is_file()
  result=subprocess.run(['codesign','-d','--entitlements',':-',str(app)],capture_output=True,check=True)
  data=result.stdout or result.stderr

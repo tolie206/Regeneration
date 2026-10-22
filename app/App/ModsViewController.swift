@@ -184,19 +184,19 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
     private func chooseSound(){
         let profiles=SoundInstaller.available()
         guard !profiles.isEmpty else{show(ModError("Nhập gói âm thanh trước, rồi tắt hẳn và mở lại app để game nạp bank."));return}
-        let ask=UIAlertController(title:"Chọn xe",message:"Để trống để dùng xe đang ngồi; hoặc nhập spawn name (ví dụ wave). Gán được lưu cho model xe. Sau khi nhập sound phải khởi động lại app.",preferredStyle:.alert)
-        ask.addTextField{$0.placeholder="Spawn name hoặc để trống";$0.autocapitalizationType = .none}
-        ask.addAction(UIAlertAction(title:"Huỷ",style:.cancel))
-        ask.addAction(UIAlertAction(title:"Tiếp tục",style:.default){[weak self,weak ask] _ in
-            let name=(ask?.textFields?.first?.text ?? "").lowercased().trimmingCharacters(in:.whitespacesAndNewlines)
-            let model=name.isEmpty ? PGCurrentSoundVehicle():ModAudio.hash(name)
-            guard model != 0,name.isEmpty || ModPack.validName(name) else{self?.show(ModError("Hãy ngồi vào xe và chờ một giây, hoặc nhập spawn name hợp lệ."));return}
-            let menu=UIAlertController(title:"Âm thanh động cơ",message:"Áp dụng cho xe đã chọn; không tăng gain hay thay mixer của engine.",preferredStyle:.alert)
-            for profile in profiles {menu.addAction(UIAlertAction(title:profile,style:.default){_ in SoundAssignments.set(model,profile)})}
-            menu.addAction(UIAlertAction(title:"Bỏ gán (xe mới dùng tiếng gốc)",style:.default){_ in SoundAssignments.set(model,"")})
-            menu.addAction(UIAlertAction(title:"Huỷ",style:.cancel));self?.present(menu,animated:true)
-        })
-        present(ask,animated:true)
+        let cars=ModVehicleSupport.vehicles()
+        guard !cars.isEmpty else{show(ModError("Chưa có xe mod trong danh sách. Khởi động game một lần sau khi nhập xe."));return}
+        let ask=UIAlertController(title:"Chọn xe đã mod",message:"Chọn xe rồi chọn tiếng động cơ. Sau khi nhập gói sound cần mở lại app.",preferredStyle:.alert)
+        for name in cars {
+            ask.addAction(UIAlertAction(title:name,style:.default){[weak self] _ in
+                let model=ModAudio.hash(name)
+                let menu=UIAlertController(title:"Âm thanh: \(name)",message:nil,preferredStyle:.alert)
+                for profile in profiles {menu.addAction(UIAlertAction(title:profile,style:.default){_ in SoundAssignments.set(model,profile)})}
+                menu.addAction(UIAlertAction(title:"Bỏ gán (xe mới dùng tiếng gốc)",style:.default){_ in SoundAssignments.set(model,"")})
+                menu.addAction(UIAlertAction(title:"Huỷ",style:.cancel));self?.present(menu,animated:true)
+            })
+        }
+        ask.addAction(UIAlertAction(title:"Huỷ",style:.cancel));present(ask,animated:true)
     }
     private func chooseTranslation(){
         let menu=UIAlertController(title:"Việt hoá tích hợp",message:"Áp dụng khi mở lại app. Có dấu dùng font kèm gói Việt hoá; nếu chữ lỗi hãy chọn không dấu.",preferredStyle:.alert)

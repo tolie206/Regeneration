@@ -1,0 +1,85 @@
+import Foundation
+/// Only mod metadata is inspected, before engine startup. No model/texture conversion.
+enum ModVehicleSupport {
+ static func vehicles()->[String] {
+  ModInstaller.installed().filter{$0.enabled}.flatMap{mod -> [String] in
+   guard let b=try? Data(contentsOf:mod.url.appendingPathComponent(".mulone-vehicles.json")),let v=try? JSONSerialization.jsonObject(with:b) as? [String] else{return []}
+   return v.filter{ModPack.validName($0)}
+  }.sorted()
+ }
+ static func prepare(manifestPath:String,log:(String)->Void) {
+  let fm=FileManager.default
+  guard let b=try? Data(contentsOf:URL(fileURLWithPath:manifestPath)),let manifest=try? JSONSerialization.jsonObject(with:b) as? [String:Any],let rows=manifest["files"] as? [[Any]] else{return}
+  var known=Set(rows.compactMap{$0.first as? String}.filter{$0.lowercased().hasSuffix(".ytd")}.map{URL(fileURLWithPath:$0).deletingPathExtension().lastPathComponent.lowercased()})
+  known.insert("vehshare")
+  var archives:[(URL,RPFArchive,URL)]=[]
+  func textures(_ r:RPFArchive,_ depth:Int) {
+   guard depth<5 else{return}
+   for e in r.entries {
+    if e.path.hasSuffix(".ytd"){known.insert(URL(fileURLWithPath:e.path).deletingPathExtension().lastPathComponent)}
+    if e.path.hasSuffix(".rpf"),let child=try? r.nested(e){textures(child,depth+1)}
+   }
+  }
+  let mods=ModInstaller.installed().filter{$0.enabled && !$0.name.hasPrefix("_newgen_story_")}
+  for mod in mods {
+   guard let walk=fm.enumerator(at:mod.url,includingPropertiesForKeys:nil,options:.skipsHiddenFiles) else{continue}
+   for case let url as URL in walk where url.lastPathComponent.lowercased()=="dlc.rpf" {
+    do{let r=try RPFArchive(url:url);textures(r,0);archives.append((url,r,mod.url))}catch{log("Vehicle metadata scan: \(error.localizedDescription)")}
+   }
+  }
+  var names:[URL:Set<String>]=[:]
+  let parentRE=try! NSRegularExpression(pattern:"<parent>\\s*([^<]+)\\s*</parent>")
+  let modelRE=try! NSRegularExpression(pattern:"<modelName>\\s*([^<]+)\\s*</modelName>")
+  for (url,r,root) in archives {
+   do {
+    var out=r.bytes,changed=false
+    for e in r.entries where e.path.hasSuffix("vehicles.meta") {
+     let data=try r.metadata(e)
+     guard var text=String(data:data,encoding:.utf8) else{continue}
+     let ns=text as NSString
+     for m in modelRE.matches(in:text,range:NSRange(location:0,length:ns.length)) {
+      let name=ns.substring(with:m.range(at:1)).trimmingCharacters(in:.whitespacesAndNewlines).lowercased()
+      if ModPack.validName(name){names[root,default:[]].insert(name)}
+     }
+     for m in parentRE.matches(in:text,range:NSRange(location:0,length:ns.length)).reversed() {
+      let parent=ns.substring(with:m.range(at:1)).trimmingCharacters(in:.whitespacesAndNewlines).lowercased()
+      // This absent Bikers DLC dependency is confirmed in the supplied SH150 pack.
+      // Other unknown parents are reported, never silently remapped.
+      if !known.contains(parent) {
+       if parent=="vehicles_biker_shared" {
+        text=(text as NSString).replacingCharacters(in:m.range,with:"<parent>vehshare</parent>")
+        log("Vehicle compatibility: missing texture parent \(parent) -> vehshare in \(url.lastPathComponent)/\(e.path).")
+       }else{log("Vehicle compatibility: unresolved texture parent \(parent); kept unchanged.")}
+      }
+     }
+     if text != String(data:data,encoding:.utf8) {
+      // Append an uncompressed binary entry; all geometry, nested RPFs and flags stay byte-identical.
+      let count=Int(VehicleInstaller.word(out,4)),nsStart=16+16*count
+      let nameSize=Int(VehicleInstaller.word(out,8))
+      var entryAt:Int?=nil
+      for i in 0..<count {
+       let at=16+i*16,a=VehicleInstaller.word(out,at),c=VehicleInstaller.word(out,at+4)
+       if c==0x7fffff00{continue}
+       let offset=Int((UInt64(a)|UInt64(c)<<32)>>40 & 0xffffff)*512
+       if offset==e.offset {entryAt=at;break}
+      }
+      guard nsStart+nameSize<=out.count,let at=entryAt else{throw ModError("Không tìm thấy entry metadata.")}
+      while out.count%512 != 0{out.append(0)}
+      let block=out.count/512,new=Data(text.utf8)
+      func put(_ at:Int,_ n:UInt32){for i in 0..<4{out[at+i]=UInt8(truncatingIfNeeded:n>>(i*8))}}
+      put(at,VehicleInstaller.word(out,at)&0xffff);put(at+4,UInt32(block)<<8);put(at+8,UInt32(new.count));put(at+12,0)
+      out.append(new);changed=true
+     }
+    }
+    if changed {
+     let backup=url.deletingLastPathComponent().appendingPathComponent(".dlc.rpf.mulone-original")
+     if !fm.fileExists(atPath:backup.path){try fm.copyItem(at:url,to:backup)}
+     try out.write(to:url,options:.atomic)
+    }
+   }catch{log("Vehicle compatibility: \(error.localizedDescription); original pack retained on write failure.")}
+  }
+  for mod in mods {
+   do{try JSONSerialization.data(withJSONObject:Array(names[mod.url] ?? []).sorted()).write(to:mod.url.appendingPathComponent(".mulone-vehicles.json"),options:.atomic)}catch{log("Vehicle list: \(error.localizedDescription)")}
+  }
+ }
+}

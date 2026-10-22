@@ -626,6 +626,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         appendLog("Native touch controls support held buttons, sprint and weapon selection.")
         installModsForTest()
         do { try BundledVietnamese.prepare() } catch { appendLog("Built-in translation: \(error.localizedDescription)") }
+        ModVehicleSupport.prepare(manifestPath:path,log:appendLog)
         SoundAssignments.configure()
         noticeMods()
         startAudio()

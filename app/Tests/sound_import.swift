@@ -34,6 +34,26 @@ import FoundationXML
   let bad=stage.appendingPathComponent("audioconfig");try fm.createDirectory(at:bad,withIntermediateDirectories:true)
   try Data([54,0,0,0]).write(to:bad.appendingPathComponent("broken_sounds.dat54.rel"))
   do{_ = try SoundInstaller.build(stage);fatalError("truncated REL accepted")}catch is ModError{}
+  // Metadata repair must preserve every nested archive byte and remain idempotent.
+  let modRoot=ModInstaller.modsFolder.appendingPathComponent("mulone-test-"+UUID().uuidString)
+  let packDir=modRoot.appendingPathComponent("update/x64/dlcpacks/test")
+  try fm.createDirectory(at:packDir,withIntermediateDirectories:true);defer{try? fm.removeItem(at:modRoot)}
+  let vehicleXML=Data("<CVehicleModelInfo__InitDataList><InitDatas><Item><modelName>sh150</modelName></Item></InitDatas><txdRelationships><Item><parent>vehicles_biker_shared</parent><child>sh150</child></Item></txdRelationships></CVehicleModelInfo__InitDataList>".utf8)
+  let vehiclePack=try VehicleInstaller.pack(["data/vehicles.meta":vehicleXML,"x64/vehicles.rpf":single])
+  let vehicleURL=packDir.appendingPathComponent("dlc.rpf");try vehiclePack.write(to:vehicleURL)
+  let manifestURL=root.appendingPathComponent("manifest.json")
+  try JSONSerialization.data(withJSONObject:["files":[["x64/vehshare.ytd",16,0]]]).write(to:manifestURL)
+  ModVehicleSupport.prepare(manifestPath:manifestURL.path,log:{print($0)})
+  let repaired=try RPFArchive(url:vehicleURL)
+  let meta=try repaired.metadata(repaired.entries.first{$0.path=="data/vehicles.meta"}!)
+  precondition(String(data:meta,encoding:.utf8)!.contains("<parent>vehshare</parent>"))
+  let nestedEntry=repaired.entries.first{$0.path=="x64/vehicles.rpf"}!
+  precondition(repaired.bytes.subdata(in:nestedEntry.offset..<(nestedEntry.offset+nestedEntry.size))==single)
+  let backup=try Data(contentsOf:packDir.appendingPathComponent(".dlc.rpf.mulone-original"));precondition(backup==vehiclePack)
+  let first=try Data(contentsOf:vehicleURL)
+  ModVehicleSupport.prepare(manifestPath:manifestURL.path,log:{print($0)})
+  let second=try Data(contentsOf:vehicleURL);precondition(first==second)
+  precondition(ModVehicleSupport.vehicles().contains("sh150"))
   print("PASS: actual H2R FiveM folder import, native REL54 alias, unchanged AWC, valid DLC XML and corrupt input rejection")
  }
 }
