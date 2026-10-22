@@ -1,0 +1,42 @@
+{
+  "app\\Source\\MetalRenderer\\MetalRenderer.h": {
+    "sha256": "f64adbb1bf72231da92582d18fb27df071fed0d763d612377b6b5a7513f7311f",
+    "unchanged_from_1_4_4": true
+  },
+  "app\\Source\\MetalRenderer\\MRFrameReports.h": {
+    "sha256": "7bb7f98da673ece96775b501f95f5e78b6d58d6612e28d3dc87eae4ad8306601",
+    "unchanged_from_1_4_4": true
+  },
+  "app\\Source\\MetalRenderer\\MRFrameReports.mm": {
+    "sha256": "275d6ace7b2cef442a42cc55a436ec99a45c86c2f82a80afe4aa883f3286df0d",
+    "unchanged_from_1_4_4": true
+  },
+  "app\\Source\\MetalRenderer\\MRInternal.h": {
+    "sha256": "69d32ec3d0d9cae78e22b92ef17257d4d61d40fe51b5645c92a80de27a423b70",
+    "unchanged_from_1_4_4": true
+  },
+  "app\\Source\\MetalRenderer\\MRRenderer.mm": {
+    "sha256": "95ed1a2877b144e9939e40edfc372ee3e37a09c55b1d462c5e46a0e011844edb",
+    "unchanged_from_1_4_4": true
+  },
+  "app\\Source\\MetalRenderer\\MRShaders.mm": {
+    "sha256": "f6d2c8fccb03e380f069664089d461fdb4c9232ac1e1ef96ca02f6598dcadfd0",
+    "unchanged_from_1_4_4": true
+  },
+  "app\\Source\\BC1ToASTC.c": {
+    "sha256": "46f485a26dd2a2f85eabe9bda193bd04e958a2e8ad2278f273ec7af0c96373a2",
+    "unchanged_from_1_4_4": true
+  },
+  "app\\Source\\BCTextureDecoder.c": {
+    "sha256": "cb39c50cdc7bd2f93b72eed71396eda46f7209bdcefce1aed879084747b5089c",
+    "unchanged_from_1_4_4": true
+  },
+  "app\\Source\\MetalGraphicsHost.mm": {
+    "sha256": "209270dee8066e26a29c59990882344aedf1e8349c7b4be7d3de65ba1714abd5",
+    "unchanged_from_1_4_4": true
+  },
+  "app\\Source\\NativeThreads.c": {
+    "sha256": "bfa32cf4aa84775a46ddf0cada8b382e5de2ae102b2a3526f42cdebc6b02f412",
+    "unchanged_from_1_4_4": true
+  }
+}
