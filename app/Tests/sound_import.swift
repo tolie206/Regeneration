@@ -18,6 +18,19 @@ import FoundationXML
   for name in ["setup2.xml","content.xml"] {
    let e=archive.entries.first{$0.path==name}!;let xml=try archive.metadata(e);precondition(XMLParser(data:xml).parse())
   }
+  // A Singleplayer RPF often nests sfx/dlc_bank.rpf. Keep the parent bank name.
+  let nested=try VehicleInstaller.pack(["ta103ninjah2r.awc":source])
+  let game=try Data(contentsOf:fixture.appendingPathComponent("audioconfig/ta103ninjah2r_game.dat151.rel"))
+  let single=try VehicleInstaller.pack(["sfx/dlc_ta103ninjah2r.rpf":nested,"audioconfig/ta103ninjah2r_game.dat151.rel":game,"audioconfig/ta103ninjah2r_sounds.dat54.rel":original])
+  let root=fm.temporaryDirectory.appendingPathComponent("sound-nested-"+UUID().uuidString)
+  try fm.createDirectory(at:root,withIntermediateDirectories:true);defer{try? fm.removeItem(at:root)}
+  let singleFile=root.appendingPathComponent("dlc.rpf");try single.write(to:singleFile)
+  let nestedStage=try SoundInstaller.stage([singleFile]);defer{try? fm.removeItem(at:nestedStage)}
+  let (nestedPlan,nestedProfiles)=try SoundInstaller.build(nestedStage)
+  precondition(nestedProfiles==profiles)
+  let nestedArchive=try RPFArchive(url:nestedPlan.items.first!.source)
+  let nestedBank=nestedArchive.entries.first{$0.path==bank.path}!
+  let nestedBytes=try nestedArchive.binary(nestedBank);precondition(nestedBytes==source)
   let bad=stage.appendingPathComponent("audioconfig");try fm.createDirectory(at:bad,withIntermediateDirectories:true)
   try Data([54,0,0,0]).write(to:bad.appendingPathComponent("broken_sounds.dat54.rel"))
   do{_ = try SoundInstaller.build(stage);fatalError("truncated REL accepted")}catch is ModError{}

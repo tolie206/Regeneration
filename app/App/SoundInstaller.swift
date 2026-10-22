@@ -43,11 +43,11 @@ enum SoundInstaller {
     try add("sfx/"+bank+"/"+n,data)
    }
   }
-  func archive(_ r:RPFArchive,_ depth:Int) throws {
+  func archive(_ r:RPFArchive,_ depth:Int,_ prefix:String="") throws {
    guard depth<5 else{throw ModError("RPF lồng quá sâu.")}
    for e in r.entries {
-    if e.path.hasSuffix(".rpf"){try archive(r.nested(e),depth+1)}
-    else if e.path.hasSuffix(".awc") || e.path.hasSuffix(".rel"){try collect(e.path,r.binary(e))}
+    if e.path.hasSuffix(".rpf"){try archive(r.nested(e),depth+1,prefix+e.path+"/")}
+    else if e.path.hasSuffix(".awc") || e.path.hasSuffix(".rel"){try collect(prefix+e.path,r.binary(e))}
    }
   }
   var inputs:[URL]=[]
