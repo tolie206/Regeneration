@@ -12,6 +12,7 @@ jobs:
     timeout-minutes: 180
     env:
       JOBS: '2'
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
     steps:
       - name: Require private repo and Apple Silicon
         env:
@@ -22,6 +23,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Verify original-release toolchain
+        run: |
+          test -d "$DEVELOPER_DIR"
+          xcodebuild -version
+          xcodebuild -version | grep -Fx 'Xcode 26.2'
+          xcodebuild -version | grep -Fx 'Build version 17C52'
+          test "$(xcrun --sdk iphoneos --show-sdk-version)" = '26.2'
+          xcrun clang --version
       - name: Validate private build inputs
         run: |
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/game-files"
@@ -40,16 +49,16 @@ jobs:
           clang -c Tests/SoundTestStubs.c -o "$RUNNER_TEMP/stubs.o"
           swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/ModVehicleSupport.swift Tests/SoundTestStubs.swift Tests/sound_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/sound-test"
           "$RUNNER_TEMP/sound-test" "$GITHUB_WORKSPACE/tests/fixtures/h2r"
-      - name: Build MuLone-V002
+      - name: Build MuLone-V003
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify IPA entitlements
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa MuLone-V002.ipa
+          mv GTA5Port.ipa MuLone-V003.ipa
       - uses: actions/upload-artifact@v4
         with:
-          name: MuLone-V002
-          path: MuLone-V002.ipa
+          name: MuLone-V003
+          path: MuLone-V003.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()
