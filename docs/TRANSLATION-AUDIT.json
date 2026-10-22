@@ -1,0 +1,15 @@
+{
+  "gxt2_files": 602,
+  "labels": 213683,
+  "matching_labels_updated": 41106,
+  "font_files": [
+    "common/data/ui/fontmap.xml",
+    "x64/data/cdimages/scaleform_frontend.rpf/font_lib_editor.gfx",
+    "x64/data/cdimages/scaleform_frontend.rpf/font_lib_sc.gfx",
+    "x64/data/cdimages/scaleform_platform_pc.rpf/font_lib_efigs_pc.gfx",
+    "x64/data/cdimages/scaleform_platform_pc.rpf/font_lib_efigs_pc.ytd"
+  ],
+  "phone_tested": false,
+  "fallback": "VietnamesePlain.zip",
+  "source": "User-provided GTAV-VietHoa-1.4.1 OIV"
+}

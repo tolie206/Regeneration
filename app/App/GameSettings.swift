@@ -87,7 +87,8 @@ final class GameSettings {
             let arguments = ProcessInfo.processInfo.arguments
             if let i = arguments.firstIndex(of: "--test-camera-mode"), i + 1 < arguments.count { return arguments[i + 1] == "0" ? .stick : .swipeMouse }
             #endif
-            return (CameraTouchMode(rawValue: defaults.integer(forKey: "cameraTouchMode")) ?? .stick) == .stick ? .stick : .swipeMouse
+            guard defaults.object(forKey: "cameraTouchMode") != nil else { return .swipeMouse }
+            return (CameraTouchMode(rawValue: defaults.integer(forKey: "cameraTouchMode")) ?? .swipeMouse) == .stick ? .stick : .swipeMouse
         }
         set {
             defaults.set(newValue.rawValue, forKey: "cameraTouchMode")

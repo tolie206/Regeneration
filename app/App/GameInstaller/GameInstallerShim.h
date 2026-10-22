@@ -70,3 +70,5 @@ const char *gi_libarchive_version(void);
 }
 #endif
 #endif
+
+int gi_inflate_raw(const void *,uint32_t,void *,uint32_t);

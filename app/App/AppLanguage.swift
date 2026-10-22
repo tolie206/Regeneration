@@ -47,7 +47,7 @@ struct AppLanguage: Equatable {
     private static let storageKey = "gtaPortAppLanguage"
 
     static var current: AppLanguage {
-        let saved = UserDefaults.standard.string(forKey: storageKey) ?? english.rawValue
+        let saved = UserDefaults.standard.string(forKey: storageKey) ?? "vi"
         return allCases.first { $0.rawValue == saved } ?? .english
     }
 

@@ -1,9 +1,8 @@
 import Foundation
 import UIKit
 
-/// Sends the app's logs to the developer (5★ Port Builder site, which forwards them on Telegram).
+/// Local sharing guidance. No remote log or save upload endpoint in this fork.
 enum LogUploader {
-    static let endpoint = URL(string: "https://fivestarport.vercel.app/api/log")!
     /// The site accepts up to 4 MB, so each log is trimmed to 1.8 MB: its start (device, settings,
     /// game files) and its end (where it stopped or crashed).
     private static let perLog = 1_800_000
@@ -28,47 +27,9 @@ enum LogUploader {
     }
 
     static func send(note: String, includeSave: Bool = false, done: @escaping ((String, String)) -> Void) {
-        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let save = includeSave ? latestSave().flatMap { url in (try? Data(contentsOf: url)).map { (url.lastPathComponent, $0) } } : nil
-        var body = Data()
-        for (title, name) in [("PREVIOUS RUN", "native-port-previous.log"), ("THIS RUN", "native-port.log")] {
-            guard let data = try? Data(contentsOf: documents.appendingPathComponent(name)), !data.isEmpty else { continue }
-            body.append("===== \(title) (\(name)) =====\n".data(using: .utf8)!)
-            // With a save the logs get a little less room, to stay under the site's 4 MB.
-            body.append(trimmed(data, to: save == nil ? perLog : 1_400_000))
-            body.append("\n".data(using: .utf8)!)
-        }
-        if let (name, data) = save {
-            body.append("===== SAVE (\(name), \(data.count) bytes, base64) =====\n".data(using: .utf8)!)
-            body.append(data.base64EncodedData(options: [.lineLength76Characters, .endLineWithLineFeed]))
-            body.append("\n===== END SAVE =====\n".data(using: .utf8)!)
-        }
-        guard !body.isEmpty else { DispatchQueue.main.async { done((AppLanguage.choose("No log yet"), AppLanguage.choose("Start the game once, then try again."))) }; return }
-        var url = endpoint
-        #if targetEnvironment(simulator)
-        // Test (PG_LOG_ENDPOINT=http://127.0.0.1:port/): the upload goes to a local catcher, not to Telegram.
-        if let local = ProcessInfo.processInfo.environment["PG_LOG_ENDPOINT"].flatMap(URL.init(string:)) { url = local }
-        #endif
-        var request = URLRequest(url: url, timeoutInterval: 60)
-        request.httpMethod = "POST"
-        request.setValue("text/plain; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.setValue("\(GameSettings.shared.tier.model) · iOS \(UIDevice.current.systemVersion) · \(GameSettings.shared.tier.memoryLimitMB) MB limit", forHTTPHeaderField: "X-Device")
-        request.setValue(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?", forHTTPHeaderField: "X-App-Version")
-        request.setValue(String(note.prefix(400)).addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "", forHTTPHeaderField: "X-Note")
-        URLSession.shared.uploadTask(with: request, from: body) { data, response, error in
-            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
-            let reply = data.flatMap { try? JSONSerialization.jsonObject(with: $0) as? [String: Any] }
-            let result: (String, String)
-            if status == 200 {
-                result = (AppLanguage.choose("Log sent, thank you!"), AppLanguage.interpolate(AppLanguage.choose("Reference: {arg0}. Mention it if you also ask for help in the community."), [String(describing: reply?["id"] as? String ?? "-")]))
-            } else if error != nil {
-                result = (AppLanguage.choose("Couldn't send the log"), AppLanguage.choose("No internet connection? Try again, or use Share log instead."))
-            } else {
-                result = (AppLanguage.choose("Couldn't send the log"), (reply?["error"] as? String) ?? AppLanguage.choose("Try again later, or use Share log instead."))
-            }
-            DispatchQueue.main.async { done(result) }
-        }.resume()
+        DispatchQueue.main.async { done(("Chia sẻ nhật ký", "Dùng mục Chia sẻ nhật ký để lưu hoặc gửi cho nhóm tester. Bản này không tự gửi log hay save đến dịch vụ bên ngoài.")) }
     }
+
 }
 
 /// "Send log to the developer": its own screen so the buttons stay visible above the keyboard in landscape.

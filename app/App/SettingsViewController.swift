@@ -205,7 +205,7 @@ final class SettingsViewController: UITableViewController {
         case .gyro:
             return AppLanguage.choose("Move the phone to fine-tune your aim; turning your body turns the camera. Tilt steering turns the phone like a steering wheel: Assist adds fine control on top of the touch steering, Tilt to steer replaces it. The straight-ahead angle is however you hold the phone when you get in.")
         case .files: return filesFooter()
-        case .device: return AppLanguage.choose("GTA V Port") + " \(Theme.appVersion). " + AppLanguage.choose("Quote this version when you report a problem.")
+        case .device: return "GTA NEW GEN" + " \(Theme.appVersion). " + AppLanguage.choose("Quote this version when you report a problem.")
         case .language:
             return AppLanguage.choose("Menus change right away. The game itself switches language the next time it starts.")
         }

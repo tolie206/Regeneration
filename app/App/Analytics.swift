@@ -26,13 +26,14 @@ final class Analytics {
         #if targetEnvironment(simulator)
         endpoint = ProcessInfo.processInfo.environment["PG_STATS_ENDPOINT"].flatMap(URL.init(string:))
         #else
-        endpoint = URL(string: "https://fivestarport.vercel.app/api/stats")
+        endpoint = nil
         #endif
         if let data = try? Data(contentsOf: file), let saved = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] { pending = saved }
     }
 
     /// At launch: count the app open, then send every few minutes and when the app goes to the background.
     func start() {
+        guard endpoint != nil else { return }
         track("app_open")
         let timer = DispatchSource.makeTimerSource(queue: queue)
         timer.schedule(deadline: .now() + 20, repeating: 300)
@@ -47,6 +48,7 @@ final class Analytics {
     }
 
     func track(_ event: String, _ properties: [String: Any] = [:]) {
+        guard endpoint != nil else { return }
         let item: [String: Any] = ["e": event, "t": Int64(Date().timeIntervalSince1970 * 1000), "u": UUID().uuidString.lowercased(), "p": properties]
         queue.async {
             self.pending.append(item)

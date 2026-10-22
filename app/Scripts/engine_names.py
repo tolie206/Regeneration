@@ -19,6 +19,8 @@ TABLE = root / 'Generated/funcnames.tsv'
 HEADER = root / 'Generated/engine-functions.h'
 # Engine functions the host code calls directly (Source/*.c): each gets a macro in HEADER.
 HOST_FUNCTIONS = {
+    'PG_FN_AUDIO_PROFILE': 'rage::audMetadataManager::GetObject_Verify(unsigned int, unsigned int) const',
+    'PG_FN_FORCE_AUDIO': 'audio_commands::CommandForceVehicleGameObject(int, char const*)',
     # Settings › Cheats: God mode, Never wanted, repair, time and weather (Source/NativeCheats.inc).
     'PG_FN_PLAYER_ID': 'player_commands::CommandPlayerId()',
     'PG_FN_SET_PLAYER_INVINCIBLE': 'player_commands::CommandSetPlayerInvincible(int, bool)',

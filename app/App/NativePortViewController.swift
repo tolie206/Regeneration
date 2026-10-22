@@ -395,7 +395,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         // A newer release on GitHub: say so once per version, pointing to the Telegram group.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             guard let self else { return }
-            UpdateCheck.run(from: self) { [weak self] line in DispatchQueue.main.async { self?.appendLog(line) } }
+            // This fork distributes tester builds manually through its private Actions page.
         }
         if let recovery = GameSettings.shared.recoverFromFailedBoot() {
             appendLog("Previous launch on \(recovery.failed.title) did not finish; lowered to \(recovery.fallback.title)\(recovery.resetHeight.map { ", resolution \($0)p back to Auto" } ?? "").")
@@ -625,6 +625,8 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         launchButton.setTitle(AppLanguage.choose("Loading…"), for: .disabled); launchButton.setNeedsUpdateConfiguration()
         appendLog("Native touch controls support held buttons, sprint and weapon selection.")
         installModsForTest()
+        do { try BundledVietnamese.prepare() } catch { appendLog("Built-in translation: \(error.localizedDescription)") }
+        SoundAssignments.configure()
         noticeMods()
         startAudio()
         let (root, rootNote) = EnginePaths.filesRoot()

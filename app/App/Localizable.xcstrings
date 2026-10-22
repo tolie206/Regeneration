@@ -1315,6 +1315,12 @@
             "state": "translated",
             "value": "1080p con shaders, sombras y reflejos altos"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1080p với shader, bóng đổ và phản chiếu cao"
+          }
         }
       }
     },
@@ -2145,6 +2151,12 @@
             "state": "translated",
             "value": "輔助瞄準"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hỗ trợ ngắm"
+          }
         }
       }
     },
@@ -2227,6 +2239,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Apuntado libre asistido"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ngắm tự do có hỗ trợ"
           }
         }
       }
@@ -2477,6 +2495,12 @@
             "state": "translated",
             "value": "Atrás"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quay lại"
+          }
         }
       }
     },
@@ -2560,6 +2584,12 @@
             "state": "translated",
             "value": "平衡"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cân bằng"
+          }
         }
       }
     },
@@ -2642,6 +2672,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "省電"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiết kiệm pin"
           }
         }
       }
@@ -3223,6 +3259,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "取消"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Huỷ"
           }
         }
       }
@@ -4339,6 +4381,12 @@
             "state": "translated",
             "value": "完成"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xong"
+          }
         }
       }
     },
@@ -5347,6 +5395,12 @@
             "state": "translated",
             "value": "編輯按鍵配置"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chỉnh bố trí điều khiển"
+          }
         }
       }
     },
@@ -5600,7 +5654,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dự án fan làm - chơi bằng file game của bạn"
+            "value": "Bản iOS · sử dụng dữ liệu game của bạn"
           }
         },
         "ar": {
@@ -6189,6 +6243,12 @@
             "state": "translated",
             "value": "幀率"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giới hạn FPS"
+          }
         }
       }
     },
@@ -6272,6 +6332,12 @@
             "state": "translated",
             "value": "自由瞄準"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ngắm tự do"
+          }
         }
       }
     },
@@ -6354,6 +6420,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Explora libremente todo el mapa con todas las armas. Sin misiones."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khám phá bản đồ với đầy đủ vũ khí. Không có nhiệm vụ."
           }
         }
       }
@@ -6613,85 +6685,85 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port"
+            "value": "GTA NEW GEN"
           }
         },
         "ar": {
@@ -6947,6 +7019,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "遊戲檔案"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dữ liệu game"
           }
         }
       }
@@ -7221,6 +7299,12 @@
             "state": "translated",
             "value": "遊戲模式"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chế độ chơi"
+          }
         }
       }
     },
@@ -7386,6 +7470,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "畫質"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đồ hoạ"
           }
         }
       }
@@ -8229,6 +8319,12 @@
             "state": "translated",
             "value": "Texturas, efectos y distancia de dibujado con más detalle"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texture, hiệu ứng và tầm nhìn chi tiết hơn"
+          }
         }
       }
     },
@@ -9059,6 +9155,12 @@
             "state": "translated",
             "value": "語言"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ngôn ngữ"
+          }
         }
       }
     },
@@ -9664,6 +9766,12 @@
             "state": "translated",
             "value": "Menor carga, más tiempo de juego"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tải thấp nhất, chơi lâu hơn"
+          }
         }
       }
     },
@@ -9746,6 +9854,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "最高"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tối đa"
           }
         }
       }
@@ -10078,6 +10192,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Resolución casi nativa, texturas altas y distancia de dibujado completa (los Pro más recientes)"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gần độ phân giải gốc, texture cao và tầm nhìn tối đa (dòng Pro mới)"
           }
         }
       }
@@ -10577,6 +10697,12 @@
             "state": "translated",
             "value": "OK"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đồng ý"
+          }
         }
       }
     },
@@ -10660,6 +10786,12 @@
             "state": "translated",
             "value": "關閉"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tắt"
+          }
         }
       }
     },
@@ -10742,6 +10874,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Activado"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật"
           }
         }
       }
@@ -10909,6 +11047,12 @@
             "state": "translated",
             "value": "Un toque. Ayuda a solucionar cierres y problemas de carga"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu nhật ký để gửi cho nhóm tester"
+          }
         }
       }
     },
@@ -10991,6 +11135,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "暫停"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tạm dừng"
           }
         }
       }
@@ -11240,6 +11390,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "效能"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiệu năng"
           }
         }
       }
@@ -11840,6 +11996,12 @@
             "state": "translated",
             "value": "高畫質"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chất lượng"
+          }
         }
       }
     },
@@ -12171,6 +12333,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Eliminar"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gỡ bỏ"
           }
         }
       }
@@ -12670,6 +12838,12 @@
             "state": "translated",
             "value": "重設"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đặt lại"
+          }
         }
       }
     },
@@ -12752,6 +12926,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "解析度"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Độ phân giải"
           }
         }
       }
@@ -13275,6 +13455,12 @@
             "state": "translated",
             "value": "沙盒模式"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tự do"
+          }
         }
       }
     },
@@ -13357,6 +13543,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Guarda o envía tú mismo el registro de esta sesión y el de la anterior"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu hoặc chia sẻ nhật ký lần chạy hiện tại và lần trước"
           }
         }
       }
@@ -13606,6 +13798,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enviar registro al desarrollador"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hỗ trợ và nhật ký"
           }
         }
       }
@@ -14121,7 +14319,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chia sẻ log"
+            "value": "Chia sẻ nhật ký"
           }
         },
         "ar": {
@@ -14211,6 +14409,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Imagen y sombras más nítidas"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hình ảnh và bóng đổ sắc nét hơn"
           }
         }
       }
@@ -14876,6 +15080,12 @@
             "state": "translated",
             "value": "劇情模式"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cốt truyện"
+          }
         }
       }
     },
@@ -15383,79 +15593,79 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The app was not allowed to open that folder. Move your game folder to Files › On My iPhone › GTA V Port instead; the app finds it there by itself."
+            "value": "The app was not allowed to open that folder. Move your game folder to Files › On My iPhone › GTA NEW GEN instead; the app finds it there by itself."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "App 沒有權限讀取此資料夾。請改移到「檔案 › 我的 iPhone › GTA V Port」，App 便能自動偵測。"
+            "value": "App 沒有權限讀取此資料夾。請改移到「檔案 › 我的 iPhone › GTA NEW GEN」，App 便能自動偵測。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’app n’a pas été autorisée à ouvrir ce dossier. Déplacez plutôt le dossier du jeu dans Fichiers › Sur mon iPhone › GTA V Port ; l’app l’y trouve d’elle-même."
+            "value": "L’app n’a pas été autorisée à ouvrir ce dossier. Déplacez plutôt le dossier du jeu dans Fichiers › Sur mon iPhone › GTA NEW GEN ; l’app l’y trouve d’elle-même."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’app non ha il permesso di aprire quella cartella. Sposta invece la cartella del gioco in File › Su iPhone › GTA V Port; l’app la trova da sola."
+            "value": "L’app non ha il permesso di aprire quella cartella. Sposta invece la cartella del gioco in File › Su iPhone › GTA NEW GEN; l’app la trova da sola."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die App durfte diesen Ordner nicht öffnen. Verschiebe deinen Spielordner stattdessen nach Dateien › Auf meinem iPhone › GTA V Port; die App findet ihn dort von selbst."
+            "value": "Die App durfte diesen Ordner nicht öffnen. Verschiebe deinen Spielordner stattdessen nach Dateien › Auf meinem iPhone › GTA NEW GEN; die App findet ihn dort von selbst."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La app no tiene permiso para abrir esa carpeta. Mejor mueve la carpeta del juego a Archivos › En mi iPhone › GTA V Port; la app la encontrará ahí sola."
+            "value": "La app no tiene permiso para abrir esa carpeta. Mejor mueve la carpeta del juego a Archivos › En mi iPhone › GTA NEW GEN; la app la encontrará ahí sola."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "アプリにそのフォルダを開く許可がありませんでした。代わりに、ゲームフォルダを「ファイル › このiPhone内 › GTA V Port」に移動してください。そこならアプリが自動で見つけます。"
+            "value": "アプリにそのフォルダを開く許可がありませんでした。代わりに、ゲームフォルダを「ファイル › このiPhone内 › GTA NEW GEN」に移動してください。そこならアプリが自動で見つけます。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "앱에 해당 폴더를 열 수 있는 권한이 없습니다. 대신 게임 폴더를 ‘파일 › 나의 iPhone › GTA V Port’로 옮기세요. 그곳에 있으면 앱이 자동으로 찾습니다."
+            "value": "앱에 해당 폴더를 열 수 있는 권한이 없습니다. 대신 게임 폴더를 ‘파일 › 나의 iPhone › GTA NEW GEN’로 옮기세요. 그곳에 있으면 앱이 자동으로 찾습니다."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aplikacja nie otrzymała dostępu do tego folderu. Przenieś folder gry do Pliki › Na moim iPhonie › GTA V Port; aplikacja sama go tam znajdzie."
+            "value": "Aplikacja nie otrzymała dostępu do tego folderu. Przenieś folder gry do Pliki › Na moim iPhonie › GTA NEW GEN; aplikacja sama go tam znajdzie."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O app não teve permissão para abrir essa pasta. Em vez disso, mova a pasta do jogo para Arquivos › No Meu iPhone › GTA V Port; o app a encontra lá sozinho."
+            "value": "O app não teve permissão para abrir essa pasta. Em vez disso, mova a pasta do jogo para Arquivos › No Meu iPhone › GTA NEW GEN; o app a encontra lá sozinho."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Приложению не разрешили открыть эту папку. Вместо этого переместите папку игры в Файлы › На iPhone › GTA V Port: там приложение найдёт её само."
+            "value": "Приложению не разрешили открыть эту папку. Вместо этого переместите папку игры в Файлы › На iPhone › GTA NEW GEN: там приложение найдёт её само."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "App 没有权限访问此文件夹。请改为将游戏文件夹移到“文件 › 我的 iPhone › GTA V Port”，App 会自动找到。"
+            "value": "App 没有权限访问此文件夹。请改为将游戏文件夹移到“文件 › 我的 iPhone › GTA NEW GEN”，App 会自动找到。"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "La app no tiene permiso para abrir esa carpeta. Mejor mueve la carpeta del juego a Archivos › En mi iPhone › GTA V Port; la app la encontrará ahí sola."
+            "value": "La app no tiene permiso para abrir esa carpeta. Mejor mueve la carpeta del juego a Archivos › En mi iPhone › GTA NEW GEN; la app la encontrará ahí sola."
           }
         }
       }
@@ -15622,6 +15832,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "La campaña con misiones. Continúa tu última partida guardada o empieza desde el Prólogo."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chơi nhiệm vụ cốt truyện. Tiếp tục bản lưu gần nhất hoặc bắt đầu từ phần mở đầu."
           }
         }
       }
@@ -15970,85 +16186,85 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The game folder was moved or deleted. Put it back in Files › On My iPhone › GTA V Port, or pick it again."
+            "value": "The game folder was moved or deleted. Put it back in Files › On My iPhone › GTA NEW GEN, or pick it again."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "遊戲資料夾可能已移動或刪除。請將它移回「檔案 › 我的 iPhone › GTA V Port」，或重新選取資料夾。"
+            "value": "遊戲資料夾可能已移動或刪除。請將它移回「檔案 › 我的 iPhone › GTA NEW GEN」，或重新選取資料夾。"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le dossier du jeu a été déplacé ou supprimé. Remettez-le dans Fichiers › Sur mon iPhone › GTA V Port, ou choisissez-le à nouveau."
+            "value": "Le dossier du jeu a été déplacé ou supprimé. Remettez-le dans Fichiers › Sur mon iPhone › GTA NEW GEN, ou choisissez-le à nouveau."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "La cartella del gioco è stata spostata o eliminata. Rimettila in File › Su iPhone › GTA V Port, oppure sceglila di nuovo."
+            "value": "La cartella del gioco è stata spostata o eliminata. Rimettila in File › Su iPhone › GTA NEW GEN, oppure sceglila di nuovo."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Der Spielordner wurde verschoben oder gelöscht. Leg ihn zurück nach Dateien › Auf meinem iPhone › GTA V Port oder wähle ihn erneut."
+            "value": "Der Spielordner wurde verschoben oder gelöscht. Leg ihn zurück nach Dateien › Auf meinem iPhone › GTA NEW GEN oder wähle ihn erneut."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La carpeta del juego se ha movido o eliminado. Vuelve a ponerla en Archivos › En mi iPhone › GTA V Port o elígela de nuevo."
+            "value": "La carpeta del juego se ha movido o eliminado. Vuelve a ponerla en Archivos › En mi iPhone › GTA NEW GEN o elígela de nuevo."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ゲームフォルダが移動または削除されました。「ファイル › このiPhone内 › GTA V Port」に戻すか、もう一度選択してください。"
+            "value": "ゲームフォルダが移動または削除されました。「ファイル › このiPhone内 › GTA NEW GEN」に戻すか、もう一度選択してください。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "게임 폴더가 이동되었거나 삭제되었습니다. ‘파일 › 나의 iPhone › GTA V Port’로 다시 옮기거나 폴더를 다시 선택하세요."
+            "value": "게임 폴더가 이동되었거나 삭제되었습니다. ‘파일 › 나의 iPhone › GTA NEW GEN’로 다시 옮기거나 폴더를 다시 선택하세요."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Folder gry został przeniesiony lub usunięty. Umieść go z powrotem w Pliki › Na moim iPhonie › GTA V Port lub wybierz go ponownie."
+            "value": "Folder gry został przeniesiony lub usunięty. Umieść go z powrotem w Pliki › Na moim iPhonie › GTA NEW GEN lub wybierz go ponownie."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A pasta do jogo foi movida ou apagada. Coloque-a de volta em Arquivos › No Meu iPhone › GTA V Port ou escolha-a de novo."
+            "value": "A pasta do jogo foi movida ou apagada. Coloque-a de volta em Arquivos › No Meu iPhone › GTA NEW GEN ou escolha-a de novo."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Папка игры перемещена или удалена. Верните её в Файлы › На iPhone › GTA V Port или выберите заново."
+            "value": "Папка игры перемещена или удалена. Верните её в Файлы › На iPhone › GTA NEW GEN или выберите заново."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "游戏文件夹可能已被移动或删除。请将它移回“文件 › 我的 iPhone › GTA V Port”，或重新选择文件夹。"
+            "value": "游戏文件夹可能已被移动或删除。请将它移回“文件 › 我的 iPhone › GTA NEW GEN”，或重新选择文件夹。"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "La carpeta del juego se movió o se eliminó. Vuelve a ponerla en Archivos › En mi iPhone › GTA V Port o elígela de nuevo."
+            "value": "La carpeta del juego se movió o se eliminó. Vuelve a ponerla en Archivos › En mi iPhone › GTA NEW GEN o elígela de nuevo."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Thư mục game đã bị di chuyển hoặc xoá. Đặt nó lại ở Tệp > iPhone của tôi > GTA V Port, hoặc chọn lại."
+            "value": "Thư mục game đã bị di chuyển hoặc xoá. Đặt nó lại ở Tệp > iPhone của tôi > GTA NEW GEN, hoặc chọn lại."
           }
         }
       }
@@ -16298,6 +16514,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "此裝置"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thiết bị này"
           }
         }
       }
@@ -16714,6 +16936,12 @@
             "state": "translated",
             "value": "Configuración probada actual para iPhone de 6 GB"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cấu hình thử nghiệm cho iPhone RAM 6 GB"
+          }
         }
       }
     },
@@ -16796,6 +17024,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "觸控按鍵"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Điều khiển cảm ứng"
           }
         }
       }
@@ -17052,6 +17286,12 @@
             "state": "translated",
             "value": "Fijado de blanco clásico"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khoá mục tiêu truyền thống"
+          }
         }
       }
     },
@@ -17307,6 +17547,12 @@
             "state": "translated",
             "value": "極高"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siêu cao"
+          }
         }
       }
     },
@@ -17389,6 +17635,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "不限制"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không giới hạn"
           }
         }
       }
@@ -18825,6 +19077,12 @@
             "state": "translated",
             "value": "Mapa de prueba de GTA VI"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bản đồ GTA VI thử nghiệm"
+          }
         }
       }
     },
@@ -19090,7 +19348,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Layout điều khiển"
+            "value": "Bố trí điều khiển"
           }
         }
       }
@@ -19175,6 +19433,12 @@
             "state": "translated",
             "value": "正在開始…"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang khởi động…"
+          }
         }
       }
     },
@@ -19257,6 +19521,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "完成：所有遊戲檔案皆已解壓縮並檢查"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoàn tất giải nén và kiểm tra toàn bộ dữ liệu game"
           }
         }
       }
@@ -19341,6 +19611,12 @@
             "state": "translated",
             "value": "無法完成"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thể hoàn tất"
+          }
         }
       }
     },
@@ -19423,6 +19699,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "遊戲檔案連結"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đường dẫn dữ liệu game"
           }
         }
       }
@@ -19507,6 +19789,12 @@
             "state": "translated",
             "value": "Mostrar todos los problemas"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xem toàn bộ lỗi"
+          }
         }
       }
     },
@@ -19589,6 +19877,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Jugar de todos modos"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vẫn chơi"
           }
         }
       }
@@ -19673,6 +19967,12 @@
             "state": "translated",
             "value": "Continuar"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếp tục"
+          }
         }
       }
     },
@@ -19755,6 +20055,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "重新檢查所有檔案"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kiểm tra lại toàn bộ tệp"
           }
         }
       }
@@ -19839,6 +20145,12 @@
             "state": "translated",
             "value": "重新尋找"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tìm lại"
+          }
         }
       }
     },
@@ -19921,6 +20233,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Elegir una carpeta…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chọn thư mục…"
           }
         }
       }
@@ -20005,6 +20323,12 @@
             "state": "translated",
             "value": "Elegir un archivo comprimido…"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chọn tệp nén…"
+          }
         }
       }
     },
@@ -20087,6 +20411,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Descomprimir"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giải nén"
           }
         }
       }
@@ -20419,6 +20749,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Teclado y mouse"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bàn phím và chuột"
           }
         }
       }
@@ -20856,85 +21192,85 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "In the GTA V Port folder"
+            "value": "In the GTA NEW GEN folder"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 GTA V Port 資料夾內"
+            "value": "在 GTA NEW GEN 資料夾內"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dans le dossier GTA V Port"
+            "value": "Dans le dossier GTA NEW GEN"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nella cartella GTA V Port"
+            "value": "Nella cartella GTA NEW GEN"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Im Ordner GTA V Port"
+            "value": "Im Ordner GTA NEW GEN"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "En la carpeta GTA V Port"
+            "value": "En la carpeta GTA NEW GEN"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Portフォルダ内"
+            "value": "GTA NEW GENフォルダ内"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port 폴더 내"
+            "value": "GTA NEW GEN 폴더 내"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "W folderze GTA V Port"
+            "value": "W folderze GTA NEW GEN"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Na pasta GTA V Port"
+            "value": "Na pasta GTA NEW GEN"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "В папке GTA V Port"
+            "value": "В папке GTA NEW GEN"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 GTA V Port 文件夹中"
+            "value": "在 GTA NEW GEN 文件夹中"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "En la carpeta GTA V Port"
+            "value": "En la carpeta GTA NEW GEN"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Trong thư mục GTA V Port"
+            "value": "Trong thư mục GTA NEW GEN"
           }
         }
       }
@@ -21641,6 +21977,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "En streaming desde tu servidor"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đọc dữ liệu từ máy chủ của bạn"
           }
         }
       }
@@ -22638,6 +22980,12 @@
             "state": "translated",
             "value": "Joystick derecho virtual"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cần phải ảo"
+          }
         }
       }
     },
@@ -22721,6 +23069,12 @@
             "state": "translated",
             "value": "Deslizar (estilo control)"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vuốt (tay cầm)"
+          }
         }
       }
     },
@@ -22803,6 +23157,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Deslizar (experimento con mouse)"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vuốt (chuột thử nghiệm)"
           }
         }
       }
@@ -23727,79 +24087,79 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 file is only in iCloud, not on this iPhone (for example {arg0}). The game can't read them from there: move the game folder to Files › On My iPhone › GTA V Port."
+            "value": "1 file is only in iCloud, not on this iPhone (for example {arg0}). The game can't read them from there: move the game folder to Files › On My iPhone › GTA NEW GEN."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 fichier est uniquement dans iCloud, pas sur cet iPhone (par exemple {arg0}). Le jeu ne peut pas le lire depuis iCloud : déplacez le dossier du jeu dans Fichiers › Sur mon iPhone › GTA V Port."
+            "value": "1 fichier est uniquement dans iCloud, pas sur cet iPhone (par exemple {arg0}). Le jeu ne peut pas le lire depuis iCloud : déplacez le dossier du jeu dans Fichiers › Sur mon iPhone › GTA NEW GEN."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 file è solo in iCloud, non su questo iPhone (ad esempio {arg0}). Il gioco non può leggerlo da lì: sposta la cartella del gioco in File › Su iPhone › GTA V Port."
+            "value": "1 file è solo in iCloud, non su questo iPhone (ad esempio {arg0}). Il gioco non può leggerlo da lì: sposta la cartella del gioco in File › Su iPhone › GTA NEW GEN."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 Datei ist nur in iCloud, nicht auf diesem iPhone (zum Beispiel {arg0}). Das Spiel kann sie dort nicht lesen: Verschiebe den Spielordner nach Dateien › Auf meinem iPhone › GTA V Port."
+            "value": "1 Datei ist nur in iCloud, nicht auf diesem iPhone (zum Beispiel {arg0}). Das Spiel kann sie dort nicht lesen: Verschiebe den Spielordner nach Dateien › Auf meinem iPhone › GTA NEW GEN."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 archivo solo está en iCloud, no en este iPhone (por ejemplo, {arg0}). El juego no puede leerlo desde ahí: mueve la carpeta del juego a Archivos › En mi iPhone › GTA V Port."
+            "value": "1 archivo solo está en iCloud, no en este iPhone (por ejemplo, {arg0}). El juego no puede leerlo desde ahí: mueve la carpeta del juego a Archivos › En mi iPhone › GTA NEW GEN."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "1個のファイルがiCloudにのみあり、このiPhoneにはありません（例: {arg0}）。ゲームはiCloudからは読み込めません。ゲームフォルダを「ファイル › このiPhone内 › GTA V Port」に移動してください。"
+            "value": "1個のファイルがiCloudにのみあり、このiPhoneにはありません（例: {arg0}）。ゲームはiCloudからは読み込めません。ゲームフォルダを「ファイル › このiPhone内 › GTA NEW GEN」に移動してください。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "파일 1개가 이 iPhone이 아닌 iCloud에만 있습니다(예: {arg0}). 게임은 iCloud에서 파일을 읽을 수 없습니다. 게임 폴더를 ‘파일 › 나의 iPhone › GTA V Port’로 옮기세요."
+            "value": "파일 1개가 이 iPhone이 아닌 iCloud에만 있습니다(예: {arg0}). 게임은 iCloud에서 파일을 읽을 수 없습니다. 게임 폴더를 ‘파일 › 나의 iPhone › GTA NEW GEN’로 옮기세요."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 plik jest tylko w iCloud, a nie na tym iPhonie (np. {arg0}). Gra nie może go stamtąd odczytać: przenieś folder gry do Pliki › Na moim iPhonie › GTA V Port."
+            "value": "1 plik jest tylko w iCloud, a nie na tym iPhonie (np. {arg0}). Gra nie może go stamtąd odczytać: przenieś folder gry do Pliki › Na moim iPhonie › GTA NEW GEN."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 arquivo está só no iCloud, não neste iPhone (por exemplo, {arg0}). O jogo não consegue lê-lo de lá: mova a pasta do jogo para Arquivos › No Meu iPhone › GTA V Port."
+            "value": "1 arquivo está só no iCloud, não neste iPhone (por exemplo, {arg0}). O jogo não consegue lê-lo de lá: mova a pasta do jogo para Arquivos › No Meu iPhone › GTA NEW GEN."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 файл есть только в iCloud, а не на этом iPhone (например, {arg0}). Игра не может читать его оттуда: переместите папку игры в Файлы › На iPhone › GTA V Port."
+            "value": "1 файл есть только в iCloud, а не на этом iPhone (например, {arg0}). Игра не может читать его оттуда: переместите папку игры в Файлы › На iPhone › GTA NEW GEN."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "有 1 个文件只在 iCloud 中，不在此 iPhone 上（例如 {arg0}）。游戏无法从 iCloud 读取：请将游戏文件夹移到“文件 › 我的 iPhone › GTA V Port”。"
+            "value": "有 1 个文件只在 iCloud 中，不在此 iPhone 上（例如 {arg0}）。游戏无法从 iCloud 读取：请将游戏文件夹移到“文件 › 我的 iPhone › GTA NEW GEN”。"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 archivo solo está en iCloud, no en este iPhone (por ejemplo, {arg0}). El juego no puede leerlo desde ahí: mueve la carpeta del juego a Archivos › En mi iPhone › GTA V Port."
+            "value": "1 archivo solo está en iCloud, no en este iPhone (por ejemplo, {arg0}). El juego no puede leerlo desde ahí: mueve la carpeta del juego a Archivos › En mi iPhone › GTA NEW GEN."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "有 1 個檔案只在 iCloud，不在此 iPhone 上（例如 {arg0}）。遊戲無法從 iCloud 讀取：請將遊戲資料夾移到「檔案 › 我的 iPhone › GTA V Port」。"
+            "value": "有 1 個檔案只在 iCloud，不在此 iPhone 上（例如 {arg0}）。遊戲無法從 iCloud 讀取：請將遊戲資料夾移到「檔案 › 我的 iPhone › GTA NEW GEN」。"
           }
         }
       }
@@ -23810,79 +24170,79 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "{arg0} files are only in iCloud, not on this iPhone (for example {arg1}). The game can't read them from there: move the game folder to Files › On My iPhone › GTA V Port."
+            "value": "{arg0} files are only in iCloud, not on this iPhone (for example {arg1}). The game can't read them from there: move the game folder to Files › On My iPhone › GTA NEW GEN."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "{arg0} fichiers sont uniquement dans iCloud, pas sur cet iPhone (par exemple {arg1}). Le jeu ne peut pas les lire depuis iCloud : déplacez le dossier du jeu dans Fichiers › Sur mon iPhone › GTA V Port."
+            "value": "{arg0} fichiers sont uniquement dans iCloud, pas sur cet iPhone (par exemple {arg1}). Le jeu ne peut pas les lire depuis iCloud : déplacez le dossier du jeu dans Fichiers › Sur mon iPhone › GTA NEW GEN."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "{arg0} file sono solo in iCloud, non su questo iPhone (ad esempio {arg1}). Il gioco non può leggerli da lì: sposta la cartella del gioco in File › Su iPhone › GTA V Port."
+            "value": "{arg0} file sono solo in iCloud, non su questo iPhone (ad esempio {arg1}). Il gioco non può leggerli da lì: sposta la cartella del gioco in File › Su iPhone › GTA NEW GEN."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "{arg0} Dateien sind nur in iCloud, nicht auf diesem iPhone (zum Beispiel {arg1}). Das Spiel kann sie dort nicht lesen: Verschiebe den Spielordner nach Dateien › Auf meinem iPhone › GTA V Port."
+            "value": "{arg0} Dateien sind nur in iCloud, nicht auf diesem iPhone (zum Beispiel {arg1}). Das Spiel kann sie dort nicht lesen: Verschiebe den Spielordner nach Dateien › Auf meinem iPhone › GTA NEW GEN."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "{arg0} archivos solo están en iCloud, no en este iPhone (por ejemplo, {arg1}). El juego no puede leerlos desde ahí: mueve la carpeta del juego a Archivos › En mi iPhone › GTA V Port."
+            "value": "{arg0} archivos solo están en iCloud, no en este iPhone (por ejemplo, {arg1}). El juego no puede leerlos desde ahí: mueve la carpeta del juego a Archivos › En mi iPhone › GTA NEW GEN."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "{arg0}個のファイルがiCloudにのみあり、このiPhoneにはありません（例: {arg1}）。ゲームはiCloudからは読み込めません。ゲームフォルダを「ファイル › このiPhone内 › GTA V Port」に移動してください。"
+            "value": "{arg0}個のファイルがiCloudにのみあり、このiPhoneにはありません（例: {arg1}）。ゲームはiCloudからは読み込めません。ゲームフォルダを「ファイル › このiPhone内 › GTA NEW GEN」に移動してください。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "파일 {arg0}개가 이 iPhone이 아닌 iCloud에만 있습니다(예: {arg1}). 게임은 iCloud에서 파일을 읽을 수 없습니다. 게임 폴더를 ‘파일 › 나의 iPhone › GTA V Port’로 옮기세요."
+            "value": "파일 {arg0}개가 이 iPhone이 아닌 iCloud에만 있습니다(예: {arg1}). 게임은 iCloud에서 파일을 읽을 수 없습니다. 게임 폴더를 ‘파일 › 나의 iPhone › GTA NEW GEN’로 옮기세요."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pliki tylko w iCloud, a nie na tym iPhonie: {arg0} (np. {arg1}). Gra nie może ich stamtąd odczytać: przenieś folder gry do Pliki › Na moim iPhonie › GTA V Port."
+            "value": "Pliki tylko w iCloud, a nie na tym iPhonie: {arg0} (np. {arg1}). Gra nie może ich stamtąd odczytać: przenieś folder gry do Pliki › Na moim iPhonie › GTA NEW GEN."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "{arg0} arquivos estão só no iCloud, não neste iPhone (por exemplo, {arg1}). O jogo não consegue lê-los de lá: mova a pasta do jogo para Arquivos › No Meu iPhone › GTA V Port."
+            "value": "{arg0} arquivos estão só no iCloud, não neste iPhone (por exemplo, {arg1}). O jogo não consegue lê-los de lá: mova a pasta do jogo para Arquivos › No Meu iPhone › GTA NEW GEN."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Файлов только в iCloud, а не на этом iPhone: {arg0} (например, {arg1}). Игра не может читать их оттуда: переместите папку игры в Файлы › На iPhone › GTA V Port."
+            "value": "Файлов только в iCloud, а не на этом iPhone: {arg0} (например, {arg1}). Игра не может читать их оттуда: переместите папку игры в Файлы › На iPhone › GTA NEW GEN."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "有 {arg0} 个文件只在 iCloud 中，不在此 iPhone 上（例如 {arg1}）。游戏无法从 iCloud 读取：请将游戏文件夹移到“文件 › 我的 iPhone › GTA V Port”。"
+            "value": "有 {arg0} 个文件只在 iCloud 中，不在此 iPhone 上（例如 {arg1}）。游戏无法从 iCloud 读取：请将游戏文件夹移到“文件 › 我的 iPhone › GTA NEW GEN”。"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "{arg0} archivos solo están en iCloud, no en este iPhone (por ejemplo, {arg1}). El juego no puede leerlos desde ahí: mueve la carpeta del juego a Archivos › En mi iPhone › GTA V Port."
+            "value": "{arg0} archivos solo están en iCloud, no en este iPhone (por ejemplo, {arg1}). El juego no puede leerlos desde ahí: mueve la carpeta del juego a Archivos › En mi iPhone › GTA NEW GEN."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "有 {arg0} 個檔案只在 iCloud，不在此 iPhone 上（例如 {arg1}）。遊戲無法從 iCloud 讀取：請將遊戲資料夾移到「檔案 › 我的 iPhone › GTA V Port」。"
+            "value": "有 {arg0} 個檔案只在 iCloud，不在此 iPhone 上（例如 {arg1}）。遊戲無法從 iCloud 讀取：請將遊戲資料夾移到「檔案 › 我的 iPhone › GTA NEW GEN」。"
           }
         }
       }
@@ -24797,6 +25157,12 @@
             "state": "translated",
             "value": "已在此 iPhone 上"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã có trên iPhone này"
+          }
         }
       }
     },
@@ -24806,79 +25172,85 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Easiest: in the Files app, move your unpacked game folder into On My iPhone › GTA V Port. The app finds it there by itself, however deep it is."
+            "value": "Easiest: in the Files app, move your unpacked game folder into On My iPhone › GTA NEW GEN. The app finds it there by itself, however deep it is."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le plus simple : dans l’app Fichiers, déplacez le dossier du jeu décompressé dans Sur mon iPhone › GTA V Port. L’app l’y trouve d’elle-même, quelle que soit sa profondeur."
+            "value": "Le plus simple : dans l’app Fichiers, déplacez le dossier du jeu décompressé dans Sur mon iPhone › GTA NEW GEN. L’app l’y trouve d’elle-même, quelle que soit sa profondeur."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il modo più semplice: nell’app File, sposta la cartella del gioco estratta in Su iPhone › GTA V Port. L’app la trova da sola, a qualsiasi profondità."
+            "value": "Il modo più semplice: nell’app File, sposta la cartella del gioco estratta in Su iPhone › GTA NEW GEN. L’app la trova da sola, a qualsiasi profondità."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Am einfachsten: Verschiebe deinen entpackten Spielordner in der Dateien-App nach Auf meinem iPhone › GTA V Port. Die App findet ihn dort von selbst, egal wie tief er liegt."
+            "value": "Am einfachsten: Verschiebe deinen entpackten Spielordner in der Dateien-App nach Auf meinem iPhone › GTA NEW GEN. Die App findet ihn dort von selbst, egal wie tief er liegt."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lo más fácil: en la app Archivos, mueve la carpeta del juego descomprimida a En mi iPhone › GTA V Port. La app la encuentra ahí sola, aunque esté dentro de otras carpetas."
+            "value": "Lo más fácil: en la app Archivos, mueve la carpeta del juego descomprimida a En mi iPhone › GTA NEW GEN. La app la encuentra ahí sola, aunque esté dentro de otras carpetas."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "最も簡単な方法: 「ファイル」アプリで、展開済みのゲームフォルダを「このiPhone内 › GTA V Port」に移動します。どれだけ深い階層にあっても、アプリが自動で見つけます。"
+            "value": "最も簡単な方法: 「ファイル」アプリで、展開済みのゲームフォルダを「このiPhone内 › GTA NEW GEN」に移動します。どれだけ深い階層にあっても、アプリが自動で見つけます。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "가장 쉬운 방법: 파일 앱에서 압축을 푼 게임 폴더를 ‘나의 iPhone › GTA V Port’로 옮기세요. 아무리 깊은 곳에 있어도 앱이 자동으로 찾습니다."
+            "value": "가장 쉬운 방법: 파일 앱에서 압축을 푼 게임 폴더를 ‘나의 iPhone › GTA NEW GEN’로 옮기세요. 아무리 깊은 곳에 있어도 앱이 자동으로 찾습니다."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Najprościej: w aplikacji Pliki przenieś rozpakowany folder gry do Na moim iPhonie › GTA V Port. Aplikacja sama go tam znajdzie, nawet głęboko w podfolderach."
+            "value": "Najprościej: w aplikacji Pliki przenieś rozpakowany folder gry do Na moim iPhonie › GTA NEW GEN. Aplikacja sama go tam znajdzie, nawet głęboko w podfolderach."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mais fácil: no app Arquivos, mova a pasta descompactada do jogo para No Meu iPhone › GTA V Port. O app a encontra lá sozinho, não importa a profundidade."
+            "value": "Mais fácil: no app Arquivos, mova a pasta descompactada do jogo para No Meu iPhone › GTA NEW GEN. O app a encontra lá sozinho, não importa a profundidade."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Проще всего: в приложении «Файлы» переместите распакованную папку игры в На iPhone › GTA V Port. Приложение само найдёт её там, на любой глубине."
+            "value": "Проще всего: в приложении «Файлы» переместите распакованную папку игры в На iPhone › GTA NEW GEN. Приложение само найдёт её там, на любой глубине."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "最简单的方法：在“文件”App 中，将解压后的游戏文件夹移到“我的 iPhone › GTA V Port”。无论放在多深的位置，App 都能自动找到。"
+            "value": "最简单的方法：在“文件”App 中，将解压后的游戏文件夹移到“我的 iPhone › GTA NEW GEN”。无论放在多深的位置，App 都能自动找到。"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lo más fácil: en la app Archivos, mueve la carpeta del juego descomprimida a En mi iPhone › GTA V Port. La app la encuentra ahí sola, aunque esté dentro de otras carpetas."
+            "value": "Lo más fácil: en la app Archivos, mueve la carpeta del juego descomprimida a En mi iPhone › GTA NEW GEN. La app la encuentra ahí sola, aunque esté dentro de otras carpetas."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "最簡單的方法：在「檔案」App 中，將解壓縮後的遊戲資料夾移到「我的 iPhone › GTA V Port」。無論放在多深的位置，App 都能自動找到。"
+            "value": "最簡單的方法：在「檔案」App 中，將解壓縮後的遊戲資料夾移到「我的 iPhone › GTA NEW GEN」。無論放在多深的位置，App 都能自動找到。"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cách dễ nhất: trong ứng dụng Tệp, chuyển thư mục game đã giải nén vào Trên iPhone của tôi › GTA NEW GEN. Ứng dụng sẽ tự tìm game."
           }
         }
       }
@@ -25045,6 +25417,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "透過連結"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Từ đường dẫn"
           }
         }
       }
@@ -25378,6 +25756,12 @@
             "state": "translated",
             "value": "從「檔案」中的壓縮檔"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Từ tệp nén trong ứng dụng Tệp"
+          }
         }
       }
     },
@@ -25544,6 +25928,12 @@
             "state": "translated",
             "value": "正在檢查遊戲檔案…"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang kiểm tra dữ liệu game…"
+          }
         }
       }
     },
@@ -25553,79 +25943,79 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "\"{arg0}\" in the GTA V Port folder: all {arg1} game files checked ({arg2})."
+            "value": "\"{arg0}\" in the GTA NEW GEN folder: all {arg1} game files checked ({arg2})."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "« {arg0} » dans le dossier GTA V Port : les {arg1} fichiers du jeu ont été vérifiés ({arg2})."
+            "value": "« {arg0} » dans le dossier GTA NEW GEN : les {arg1} fichiers du jeu ont été vérifiés ({arg2})."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "“{arg0}” nella cartella GTA V Port: tutti i {arg1} file di gioco controllati ({arg2})."
+            "value": "“{arg0}” nella cartella GTA NEW GEN: tutti i {arg1} file di gioco controllati ({arg2})."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "„{arg0}“ im Ordner GTA V Port: alle {arg1} Spieldateien geprüft ({arg2})."
+            "value": "„{arg0}“ im Ordner GTA NEW GEN: alle {arg1} Spieldateien geprüft ({arg2})."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "\"{arg0}\" en la carpeta GTA V Port: los {arg1} archivos del juego comprobados ({arg2})."
+            "value": "\"{arg0}\" en la carpeta GTA NEW GEN: los {arg1} archivos del juego comprobados ({arg2})."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Portフォルダ内の「{arg0}」: {arg1}個のゲームファイルをすべて確認済み（{arg2}）。"
+            "value": "GTA NEW GENフォルダ内の「{arg0}」: {arg1}個のゲームファイルをすべて確認済み（{arg2}）。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port 폴더의 ‘{arg0}’: 게임 파일 {arg1}개 모두 확인됨({arg2})."
+            "value": "GTA NEW GEN 폴더의 ‘{arg0}’: 게임 파일 {arg1}개 모두 확인됨({arg2})."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "„{arg0}” w folderze GTA V Port: sprawdzono wszystkie pliki gry ({arg1}, {arg2})."
+            "value": "„{arg0}” w folderze GTA NEW GEN: sprawdzono wszystkie pliki gry ({arg1}, {arg2})."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "\"{arg0}\" na pasta GTA V Port: todos os {arg1} arquivos do jogo verificados ({arg2})."
+            "value": "\"{arg0}\" na pasta GTA NEW GEN: todos os {arg1} arquivos do jogo verificados ({arg2})."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "«{arg0}» в папке GTA V Port: все файлы игры проверены (файлов: {arg1}, {arg2})."
+            "value": "«{arg0}» в папке GTA NEW GEN: все файлы игры проверены (файлов: {arg1}, {arg2})."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port 文件夹中的“{arg0}”：已检查全部 {arg1} 个游戏文件（{arg2}）。"
+            "value": "GTA NEW GEN 文件夹中的“{arg0}”：已检查全部 {arg1} 个游戏文件（{arg2}）。"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "\"{arg0}\" en la carpeta GTA V Port: los {arg1} archivos del juego verificados ({arg2})."
+            "value": "\"{arg0}\" en la carpeta GTA NEW GEN: los {arg1} archivos del juego verificados ({arg2})."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port 資料夾中的「{arg0}」：已檢查全部 {arg1} 個遊戲檔案（{arg2}）。"
+            "value": "GTA NEW GEN 資料夾中的「{arg0}」：已檢查全部 {arg1} 個遊戲檔案（{arg2}）。"
           }
         }
       }
@@ -25792,6 +26182,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "可以開始遊戲"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sẵn sàng chơi"
           }
         }
       }
@@ -25968,79 +26364,79 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Found a game folder in GTA V Port, but it can't be used yet. "
+            "value": "Found a game folder in GTA NEW GEN, but it can't be used yet. "
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un dossier de jeu a été trouvé dans GTA V Port, mais il n’est pas encore utilisable. "
+            "value": "Un dossier de jeu a été trouvé dans GTA NEW GEN, mais il n’est pas encore utilisable. "
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Trovata una cartella del gioco in GTA V Port, ma non è ancora utilizzabile. "
+            "value": "Trovata una cartella del gioco in GTA NEW GEN, ma non è ancora utilizzabile. "
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Spielordner in GTA V Port gefunden, aber er ist noch nicht nutzbar. "
+            "value": "Spielordner in GTA NEW GEN gefunden, aber er ist noch nicht nutzbar. "
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se ha encontrado una carpeta del juego en GTA V Port, pero todavía no se puede usar. "
+            "value": "Se ha encontrado una carpeta del juego en GTA NEW GEN, pero todavía no se puede usar. "
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Portにゲームフォルダが見つかりましたが、まだ使用できません。 "
+            "value": "GTA NEW GENにゲームフォルダが見つかりましたが、まだ使用できません。 "
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port에서 게임 폴더를 찾았지만 아직 사용할 수 없습니다. "
+            "value": "GTA NEW GEN에서 게임 폴더를 찾았지만 아직 사용할 수 없습니다. "
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Znaleziono folder gry w GTA V Port, ale nie można go jeszcze użyć. "
+            "value": "Znaleziono folder gry w GTA NEW GEN, ale nie można go jeszcze użyć. "
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Encontramos uma pasta do jogo em GTA V Port, mas ela ainda não pode ser usada. "
+            "value": "Encontramos uma pasta do jogo em GTA NEW GEN, mas ela ainda não pode ser usada. "
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "В GTA V Port найдена папка игры, но её пока нельзя использовать. "
+            "value": "В GTA NEW GEN найдена папка игры, но её пока нельзя использовать. "
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 GTA V Port 中找到了游戏文件夹，但目前无法使用。 "
+            "value": "在 GTA NEW GEN 中找到了游戏文件夹，但目前无法使用。 "
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se encontró una carpeta del juego en GTA V Port, pero todavía no se puede usar. "
+            "value": "Se encontró una carpeta del juego en GTA NEW GEN, pero todavía no se puede usar. "
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 GTA V Port 中找到遊戲資料夾，但目前無法使用。 "
+            "value": "在 GTA NEW GEN 中找到遊戲資料夾，但目前無法使用。 "
           }
         }
       }
@@ -26125,6 +26521,12 @@
             "state": "translated",
             "value": "此 App 的資料夾中沒有內容"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thư mục ứng dụng đang trống"
+          }
         }
       }
     },
@@ -26134,79 +26536,79 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The app looked through every folder in On My iPhone › GTA V Port and found no game. If your game is somewhere else (another folder, or another app's folder), tap Choose a folder… below and pick it, or pick On My iPhone itself to search everything. iOS only lets an app into other folders once you pick them."
+            "value": "The app looked through every folder in On My iPhone › GTA NEW GEN and found no game. If your game is somewhere else (another folder, or another app's folder), tap Choose a folder… below and pick it, or pick On My iPhone itself to search everything. iOS only lets an app into other folders once you pick them."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’app a parcouru tous les dossiers de Sur mon iPhone › GTA V Port sans trouver de jeu. Si votre jeu est ailleurs (un autre dossier, ou le dossier d’une autre app), touchez Choisir un dossier… ci-dessous et sélectionnez-le, ou sélectionnez Sur mon iPhone pour tout parcourir. iOS ne laisse une app accéder à d’autres dossiers qu’une fois que vous les avez choisis."
+            "value": "L’app a parcouru tous les dossiers de Sur mon iPhone › GTA NEW GEN sans trouver de jeu. Si votre jeu est ailleurs (un autre dossier, ou le dossier d’une autre app), touchez Choisir un dossier… ci-dessous et sélectionnez-le, ou sélectionnez Sur mon iPhone pour tout parcourir. iOS ne laisse une app accéder à d’autres dossiers qu’une fois que vous les avez choisis."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’app ha cercato in tutte le cartelle di Su iPhone › GTA V Port senza trovare il gioco. Se il gioco è altrove (un’altra cartella o la cartella di un’altra app), tocca Scegli una cartella… qui sotto e selezionala, oppure seleziona Su iPhone per cercare ovunque. iOS permette a un’app di accedere ad altre cartelle solo dopo che le hai scelte."
+            "value": "L’app ha cercato in tutte le cartelle di Su iPhone › GTA NEW GEN senza trovare il gioco. Se il gioco è altrove (un’altra cartella o la cartella di un’altra app), tocca Scegli una cartella… qui sotto e selezionala, oppure seleziona Su iPhone per cercare ovunque. iOS permette a un’app di accedere ad altre cartelle solo dopo che le hai scelte."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die App hat jeden Ordner in Auf meinem iPhone › GTA V Port durchsucht und kein Spiel gefunden. Liegt dein Spiel woanders (in einem anderen Ordner oder dem Ordner einer anderen App), tippe unten auf Ordner wählen… und wähle ihn aus, oder wähle Auf meinem iPhone selbst, um alles zu durchsuchen. iOS gibt einer App erst Zugriff auf andere Ordner, wenn du sie auswählst."
+            "value": "Die App hat jeden Ordner in Auf meinem iPhone › GTA NEW GEN durchsucht und kein Spiel gefunden. Liegt dein Spiel woanders (in einem anderen Ordner oder dem Ordner einer anderen App), tippe unten auf Ordner wählen… und wähle ihn aus, oder wähle Auf meinem iPhone selbst, um alles zu durchsuchen. iOS gibt einer App erst Zugriff auf andere Ordner, wenn du sie auswählst."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La app ha revisado todas las carpetas de En mi iPhone › GTA V Port y no ha encontrado el juego. Si tu juego está en otro sitio (otra carpeta o la carpeta de otra app), toca Elegir una carpeta… abajo y selecciónala, o elige En mi iPhone para buscar en todo. iOS solo deja que una app acceda a otras carpetas cuando las eliges."
+            "value": "La app ha revisado todas las carpetas de En mi iPhone › GTA NEW GEN y no ha encontrado el juego. Si tu juego está en otro sitio (otra carpeta o la carpeta de otra app), toca Elegir una carpeta… abajo y selecciónala, o elige En mi iPhone para buscar en todo. iOS solo deja que una app acceda a otras carpetas cuando las eliges."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "「このiPhone内 › GTA V Port」内のすべてのフォルダを探しましたが、ゲームが見つかりませんでした。ゲームが別の場所（別のフォルダや別のアプリのフォルダ）にある場合は、下の「フォルダを選択…」をタップして選択するか、「このiPhone内」自体を選択してすべてを検索してください。iOSでは、アプリが他のフォルダにアクセスできるのは、そのフォルダを選択した後だけです。"
+            "value": "「このiPhone内 › GTA NEW GEN」内のすべてのフォルダを探しましたが、ゲームが見つかりませんでした。ゲームが別の場所（別のフォルダや別のアプリのフォルダ）にある場合は、下の「フォルダを選択…」をタップして選択するか、「このiPhone内」自体を選択してすべてを検索してください。iOSでは、アプリが他のフォルダにアクセスできるのは、そのフォルダを選択した後だけです。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "앱이 ‘나의 iPhone › GTA V Port’의 모든 폴더를 살펴봤지만 게임을 찾지 못했습니다. 게임이 다른 곳(다른 폴더나 다른 앱의 폴더)에 있다면 아래의 ‘폴더 선택…’을 탭하여 선택하거나, ‘나의 iPhone’ 자체를 선택해 전체를 검색하세요. iOS에서는 폴더를 직접 선택해야만 앱이 그 폴더에 접근할 수 있습니다."
+            "value": "앱이 ‘나의 iPhone › GTA NEW GEN’의 모든 폴더를 살펴봤지만 게임을 찾지 못했습니다. 게임이 다른 곳(다른 폴더나 다른 앱의 폴더)에 있다면 아래의 ‘폴더 선택…’을 탭하여 선택하거나, ‘나의 iPhone’ 자체를 선택해 전체를 검색하세요. iOS에서는 폴더를 직접 선택해야만 앱이 그 폴더에 접근할 수 있습니다."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aplikacja przeszukała wszystkie foldery w Na moim iPhonie › GTA V Port i nie znalazła gry. Jeśli gra jest gdzie indziej (w innym folderze lub folderze innej aplikacji), stuknij poniżej Wybierz folder… i wskaż go albo wybierz samo Na moim iPhonie, aby przeszukać wszystko. iOS daje aplikacji dostęp do innych folderów dopiero po ich wybraniu."
+            "value": "Aplikacja przeszukała wszystkie foldery w Na moim iPhonie › GTA NEW GEN i nie znalazła gry. Jeśli gra jest gdzie indziej (w innym folderze lub folderze innej aplikacji), stuknij poniżej Wybierz folder… i wskaż go albo wybierz samo Na moim iPhonie, aby przeszukać wszystko. iOS daje aplikacji dostęp do innych folderów dopiero po ich wybraniu."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O app procurou em todas as pastas de No Meu iPhone › GTA V Port e não encontrou o jogo. Se o seu jogo estiver em outro lugar (outra pasta ou a pasta de outro app), toque em Escolher pasta… abaixo e escolha-a, ou escolha o próprio No Meu iPhone para procurar em tudo. O iOS só deixa um app acessar outras pastas depois que você as escolhe."
+            "value": "O app procurou em todas as pastas de No Meu iPhone › GTA NEW GEN e não encontrou o jogo. Se o seu jogo estiver em outro lugar (outra pasta ou a pasta de outro app), toque em Escolher pasta… abaixo e escolha-a, ou escolha o próprio No Meu iPhone para procurar em tudo. O iOS só deixa um app acessar outras pastas depois que você as escolhe."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Приложение проверило все папки в На iPhone › GTA V Port и не нашло игру. Если игра в другом месте (в другой папке или в папке другого приложения), нажмите «Выбрать папку…» ниже и выберите её или выберите саму «На iPhone», чтобы искать везде. iOS даёт приложению доступ к другим папкам, только когда вы их выбираете."
+            "value": "Приложение проверило все папки в На iPhone › GTA NEW GEN и не нашло игру. Если игра в другом месте (в другой папке или в папке другого приложения), нажмите «Выбрать папку…» ниже и выберите её или выберите саму «На iPhone», чтобы искать везде. iOS даёт приложению доступ к другим папкам, только когда вы их выбираете."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "App 已搜索“我的 iPhone › GTA V Port”中的每个文件夹，但未找到游戏。如果游戏在其他位置（其他文件夹或其他 App 的文件夹），请轻点下方的“选择文件夹…”并选取它，或选取“我的 iPhone”本身来搜索全部内容。iOS 只允许 App 访问你选取过的其他文件夹。"
+            "value": "App 已搜索“我的 iPhone › GTA NEW GEN”中的每个文件夹，但未找到游戏。如果游戏在其他位置（其他文件夹或其他 App 的文件夹），请轻点下方的“选择文件夹…”并选取它，或选取“我的 iPhone”本身来搜索全部内容。iOS 只允许 App 访问你选取过的其他文件夹。"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "La app revisó todas las carpetas de En mi iPhone › GTA V Port y no encontró el juego. Si tu juego está en otro lugar (otra carpeta o la carpeta de otra app), toca Elegir una carpeta… abajo y selecciónala, o elige En mi iPhone para buscar en todo. iOS solo deja que una app acceda a otras carpetas cuando las eliges."
+            "value": "La app revisó todas las carpetas de En mi iPhone › GTA NEW GEN y no encontró el juego. Si tu juego está en otro lugar (otra carpeta o la carpeta de otra app), toca Elegir una carpeta… abajo y selecciónala, o elige En mi iPhone para buscar en todo. iOS solo deja que una app acceda a otras carpetas cuando las eliges."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "App 已搜尋「我的 iPhone › GTA V Port」中的每個資料夾，但找不到遊戲。如果遊戲在其他位置（其他資料夾或其他 App 的資料夾），請點按下方的「選擇資料夾…」並選取它，或選取「我的 iPhone」本身來搜尋全部內容。iOS 只允許 App 存取你選取過的其他資料夾。"
+            "value": "App 已搜尋「我的 iPhone › GTA NEW GEN」中的每個資料夾，但找不到遊戲。如果遊戲在其他位置（其他資料夾或其他 App 的資料夾），請點按下方的「選擇資料夾…」並選取它，或選取「我的 iPhone」本身來搜尋全部內容。iOS 只允許 App 存取你選取過的其他資料夾。"
           }
         }
       }
@@ -26290,6 +26692,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "尚無遊戲檔案"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có dữ liệu game"
           }
         }
       }
@@ -26457,6 +26865,12 @@
             "state": "translated",
             "value": "可以開始，但有 1 個問題檔案"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sẵn sàng, còn 1 tệp lỗi"
+          }
         }
       }
     },
@@ -26539,6 +26953,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "可以開始，但有 {arg0} 個問題檔案"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sẵn sàng, còn {arg0} tệp lỗi"
           }
         }
       }
@@ -26623,6 +27043,12 @@
             "state": "translated",
             "value": "解壓縮 {arg0}（{arg1}）"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giải nén {arg0} ({arg1})"
+          }
         }
       }
     },
@@ -26706,6 +27132,12 @@
             "state": "translated",
             "value": "要在有 1 個問題檔案的情況下開始遊戲嗎？"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chơi dù có 1 tệp lỗi?"
+          }
         }
       }
     },
@@ -26788,6 +27220,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "要在有 {arg0} 個問題檔案的情況下開始遊戲嗎？"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chơi dù có {arg0} tệp lỗi?"
           }
         }
       }
@@ -27038,6 +27476,12 @@
             "state": "translated",
             "value": "無法使用該資料夾"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thể sử dụng thư mục này"
+          }
         }
       }
     },
@@ -27120,6 +27564,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "請再選擇一次。"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hãy thử chọn lại."
           }
         }
       }
@@ -27204,6 +27654,12 @@
             "state": "translated",
             "value": "所有問題："
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Các lỗi:"
+          }
         }
       }
     },
@@ -27286,6 +27742,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "{arg0} 個問題"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{arg0} lỗi"
           }
         }
       }
@@ -27453,6 +27915,12 @@
             "state": "translated",
             "value": "正在搜尋其中每個資料夾來尋找遊戲，然後檢查每個檔案。"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tìm dữ liệu game trong các thư mục và kiểm tra từng tệp."
+          }
         }
       }
     },
@@ -27618,6 +28086,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "找到遊戲壓縮檔"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã tìm thấy tệp nén game"
           }
         }
       }
@@ -27785,6 +28259,12 @@
             "state": "translated",
             "value": "該資料夾中沒有遊戲"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thư mục này không có game"
+          }
         }
       }
     },
@@ -27867,6 +28347,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "這不是網址"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đây không phải đường dẫn web"
           }
         }
       }
@@ -27951,6 +28437,12 @@
             "state": "translated",
             "value": "請貼上以 https:// 開頭的完整連結"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dán đường dẫn đầy đủ bắt đầu bằng https://"
+          }
         }
       }
     },
@@ -28033,6 +28525,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "正在檢查連結…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang kiểm tra đường dẫn…"
           }
         }
       }
@@ -28200,6 +28698,12 @@
             "state": "translated",
             "value": "該連結是網頁"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đường dẫn này là trang web"
+          }
         }
       }
     },
@@ -28365,6 +28869,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "要解壓縮 {arg0} 嗎？"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giải nén {arg0}?"
           }
         }
       }
@@ -28532,6 +29042,12 @@
             "state": "translated",
             "value": "正在取得遊戲檔案…"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang lấy dữ liệu game…"
+          }
         }
       }
     },
@@ -28614,6 +29130,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "正在下載並解壓縮。請保持 App 開啟，進度顯示於下方。"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tải và giải nén. Giữ ứng dụng mở; tiến độ hiển thị bên dưới."
           }
         }
       }
@@ -28698,6 +29220,12 @@
             "state": "translated",
             "value": "無法取得遊戲檔案"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thể lấy dữ liệu game"
+          }
         }
       }
     },
@@ -28707,79 +29235,79 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "There is no game in \"{arg0}\". Pick the folder that has your game in it (any folder above it works, even On My iPhone itself).\n\nEasiest: move your game folder into Files › On My iPhone › GTA V Port. The app finds it there by itself."
+            "value": "There is no game in \"{arg0}\". Pick the folder that has your game in it (any folder above it works, even On My iPhone itself).\n\nEasiest: move your game folder into Files › On My iPhone › GTA NEW GEN. The app finds it there by itself."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il n’y a aucun jeu dans « {arg0} ». Choisissez le dossier qui contient votre jeu (n’importe quel dossier au-dessus convient, même Sur mon iPhone).\n\nLe plus simple : déplacez le dossier du jeu dans Fichiers › Sur mon iPhone › GTA V Port. L’app l’y trouve d’elle-même."
+            "value": "Il n’y a aucun jeu dans « {arg0} ». Choisissez le dossier qui contient votre jeu (n’importe quel dossier au-dessus convient, même Sur mon iPhone).\n\nLe plus simple : déplacez le dossier du jeu dans Fichiers › Sur mon iPhone › GTA NEW GEN. L’app l’y trouve d’elle-même."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Non c’è nessun gioco in “{arg0}”. Scegli la cartella che contiene il gioco (va bene qualsiasi cartella superiore, anche Su iPhone stesso).\n\nIl modo più semplice: sposta la cartella del gioco in File › Su iPhone › GTA V Port. L’app la trova da sola."
+            "value": "Non c’è nessun gioco in “{arg0}”. Scegli la cartella che contiene il gioco (va bene qualsiasi cartella superiore, anche Su iPhone stesso).\n\nIl modo più semplice: sposta la cartella del gioco in File › Su iPhone › GTA NEW GEN. L’app la trova da sola."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "In „{arg0}“ ist kein Spiel. Wähle den Ordner, in dem dein Spiel liegt (jeder übergeordnete Ordner geht auch, sogar Auf meinem iPhone selbst).\n\nAm einfachsten: Verschiebe deinen Spielordner nach Dateien › Auf meinem iPhone › GTA V Port. Die App findet ihn dort von selbst."
+            "value": "In „{arg0}“ ist kein Spiel. Wähle den Ordner, in dem dein Spiel liegt (jeder übergeordnete Ordner geht auch, sogar Auf meinem iPhone selbst).\n\nAm einfachsten: Verschiebe deinen Spielordner nach Dateien › Auf meinem iPhone › GTA NEW GEN. Die App findet ihn dort von selbst."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No hay ningún juego en \"{arg0}\". Elige la carpeta que contiene tu juego (sirve cualquier carpeta superior, incluso En mi iPhone).\n\nLo más fácil: mueve la carpeta del juego a Archivos › En mi iPhone › GTA V Port. La app la encuentra ahí sola."
+            "value": "No hay ningún juego en \"{arg0}\". Elige la carpeta que contiene tu juego (sirve cualquier carpeta superior, incluso En mi iPhone).\n\nLo más fácil: mueve la carpeta del juego a Archivos › En mi iPhone › GTA NEW GEN. La app la encuentra ahí sola."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "「{arg0}」にゲームがありません。ゲームが入っているフォルダを選んでください（その上位のフォルダでも、「このiPhone内」自体でも可）。\n\n最も簡単な方法: ゲームフォルダを「ファイル › このiPhone内 › GTA V Port」に移動してください。そこならアプリが自動で見つけます。"
+            "value": "「{arg0}」にゲームがありません。ゲームが入っているフォルダを選んでください（その上位のフォルダでも、「このiPhone内」自体でも可）。\n\n最も簡単な方法: ゲームフォルダを「ファイル › このiPhone内 › GTA NEW GEN」に移動してください。そこならアプリが自動で見つけます。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "‘{arg0}’에 게임이 없습니다. 게임이 들어 있는 폴더를 선택하세요(그 상위 폴더나 ‘나의 iPhone’ 자체도 가능).\n\n가장 쉬운 방법: 게임 폴더를 ‘파일 › 나의 iPhone › GTA V Port’로 옮기세요. 그곳에 있으면 앱이 자동으로 찾습니다."
+            "value": "‘{arg0}’에 게임이 없습니다. 게임이 들어 있는 폴더를 선택하세요(그 상위 폴더나 ‘나의 iPhone’ 자체도 가능).\n\n가장 쉬운 방법: 게임 폴더를 ‘파일 › 나의 iPhone › GTA NEW GEN’로 옮기세요. 그곳에 있으면 앱이 자동으로 찾습니다."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "W „{arg0}” nie ma gry. Wybierz folder, w którym jest gra (zadziała też każdy folder nadrzędny, nawet samo Na moim iPhonie).\n\nNajprościej: przenieś folder gry do Pliki › Na moim iPhonie › GTA V Port. Aplikacja sama go tam znajdzie."
+            "value": "W „{arg0}” nie ma gry. Wybierz folder, w którym jest gra (zadziała też każdy folder nadrzędny, nawet samo Na moim iPhonie).\n\nNajprościej: przenieś folder gry do Pliki › Na moim iPhonie › GTA NEW GEN. Aplikacja sama go tam znajdzie."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não há jogo em \"{arg0}\". Escolha a pasta que contém o seu jogo (qualquer pasta acima dela serve, até o próprio No Meu iPhone).\n\nMais fácil: mova a pasta do jogo para Arquivos › No Meu iPhone › GTA V Port. O app a encontra lá sozinho."
+            "value": "Não há jogo em \"{arg0}\". Escolha a pasta que contém o seu jogo (qualquer pasta acima dela serve, até o próprio No Meu iPhone).\n\nMais fácil: mova a pasta do jogo para Arquivos › No Meu iPhone › GTA NEW GEN. O app a encontra lá sozinho."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "В «{arg0}» нет игры. Выберите папку с игрой (подойдёт любая папка выше неё, даже сама «На iPhone»).\n\nПроще всего: переместите папку игры в Файлы › На iPhone › GTA V Port. Приложение само найдёт её там."
+            "value": "В «{arg0}» нет игры. Выберите папку с игрой (подойдёт любая папка выше неё, даже сама «На iPhone»).\n\nПроще всего: переместите папку игры в Файлы › На iPhone › GTA NEW GEN. Приложение само найдёт её там."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "“{arg0}”中没有游戏。请选择包含游戏的文件夹（它上层的任一文件夹也可以，甚至是“我的 iPhone”本身）。\n\n最简单的方法：将游戏文件夹移到“文件 › 我的 iPhone › GTA V Port”，App 会自动找到。"
+            "value": "“{arg0}”中没有游戏。请选择包含游戏的文件夹（它上层的任一文件夹也可以，甚至是“我的 iPhone”本身）。\n\n最简单的方法：将游戏文件夹移到“文件 › 我的 iPhone › GTA NEW GEN”，App 会自动找到。"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "No hay ningún juego en \"{arg0}\". Elige la carpeta que contiene tu juego (sirve cualquier carpeta superior, incluso En mi iPhone).\n\nLo más fácil: mueve la carpeta del juego a Archivos › En mi iPhone › GTA V Port. La app la encuentra ahí sola."
+            "value": "No hay ningún juego en \"{arg0}\". Elige la carpeta que contiene tu juego (sirve cualquier carpeta superior, incluso En mi iPhone).\n\nLo más fácil: mueve la carpeta del juego a Archivos › En mi iPhone › GTA NEW GEN. La app la encuentra ahí sola."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "「{arg0}」中沒有遊戲。請選擇含有遊戲的資料夾（它上層的任一資料夾也可以，甚至是「我的 iPhone」本身）。\n\n最簡單的方法：將遊戲資料夾移到「檔案 › 我的 iPhone › GTA V Port」，App 便能自動找到。"
+            "value": "「{arg0}」中沒有遊戲。請選擇含有遊戲的資料夾（它上層的任一資料夾也可以，甚至是「我的 iPhone」本身）。\n\n最簡單的方法：將遊戲資料夾移到「檔案 › 我的 iPhone › GTA NEW GEN」，App 便能自動找到。"
           }
         }
       }
@@ -29777,6 +30305,12 @@
             "state": "translated",
             "value": "{arg0} · {arg1} GB · App 上限 {arg2} MB"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{arg0} · {arg1} GB · giới hạn app {arg2} MB"
+          }
         }
       }
     },
@@ -29859,6 +30393,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "BC 材質"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texture BC"
           }
         }
       }
@@ -30713,6 +31253,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "控制器"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tay cầm"
           }
         }
       }
@@ -31764,7 +32310,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Telegram"
+            "value": "Dự án GitHub"
           }
         }
       }
@@ -31853,7 +32399,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Five Star Port trên Telegram"
+            "value": "GTA NEW GEN trên GitHub"
           }
         }
       }
@@ -31937,6 +32483,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "官方更新、說明與最新版本"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cập nhật, hỗ trợ và phiên bản mới"
           }
         }
       }
@@ -35424,6 +35976,12 @@
             "state": "translated",
             "value": "極致效能"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiệu năng tối đa"
+          }
         }
       }
     },
@@ -35506,6 +36064,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "更清晰的放大"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Làm nét khi phóng hình"
           }
         }
       }
@@ -36507,6 +37071,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "模組已啟用"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã bật mod"
           }
         }
       }
@@ -38168,6 +38738,12 @@
             "state": "translated",
             "value": "模組"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quản lý mod"
+          }
         }
       }
     },
@@ -38250,6 +38826,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "已安裝"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã cài"
           }
         }
       }
@@ -38334,6 +38916,12 @@
             "state": "translated",
             "value": "選擇下載好的模組（zip、rar、oiv、asi 或單一檔案）。App 會找出每個檔案該放的位置。車輛、外觀和附加包模組需要遊戲檔案在這支 iPhone 上。"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập ZIP, RAR, OIV hoặc thư mục mod. Mục Nhập âm thanh xe hỗ trợ ZIP/OIV/RPF/FiveM. Sau khi thay đổi mod hãy tắt hẳn và mở lại app."
+          }
         }
       }
     },
@@ -38416,6 +39004,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "變更會在下次啟動遊戲時生效。模組可能造成我們無法修正的閃退和故障：請到 Telegram 的 Mods 主題詢問。"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thay đổi có hiệu lực khi mở lại game. Nếu có lỗi, tắt mod và gửi nhật ký cho nhóm tester."
           }
         }
       }
@@ -38500,6 +39094,12 @@
             "state": "translated",
             "value": "正在讀取模組…"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang đọc mod…"
+          }
         }
       }
     },
@@ -38582,6 +39182,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "安裝模組…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập mod…"
           }
         }
       }
@@ -38666,6 +39272,12 @@
             "state": "translated",
             "value": "在「檔案」中顯示 Mods 資料夾"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở thư mục Mods trong Tệp"
+          }
         }
       }
     },
@@ -38749,6 +39361,12 @@
             "state": "translated",
             "value": "尚未安裝模組"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có mod"
+          }
         }
       }
     },
@@ -38831,6 +39449,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "{arg0} 個檔案"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{arg0} tệp"
           }
         }
       }
@@ -38998,6 +39622,12 @@
             "state": "translated",
             "value": "未安裝："
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không cài:"
+          }
         }
       }
     },
@@ -39080,6 +39710,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "沒有可安裝的內容"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không có tệp phù hợp để cài"
           }
         }
       }
@@ -39330,6 +39966,12 @@
             "state": "translated",
             "value": "安裝"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cài đặt"
+          }
         }
       }
     },
@@ -39412,6 +40054,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "無法安裝模組"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thể cài mod"
           }
         }
       }
@@ -39496,6 +40144,12 @@
             "state": "translated",
             "value": "安裝車輛、外觀和腳本模組"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cài mod xe, nhân vật và script"
+          }
         }
       }
     },
@@ -39578,6 +40232,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "已啟用 {arg0} 個模組"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{arg0} mod đang bật"
           }
         }
       }
@@ -39994,6 +40654,12 @@
             "state": "translated",
             "value": "Guía de mods"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hướng dẫn mod"
+          }
         }
       }
     },
@@ -40160,6 +40826,12 @@
             "state": "translated",
             "value": "{arg0} no están en esta versión del juego"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{arg0} tệp không có trong bản game này"
+          }
         }
       }
     },
@@ -40242,6 +40914,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "{arg0} se colocan al iniciar el juego"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{arg0} tệp sẽ được đặt khi game khởi động"
           }
         }
       }
@@ -40907,6 +41585,12 @@
             "state": "translated",
             "value": "繼續下載"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếp tục tải"
+          }
         }
       }
     },
@@ -40989,6 +41673,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "下載在 {arg0}% 處停止"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quá trình tải dừng ở {arg0}%"
           }
         }
       }
@@ -41322,6 +42012,12 @@
             "state": "translated",
             "value": "低"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thấp"
+          }
         }
       }
     },
@@ -41404,6 +42100,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "高"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cao"
           }
         }
       }
@@ -41488,6 +42190,12 @@
             "state": "translated",
             "value": "非常高"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rất cao"
+          }
         }
       }
     },
@@ -41570,6 +42278,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "材質"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texture"
           }
         }
       }
@@ -41654,6 +42368,12 @@
             "state": "translated",
             "value": "陰影"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bóng đổ"
+          }
         }
       }
     },
@@ -41736,6 +42456,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "反射"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phản chiếu"
           }
         }
       }
@@ -41820,6 +42546,12 @@
             "state": "translated",
             "value": "繪製距離"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tầm nhìn"
+          }
         }
       }
     },
@@ -41903,6 +42635,12 @@
             "state": "translated",
             "value": "草地"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cỏ"
+          }
         }
       }
     },
@@ -41985,6 +42723,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "交通和行人"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xe cộ và người đi đường"
           }
         }
       }
@@ -42401,6 +43145,12 @@
             "state": "translated",
             "value": "作弊"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Công cụ hỗ trợ"
+          }
         }
       }
     },
@@ -42483,6 +43233,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "載具、修理、天氣、時間、金錢等"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gọi xe, sửa chữa, thời tiết, thời gian, tiền và các mục khác"
           }
         }
       }
@@ -42650,6 +43406,12 @@
             "state": "translated",
             "value": "生成載具"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gọi xe"
+          }
         }
       }
     },
@@ -42815,6 +43577,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "設定金錢"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đặt số tiền"
           }
         }
       }
@@ -43148,6 +43916,12 @@
             "state": "translated",
             "value": "上帝模式"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bất tử"
+          }
         }
       }
     },
@@ -43313,6 +44087,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "永不通緝"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không bị truy nã"
           }
         }
       }
@@ -43480,6 +44260,12 @@
             "state": "translated",
             "value": "修理載具"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sửa xe"
+          }
         }
       }
     },
@@ -43645,6 +44431,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "清洗載具"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rửa xe"
           }
         }
       }
@@ -43812,6 +44604,12 @@
             "state": "translated",
             "value": "時間"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thời gian trong ngày"
+          }
         }
       }
     },
@@ -43978,6 +44776,12 @@
             "state": "translated",
             "value": "早上 · 06:00"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buổi sáng · 06:00"
+          }
         }
       }
     },
@@ -44060,6 +44864,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "中午 · 12:00"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buổi trưa · 12:00"
           }
         }
       }
@@ -44144,6 +44954,12 @@
             "state": "translated",
             "value": "傍晚 · 18:00"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buổi tối · 18:00"
+          }
         }
       }
     },
@@ -44227,6 +45043,12 @@
             "state": "translated",
             "value": "午夜 · 00:00"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nửa đêm · 00:00"
+          }
         }
       }
     },
@@ -44309,6 +45131,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "天氣"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thời tiết"
           }
         }
       }
@@ -44476,6 +45304,12 @@
             "state": "translated",
             "value": "晴朗"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trời quang"
+          }
         }
       }
     },
@@ -44558,6 +45392,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "艷陽高照"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nắng đẹp"
           }
         }
       }
@@ -44642,6 +45482,12 @@
             "state": "translated",
             "value": "多雲"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Có mây"
+          }
         }
       }
     },
@@ -44724,6 +45570,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "陰天"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Âm u"
           }
         }
       }
@@ -44808,6 +45660,12 @@
             "state": "translated",
             "value": "下雨"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mưa"
+          }
         }
       }
     },
@@ -44890,6 +45748,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "雷雨"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giông bão"
           }
         }
       }
@@ -44974,6 +45838,12 @@
             "state": "translated",
             "value": "霧"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sương mù"
+          }
         }
       }
     },
@@ -45056,6 +45926,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "自然天氣"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thời tiết tự nhiên"
           }
         }
       }
@@ -49207,6 +50083,12 @@
             "state": "translated",
             "value": "{arg0}、解析度、幀率、記憶體"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{arg0}, độ phân giải, FPS, bộ nhớ"
+          }
         }
       }
     },
@@ -49289,6 +50171,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "操控"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Điều khiển"
           }
         }
       }
@@ -49373,6 +50261,12 @@
             "state": "translated",
             "value": "鏡頭、按鈕、版面配置、陀螺儀、控制器和鍵盤"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Camera, nút bấm, bố trí, con quay, tay cầm và bàn phím"
+          }
         }
       }
     },
@@ -49455,6 +50349,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "遊戲模式與語言"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chế độ chơi và ngôn ngữ"
           }
         }
       }
@@ -49621,6 +50521,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "記憶體、紀錄和 Telegram 群組"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bộ nhớ, nhật ký và trang dự án"
           }
         }
       }
@@ -50369,6 +51275,12 @@
             "state": "translated",
             "value": "開啟 Telegram"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở trang dự án"
+          }
         }
       }
     },
@@ -50618,6 +51530,12 @@
             "state": "translated",
             "value": "左下角"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Góc dưới bên trái"
+          }
         }
       }
     },
@@ -50701,6 +51619,12 @@
             "state": "translated",
             "value": "左上角"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Góc trên bên trái"
+          }
         }
       }
     },
@@ -50783,6 +51707,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "自訂"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tuỳ chỉnh"
           }
         }
       }
@@ -51116,6 +52046,12 @@
             "state": "translated",
             "value": "更聰明的貼圖載入"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tải texture thông minh"
+          }
         }
       }
     },
@@ -51282,6 +52218,12 @@
             "state": "translated",
             "value": "更輕量的大貼圖"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giảm tải texture lớn"
+          }
         }
       }
     },
@@ -51447,6 +52389,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "更快的引擎執行緒"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ưu tiên luồng engine"
           }
         }
       }
@@ -51697,6 +52645,12 @@
             "state": "translated",
             "value": "無法移除模組"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thể gỡ mod"
+          }
         }
       }
     },
@@ -51706,79 +52660,85 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open GTA V Port in Files"
+            "value": "Open GTA NEW GEN in Files"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "GTA V Port in Dateien öffnen"
+            "value": "GTA NEW GEN in Dateien öffnen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abrir GTA V Port en Archivos"
+            "value": "Abrir GTA NEW GEN en Archivos"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abrir GTA V Port en Archivos"
+            "value": "Abrir GTA NEW GEN en Archivos"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ouvrir GTA V Port dans Fichiers"
+            "value": "Ouvrir GTA NEW GEN dans Fichiers"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apri GTA V Port in File"
+            "value": "Apri GTA NEW GEN in File"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "「ファイル」でGTA V Portを開く"
+            "value": "「ファイル」でGTA NEW GENを開く"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "파일 앱에서 GTA V Port 열기"
+            "value": "파일 앱에서 GTA NEW GEN 열기"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Otwórz GTA V Port w Plikach"
+            "value": "Otwórz GTA NEW GEN w Plikach"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abrir GTA V Port no Arquivos"
+            "value": "Abrir GTA NEW GEN no Arquivos"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Открыть GTA V Port в «Файлах»"
+            "value": "Открыть GTA NEW GEN в «Файлах»"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在“文件”中打开 GTA V Port"
+            "value": "在“文件”中打开 GTA NEW GEN"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "在「檔案」中打開 GTA V Port"
+            "value": "在「檔案」中打開 GTA NEW GEN"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở GTA NEW GEN trong Tệp"
           }
         }
       }
@@ -51946,6 +52906,12 @@
             "state": "translated",
             "value": "「檔案」沒有打開"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không mở được tệp"
+          }
         }
       }
     },
@@ -51955,79 +52921,79 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open the Files app yourself and go to On My iPhone › GTA V Port, move your game folder there, then come back."
+            "value": "Open the Files app yourself and go to On My iPhone › GTA NEW GEN, move your game folder there, then come back."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Öffne die Dateien-App selbst, geh zu Auf meinem iPhone › GTA V Port, verschiebe deinen Spielordner dorthin und komm zurück."
+            "value": "Öffne die Dateien-App selbst, geh zu Auf meinem iPhone › GTA NEW GEN, verschiebe deinen Spielordner dorthin und komm zurück."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abre tú mismo la app Archivos, ve a En mi iPhone › GTA V Port, mueve allí tu carpeta del juego y vuelve."
+            "value": "Abre tú mismo la app Archivos, ve a En mi iPhone › GTA NEW GEN, mueve allí tu carpeta del juego y vuelve."
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abre tú mismo la app Archivos, ve a En mi iPhone › GTA V Port, mueve allí tu carpeta del juego y vuelve."
+            "value": "Abre tú mismo la app Archivos, ve a En mi iPhone › GTA NEW GEN, mueve allí tu carpeta del juego y vuelve."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ouvrez vous-même l’app Fichiers, allez dans Sur mon iPhone › GTA V Port, déplacez-y votre dossier du jeu, puis revenez."
+            "value": "Ouvrez vous-même l’app Fichiers, allez dans Sur mon iPhone › GTA NEW GEN, déplacez-y votre dossier du jeu, puis revenez."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apri tu l’app File, vai in Su iPhone › GTA V Port, sposta lì la cartella del gioco, poi torna qui."
+            "value": "Apri tu l’app File, vai in Su iPhone › GTA NEW GEN, sposta lì la cartella del gioco, poi torna qui."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "「ファイル」アプリを自分で開き、「このiPhone内 › GTA V Port」へゲームフォルダを移動してから戻ってきてください。"
+            "value": "「ファイル」アプリを自分で開き、「このiPhone内 › GTA NEW GEN」へゲームフォルダを移動してから戻ってきてください。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "파일 앱을 직접 열고 ‘나의 iPhone › GTA V Port’로 가서 게임 폴더를 옮긴 다음 돌아오세요."
+            "value": "파일 앱을 직접 열고 ‘나의 iPhone › GTA NEW GEN’로 가서 게임 폴더를 옮긴 다음 돌아오세요."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Otwórz samodzielnie aplikację Pliki, przejdź do Na moim iPhonie › GTA V Port, przenieś tam folder gry i wróć."
+            "value": "Otwórz samodzielnie aplikację Pliki, przejdź do Na moim iPhonie › GTA NEW GEN, przenieś tam folder gry i wróć."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abra você mesmo o app Arquivos, vá em No Meu iPhone › GTA V Port, mova a pasta do jogo para lá e volte."
+            "value": "Abra você mesmo o app Arquivos, vá em No Meu iPhone › GTA NEW GEN, mova a pasta do jogo para lá e volte."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Откройте «Файлы» сами, перейдите в На iPhone › GTA V Port, переместите туда папку игры и вернитесь."
+            "value": "Откройте «Файлы» сами, перейдите в На iPhone › GTA NEW GEN, переместите туда папку игры и вернитесь."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "请自己打开“文件”App，前往“我的 iPhone › GTA V Port”，把游戏文件夹移到那里，然后回来。"
+            "value": "请自己打开“文件”App，前往“我的 iPhone › GTA NEW GEN”，把游戏文件夹移到那里，然后回来。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "請自行打開「檔案」App，前往「我的 iPhone › GTA V Port」，把遊戲資料夾搬到那裡，然後回來。"
+            "value": "請自行打開「檔案」App，前往「我的 iPhone › GTA NEW GEN」，把遊戲資料夾搬到那裡，然後回來。"
           }
         }
       }
@@ -52121,79 +53087,79 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Some sideloaded installs can't hand a folder to the app. Tap Open GTA V Port in Files, move your game folder there, then come back: the app finds it by itself."
+            "value": "Some sideloaded installs can't hand a folder to the app. Tap Open GTA NEW GEN in Files, move your game folder there, then come back: the app finds it by itself."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Manche per Sideloading installierte Apps können keinen Ordner an die App übergeben. Tippe auf GTA V Port in Dateien öffnen, verschiebe deinen Spielordner dorthin und komm zurück: Die App findet ihn von selbst."
+            "value": "Manche per Sideloading installierte Apps können keinen Ordner an die App übergeben. Tippe auf GTA NEW GEN in Dateien öffnen, verschiebe deinen Spielordner dorthin und komm zurück: Die App findet ihn von selbst."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Algunas instalaciones por sideload no pueden pasar una carpeta a la app. Toca Abrir GTA V Port en Archivos, mueve allí tu carpeta del juego y vuelve: la app la encuentra sola."
+            "value": "Algunas instalaciones por sideload no pueden pasar una carpeta a la app. Toca Abrir GTA NEW GEN en Archivos, mueve allí tu carpeta del juego y vuelve: la app la encuentra sola."
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "Algunas instalaciones por sideload no pueden pasar una carpeta a la app. Toca Abrir GTA V Port en Archivos, mueve allí tu carpeta del juego y vuelve: la app la encuentra sola."
+            "value": "Algunas instalaciones por sideload no pueden pasar una carpeta a la app. Toca Abrir GTA NEW GEN en Archivos, mueve allí tu carpeta del juego y vuelve: la app la encuentra sola."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Certaines installations en sideload ne peuvent pas transmettre un dossier à l’app. Touchez Ouvrir GTA V Port dans Fichiers, déplacez-y votre dossier du jeu, puis revenez : l’app le trouve d’elle-même."
+            "value": "Certaines installations en sideload ne peuvent pas transmettre un dossier à l’app. Touchez Ouvrir GTA NEW GEN dans Fichiers, déplacez-y votre dossier du jeu, puis revenez : l’app le trouve d’elle-même."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alcune installazioni in sideload non riescono a passare una cartella all’app. Tocca Apri GTA V Port in File, sposta lì la cartella del gioco, poi torna qui: l’app la trova da sola."
+            "value": "Alcune installazioni in sideload non riescono a passare una cartella all’app. Tocca Apri GTA NEW GEN in File, sposta lì la cartella del gioco, poi torna qui: l’app la trova da sola."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サイドロードでのインストールによっては、フォルダをアプリに渡せないことがあります。「「ファイル」でGTA V Portを開く」をタップし、ゲームフォルダをそこへ移動してから戻ってきてください。アプリが自動で見つけます。"
+            "value": "サイドロードでのインストールによっては、フォルダをアプリに渡せないことがあります。「「ファイル」でGTA NEW GENを開く」をタップし、ゲームフォルダをそこへ移動してから戻ってきてください。アプリが自動で見つけます。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "일부 사이드로드 설치에서는 폴더를 앱에 넘길 수 없습니다. ‘파일 앱에서 GTA V Port 열기’를 탭하고 게임 폴더를 그곳으로 옮긴 다음 돌아오세요. 앱이 자동으로 찾습니다."
+            "value": "일부 사이드로드 설치에서는 폴더를 앱에 넘길 수 없습니다. ‘파일 앱에서 GTA NEW GEN 열기’를 탭하고 게임 폴더를 그곳으로 옮긴 다음 돌아오세요. 앱이 자동으로 찾습니다."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Niektóre instalacje przez sideload nie mogą przekazać folderu aplikacji. Stuknij Otwórz GTA V Port w Plikach, przenieś tam folder gry i wróć: aplikacja sama go znajdzie."
+            "value": "Niektóre instalacje przez sideload nie mogą przekazać folderu aplikacji. Stuknij Otwórz GTA NEW GEN w Plikach, przenieś tam folder gry i wróć: aplikacja sama go znajdzie."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Algumas instalações por sideload não conseguem passar uma pasta para o app. Toque em Abrir GTA V Port no Arquivos, mova a pasta do jogo para lá e volte: o app a encontra sozinho."
+            "value": "Algumas instalações por sideload não conseguem passar uma pasta para o app. Toque em Abrir GTA NEW GEN no Arquivos, mova a pasta do jogo para lá e volte: o app a encontra sozinho."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Некоторые установки через сайдлоад не могут передать папку приложению. Нажмите «Открыть GTA V Port в «Файлах»», переместите туда папку игры и вернитесь: приложение само её найдёт."
+            "value": "Некоторые установки через сайдлоад не могут передать папку приложению. Нажмите «Открыть GTA NEW GEN в «Файлах»», переместите туда папку игры и вернитесь: приложение само её найдёт."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "有些侧载安装无法把文件夹交给 App。轻点“在“文件”中打开 GTA V Port”，把游戏文件夹移到那里，然后回来：App 会自动找到它。"
+            "value": "有些侧载安装无法把文件夹交给 App。轻点“在“文件”中打开 GTA NEW GEN”，把游戏文件夹移到那里，然后回来：App 会自动找到它。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "有些側載安裝無法把資料夾交給 App。點一下「在「檔案」中打開 GTA V Port」，把遊戲資料夾搬到那裡，然後回來：App 會自動找到它。"
+            "value": "有些側載安裝無法把資料夾交給 App。點一下「在「檔案」中打開 GTA NEW GEN」，把遊戲資料夾搬到那裡，然後回來：App 會自動找到它。"
           }
         }
       }
@@ -52693,6 +53659,12 @@
             "state": "translated",
             "value": "下次啟動遊戲時移除"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gỡ khi mở lại game"
+          }
         }
       }
     },
@@ -52775,6 +53747,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "下次啟動遊戲時開啟"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bật khi mở lại game"
           }
         }
       }
@@ -52859,6 +53837,12 @@
             "state": "translated",
             "value": "下次啟動遊戲時關閉"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tắt khi mở lại game"
+          }
         }
       }
     },
@@ -52941,6 +53925,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "匯入故事模式存檔…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập save cốt truyện…"
           }
         }
       }
@@ -53772,6 +54762,12 @@
             "state": "translated",
             "value": "壓縮透明材質"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nén texture trong suốt"
+          }
         }
       }
     },
@@ -53938,6 +54934,12 @@
             "state": "translated",
             "value": "更多引擎記憶體"
           }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tăng bộ nhớ trong engine"
+          }
         }
       }
     },
@@ -54020,6 +55022,156 @@
           "stringUnit": {
             "state": "translated",
             "value": "實驗功能，預設關閉。在遊戲的 4 GB 內多騰出約 270 MB，讓 6-8 GB 的 iPhone 長時間遊玩後更少停止。如果遊戲更常停止，請關閉。"
+          }
+        }
+      }
+    },
+    "Normal": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bình thường"
+          }
+        }
+      }
+    },
+    "Medium": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trung bình"
+          }
+        }
+      }
+    },
+    "Default": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mặc định"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đóng"
+          }
+        }
+      }
+    },
+    "Changes apply the next time the game starts.": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thay đổi có hiệu lực khi mở lại game."
+          }
+        }
+      }
+    },
+    "Game files missing": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thiếu dữ liệu game"
+          }
+        }
+      }
+    },
+    "Experimental": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thử nghiệm"
+          }
+        }
+      }
+    },
+    "Restart the app": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khởi động lại ứng dụng"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu"
+          }
+        }
+      }
+    },
+    "Search": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tìm kiếm"
+          }
+        }
+      }
+    },
+    "Spawn": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gọi xe"
+          }
+        }
+      }
+    },
+    "Vehicles": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xe"
+          }
+        }
+      }
+    },
+    "Vehicle spawner": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gọi xe"
+          }
+        }
+      }
+    },
+    "Aim assist": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hỗ trợ ngắm"
+          }
+        }
+      }
+    },
+    "Sensitivity": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Độ nhạy"
           }
         }
       }
