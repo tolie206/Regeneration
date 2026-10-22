@@ -303,9 +303,13 @@ final class TouchControlsView: UIView {
         default: return false
         }
     }
+    private var effectiveCameraMode: GameSettings.CameraTouchMode {
+        let settings = GameSettings.shared
+        return settings.cameraTouchMode == .swipeMouse && aiming && settings.targetingMode < 3 ? .swipePad : settings.cameraTouchMode
+    }
     /// Only the experimental mouse path needs pointer focus/lock.
     var experimentalMouseLookActive: Bool {
-        swipeCameraEnabled && GameSettings.shared.cameraTouchMode == .swipeMouse && !has(isSelectionWheel)
+        swipeCameraEnabled && effectiveCameraMode == .swipeMouse && !has(isSelectionWheel)
     }
     private func clearCameraTravel() {
         pendingCameraTravel = .zero
@@ -321,7 +325,7 @@ final class TouchControlsView: UIView {
     /// the pad. The mouse path feeds native mouse deltas but does not replace
     /// the virtual pad, so we can observe whether the game still grants aim assist.
     private func flushCameraTravel() {
-        let mode = GameSettings.shared.cameraTouchMode
+        let mode = effectiveCameraMode
         if mode != lastCameraMode { clearCameraTravel(); lastCameraMode = mode }
         guard swipeCameraEnabled, !has(isSelectionWheel) else {
             clearCameraTravel()

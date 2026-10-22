@@ -54,6 +54,19 @@ import FoundationXML
   ModVehicleSupport.prepare(manifestPath:manifestURL.path,log:{print($0)})
   let second=try Data(contentsOf:vehicleURL);precondition(first==second)
   precondition(ModVehicleSupport.vehicles().contains("sh150"))
+  // Reproduce tester's duplicate raw + converted st76cb4t mounts.
+  let rawURL=fixture.deletingLastPathComponent().appendingPathComponent("st76cb4t/dlc.rpf")
+  let stStage=try SoundInstaller.stage([rawURL]);defer{try? fm.removeItem(at:stStage)}
+  let (stPlan,stProfiles)=try SoundInstaller.build(stStage);precondition(stProfiles==["st76cb4t"])
+  let convertedRoot=try ModInstaller.install(stPlan);defer{try? fm.removeItem(at:convertedRoot)}
+  let rawRoot=ModInstaller.modsFolder.appendingPathComponent("raw-st76-test")
+  let rawPackDir=rawRoot.appendingPathComponent("update/x64/dlcpacks/st76cb4t")
+  try fm.createDirectory(at:rawPackDir,withIntermediateDirectories:true)
+  try fm.copyItem(at:rawURL,to:rawPackDir.appendingPathComponent("dlc.rpf"))
+  defer{try? fm.removeItem(at:rawRoot);try? fm.removeItem(atPath:rawRoot.path+".off")}
+  SoundAssignments.resolveDuplicatePacks(log:{print($0)})
+  precondition(!fm.fileExists(atPath:rawRoot.path));precondition(fm.fileExists(atPath:rawRoot.path+".off"))
+  precondition(fm.fileExists(atPath:convertedRoot.path))
   print("PASS: actual H2R FiveM folder import, native REL54 alias, unchanged AWC, valid DLC XML and corrupt input rejection")
  }
 }

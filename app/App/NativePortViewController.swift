@@ -397,6 +397,10 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
             guard let self else { return }
             // This fork distributes tester builds manually through its private Actions page.
         }
+        if UserDefaults.standard.bool(forKey:"NewGenPreviousBootInterrupted") {
+            appendLog("Previous boot was interrupted; keeping saved graphics and translation preferences.")
+            UserDefaults.standard.removeObject(forKey:"NewGenPreviousBootInterrupted")
+        }
         if let recovery = GameSettings.shared.recoverFromFailedBoot() {
             appendLog("Previous launch on \(recovery.failed.title) did not finish; lowered to \(recovery.fallback.title)\(recovery.resetHeight.map { ", resolution \($0)p back to Auto" } ?? "").")
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { self.explainRecovery(recovery) }
@@ -626,7 +630,9 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         appendLog("Native touch controls support held buttons, sprint and weapon selection.")
         installModsForTest()
         do { try BundledVietnamese.prepare() } catch { appendLog("Built-in translation: \(error.localizedDescription)") }
+        appendLog(BundledVietnamese.status)
         ModVehicleSupport.prepare(manifestPath:path,log:appendLog)
+        SoundAssignments.resolveDuplicatePacks(log:appendLog)
         SoundAssignments.configure()
         noticeMods()
         startAudio()

@@ -22,3 +22,10 @@ disassembly-summary.json và *.asm: ARM64 của các hàm đã chọn. Phân tí
 
 ## Rollback
 Giữ nguyên IPA gốc, V001 và V002; thay đổi source lưu theo commit. Không sửa data gốc hoặc save trong phân tích này.
+
+## Log tester V001 bổ sung
+Thiết bị iPhone13,4 / Apple A14, iOS 26.5; 1558×720/60, cityDensity=0, nhiều DLC xe và một DLC skin. Log ghi 57 FPS trung bình trong một khoảng 10 giây, 52 FPS ở mẫu Health; 2 frame >50 ms, lớn nhất 152 ms. Một freeze 1.459 ms nằm trong tải khởi động, không phải bằng chứng freeze lặp khi đã chơi ổn định. Không thấy mẫu 30 FPS hoặc native trap trong log này; cuối log app vào background.
+
+Sound profile st76cb4t đã được gán cho model 26c46c72; điều này xác nhận hook chạy, chưa xác nhận chất lượng âm thanh nghe thực tế. RAM dùng 2245 MB, còn khoảng 1850 MB theo app limit; guard không chặn/evict, asset reads không lỗi/không slow và streaming waiting=0 ở mẫu Health. Do đó chưa có bằng chứng thiếu RAM ở thời điểm đo.
+
+Renderer busy 15,6 ms/frame gần ngân sách 16,67 ms ở 60 FPS; chỉ là thời gian renderer busy, không được xem là GPU execution time hay toàn bộ CPU frame time. Main chờ render/visibility, render có 58% mẫu Wait on queued frames; chưa phân biệt được frame pacing, cap, hoặc GPU completion chỉ từ profile này. Pipeline pending làm skip 232 draws, không phải 232 frame và không chứng minh compile trực tiếp chặn main thread. Cần giữ các phân biệt này khi đánh giá V003.

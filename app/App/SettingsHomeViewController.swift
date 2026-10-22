@@ -34,6 +34,11 @@ final class SettingsHomeViewController: UITableViewController {
             }, sections: [.controls, .gyro]),
         ]
         if engineRunning {
+            list.append(Category(icon: "car.fill", title: "Gọi xe mod", summary: { "Chỉ hiện những xe mod đang bật" }, sections: [], page: { [weak self] in
+                let page = VehicleSpawnViewController()
+                page.vehicleSelected = self?.vehicleSelected
+                return page
+            }))
             list.append(Category(icon: "wand.and.stars", title: AppLanguage.choose("Cheats"), summary: {
                 AppLanguage.choose("Vehicles, repairs, weather, time, money and more")
             }, sections: [.cheats]))
@@ -112,7 +117,7 @@ final class SettingsHomeViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        "GTA NEW GEN" + " \(Theme.appVersion)"
+        "Mugoat NewGen" + " \(Theme.appVersion)"
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

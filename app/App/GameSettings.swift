@@ -321,8 +321,7 @@ final class GameSettings {
     }
     static func frameRateTitle(_ cap: Int) -> String { cap == 0 ? AppLanguage.choose("Unlocked") : "\(cap) FPS" }
 
-    // Crash fallback: a launch that never reached a stable world is treated
-    // as a memory kill, and the last preset that worked is restored.
+    // Interrupted boots are recorded without silently lowering saved graphics.
     private var bootPending: Bool {
         get { defaults.bool(forKey: "graphicsBootPending") }
         set { defaults.set(newValue, forKey: "graphicsBootPending") }
@@ -339,7 +338,7 @@ final class GameSettings {
         let resetHeight: Int?
         let memoryLimitMB: Int
     }
-    /// Lowers the settings when the previous launch failed. Returns what changed, or nil.
+    /// Records an interrupted launch; a pending flag alone does not prove a memory kill.
     func recoverFromFailedBoot() -> BootRecovery? {
         #if targetEnvironment(simulator)
         // Simulator runs are often stopped from Xcode; only phones need this (unless testing it).
@@ -347,21 +346,12 @@ final class GameSettings {
         #endif
         guard bootPending else { return nil }
         bootPending = false
-        let failed = graphicsPreset
-        // A preset that already ran stably on this phone is not the problem (the app was more likely
-        // closed by an update or by Xcode): keep it, and only undo a resolution raised above it.
-        let fallback = lastGoodPreset == failed ? failed
-            : lastGoodPreset.flatMap { $0.rawValue < failed.rawValue ? $0 : nil }
-            ?? GraphicsPreset(rawValue: max(GraphicsPreset.available[0].rawValue, min(failed.rawValue - 1, tier.recommended.rawValue))) ?? .performance
-        // A custom resolution above the fallback's own also costs memory: back to Auto (unless that
-        // resolution already ran stably with this preset).
-        let provenHeight = fallback == lastGoodPreset ? defaults.integer(forKey: "lastGoodRenderHeight") : 0
-        let resetHeight = renderHeight > max(fallback.height, provenHeight) ? renderHeight : nil
-        guard fallback != failed || resetHeight != nil else { return nil }
-        graphicsPreset = fallback
-        if resetHeight != nil { renderHeight = 0 }
-        return BootRecovery(failed: failed, fallback: fallback, resetHeight: resetHeight, memoryLimitMB: tier.memoryLimitMB)
+        // Force-quits, signing/update interruption and failed loading can all leave this flag.
+        // Never silently change graphics based only on this ambiguous marker.
+        defaults.set(true,forKey:"NewGenPreviousBootInterrupted")
+        return nil
     }
+
     /// "Try again anyway" in the popup: put the settings back as they were.
     func undoRecovery(_ recovery: BootRecovery) {
         graphicsPreset = recovery.failed

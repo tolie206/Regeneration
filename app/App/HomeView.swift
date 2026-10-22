@@ -44,7 +44,7 @@ final class HomeView: UIView {
         icon.widthAnchor.constraint(equalToConstant: 52).isActive = true
         icon.heightAnchor.constraint(equalToConstant: 52).isActive = true
         let title = brandTitle
-        title.text = "GTA NEW GEN"
+        title.text = "Mugoat NewGen"
         title.font = Theme.display(30)
         title.textColor = Theme.text
         title.adjustsFontSizeToFitWidth = true
@@ -178,7 +178,7 @@ final class HomeView: UIView {
     private let scroll = UIScrollView()
     private let secondary = UIStackView()
     func refreshLanguage() {
-        brandTitle.text = "GTA NEW GEN"
+        brandTitle.text = "Mugoat NewGen"
         brandSubtitle.text = AppLanguage.choose("Fan project · plays your own game files") + " · \(Theme.appVersion)"
         mapTitle.text = AppLanguage.choose("Map")
         playButton.configuration?.title = AppLanguage.choose("Play")

@@ -919,6 +919,26 @@ static void frontendOverlay(uint32_t id, uint64_t offset, uint8_t *destination, 
       memcpy(destination, (const uint8_t *)frontendLayout.bytes + offset, (size_t)MIN((uint64_t)count, frontendLayout.length - offset));
   }
 }
+extern NSData *PGRewriteVisualEffects(NSData *,BOOL,BOOL);
+extern NSData *PGRewriteExplosionEffects(NSData *);
+static void visualEffectsOverlay(uint32_t id,uint64_t offset,uint8_t *destination,int64_t count){
+ BOOL explosion=[assetFiles[id][0] isEqualToString:@"common/data/effects/explosionfx.dat"];
+ if(count<=0||(!explosion&&![assetFiles[id][0] hasPrefix:@"common/data/timecycle/"]))return;
+ static dispatch_once_t once;static BOOL sun,particles;static NSMutableDictionary *cache;
+ dispatch_once(&once,^{NSUserDefaults *d=NSUserDefaults.standard;sun=[d boolForKey:@"NewGenDisableSunRays"];particles=[d boolForKey:@"NewGenLightExplosions"];cache=[NSMutableDictionary dictionary];});
+ if(!sun&&!particles)return;
+ @synchronized(cache){
+  NSNumber *key=@(id);NSData *data=cache[key];
+  if(!data){uint64_t size=[assetFiles[id][1] unsignedLongLongValue];
+   if(size>4*1024*1024)return;
+   NSMutableData *source=[NSMutableData dataWithLength:(NSUInteger)size];
+   NSData *rewritten=readAssetImpl(id,0,source.mutableBytes,(uint32_t)size)==(int64_t)size?(explosion?(particles?PGRewriteExplosionEffects(source):nil):PGRewriteVisualEffects(source,sun,NO)):nil;
+   data=rewritten?:[NSData data];cache[key]=data;
+   if(rewritten)pg_log("Visual effects: cached visual-only overlay (gameplay unchanged).");
+  }
+  if(offset<data.length)memcpy(destination,(const uint8_t*)data.bytes+offset,(size_t)MIN((uint64_t)count,data.length-offset));
+ }
+}
 static int64_t readAsset(uint32_t id,uint64_t offset,uint8_t *destination,uint32_t length){
   assetReadNetworkMS=assetReadLockMS=0;assetReadNetworkBytes=0;assetReadSource=2;
   double healthStart=assetNowMS();
@@ -927,6 +947,7 @@ static int64_t readAsset(uint32_t id,uint64_t offset,uint8_t *destination,uint32
   controlMetaOverlay(id,offset,destination,result);
   gameConfigOverlay(id,offset,destination,result);
   frontendOverlay(id,offset,destination,result);
+  visualEffectsOverlay(id,offset,destination,result);
   double took=assetNowMS()-healthStart;
   atomic_fetch_add(&healthReads,1);atomic_fetch_add(&healthReadMicros,(uint64_t)(took*1000));
   if(result<0)atomic_fetch_add(&healthReadErrors,1);

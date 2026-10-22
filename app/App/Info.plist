@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>GTA NEW GEN</string>
+	<string>Mugoat NewGen</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -21,7 +21,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.4.4</string>
 	<key>CFBundleVersion</key>
-	<string>1003</string>
+	<string>1004</string>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>

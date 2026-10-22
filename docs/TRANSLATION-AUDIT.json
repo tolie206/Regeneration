@@ -1,7 +1,7 @@
 {
-  "gxt2_files": 602,
-  "labels": 213683,
-  "matching_labels_updated": 41106,
+  "gxt2_files": 1216,
+  "labels": 487918,
+  "matching_labels_updated": 70056,
   "font_files": [
     "common/data/ui/fontmap.xml",
     "x64/data/cdimages/scaleform_frontend.rpf/font_lib_editor.gfx",
