@@ -14,7 +14,8 @@ import tarfile
 import urllib.request
 from pathlib import Path
 
-URL = os.environ.get('PGMSL_PREBUILT_URL') or 'https://github.com/kevinerikjs/gta5-ios-port/releases/download/shadertool-1/pgmsl-macos-arm64.tar.gz'
+root = Path(__file__).resolve().parents[1]
+URL = os.environ.get('PGMSL_PREBUILT_URL') or (root.parent/'build-tools/pgmsl-macos-arm64.tar.gz').resolve().as_uri()
 SHA256 = 'c80005c5fe22653cc7b2dd10a8276202df8e8fbfcb6d6d1a3e6599c2240105a1'
 root = Path(__file__).resolve().parents[1]
 target = root / 'Tools/pgmsl'
