@@ -1,6 +1,9 @@
 name: Build MuLone
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - "mulone-v*"
 permissions:
   contents: read
 concurrency:
