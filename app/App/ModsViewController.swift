@@ -88,7 +88,7 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
             picker.allowsMultipleSelection = importingSound
             present(picker, animated: true)
         } else if indexPath.row == 2 {
-            if let url = URL(string: "https://github.com/hutaolee264/GTA-NEW-GEN/blob/main/docs/MODS.md") { UIApplication.shared.open(url) }
+            if let url = URL(string: "https://github.com/Living-NG/GTA-NEW-GEN-2/blob/main/docs/MODS.md") { UIApplication.shared.open(url) }
         } else {
             try? FileManager.default.createDirectory(at: ModInstaller.modsFolder, withIntermediateDirectories: true)
             if let url = URL(string: "shareddocuments://" + ModInstaller.modsFolder.path) { UIApplication.shared.open(url) }

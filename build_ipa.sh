@@ -38,6 +38,11 @@ fi
 /usr/libexec/PlistBuddy -c "Set :PGDefaultAssetServer $SERVER" App/Info.plist
 /usr/libexec/PlistBuddy -c "Set :PGLiteMode $LITE" App/Info.plist
 
+# Fail on host Objective-C syntax errors before compiling the large generated engine.
+xcrun --sdk iphoneos clang -fsyntax-only -fobjc-arc -target arm64-apple-ios16.0 -std=gnu11 -DWASM_RT_USE_MMAP=0 -DWASM_RT_MEMCHECK_BOUNDS_CHECK=1 \
+  -isysroot "$(xcrun --sdk iphoneos --show-sdk-path)" -I Source -I Generated \
+  -I Tools/wabt-1.0.42/include -I Tools/wabt-1.0.42/share/wabt/wasm2c \
+  Source/NativeAssets.m Source/VisualEffects.m
 xcodebuild -project PlayGTA5Native.xcodeproj -scheme PlayGTA5Native \
   -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
   -derivedDataPath Build/Release -jobs "$JOBS" \

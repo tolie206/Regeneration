@@ -925,7 +925,7 @@ static void visualEffectsOverlay(uint32_t id,uint64_t offset,uint8_t *destinatio
  BOOL explosion=[assetFiles[id][0] isEqualToString:@"common/data/effects/explosionfx.dat"];
  if(count<=0||(!explosion&&![assetFiles[id][0] hasPrefix:@"common/data/timecycle/"]))return;
  static dispatch_once_t once;static BOOL sun,particles;static NSMutableDictionary *cache;
- dispatch_once(&once,^{NSUserDefaults *d=NSUserDefaults.standard;sun=[d boolForKey:@"NewGenDisableSunRays"];particles=[d boolForKey:@"NewGenLightExplosions"];cache=[NSMutableDictionary dictionary];});
+ dispatch_once(&once,^{NSUserDefaults *d=[NSUserDefaults standardUserDefaults];sun=[d boolForKey:@"NewGenDisableSunRays"];particles=[d boolForKey:@"NewGenLightExplosions"];cache=[NSMutableDictionary dictionary];});
  if(!sun&&!particles)return;
  @synchronized(cache){
   NSNumber *key=@(id);NSData *data=cache[key];

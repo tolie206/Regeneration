@@ -54,16 +54,16 @@ jobs:
           clang -fobjc-arc -framework Foundation app/Source/VisualEffects.m app/Tests/visual_effects.m -o "$RUNNER_TEMP/visual-test"
           cd app
           "$RUNNER_TEMP/visual-test"
-      - name: Build MuLone-V004
+      - name: Build MuLone-V005
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify IPA entitlements
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa MuLone-V004.ipa
+          mv GTA5Port.ipa MuLone-V005.ipa
       - uses: actions/upload-artifact@v4
         with:
-          name: MuLone-V004
-          path: MuLone-V004.ipa
+          name: MuLone-V005
+          path: MuLone-V005.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()

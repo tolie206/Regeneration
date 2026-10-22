@@ -623,7 +623,9 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         // A TV already connected gets the picture from the start, in its own shape.
         let tvScreen = ProcessInfo.processInfo.arguments.contains("--no-tv") ? nil : UIScreen.screens.first(where: { $0 != UIScreen.main })
         appendLog("Graphics: " + GraphicsConfiguration.apply(GameSettings.shared, screen: tvScreen?.bounds.size ?? view.bounds.size, tv: tvScreen != nil))
+        GameSettings.shared.tier = DeviceTier.probe()
         appendLog("Device: " + GameSettings.shared.tier.summary)
+        appendLog("Memory rights: " + String(describing:DeviceTier.increasedMemoryGranted) + "; app cap \(GameSettings.shared.memoryCapMB) MiB (0=automatic); process RAM and engine virtual reservation are separate.")
         GameSettings.shared.markBootStarted()
         playIntro()
         launchButton.setTitle(AppLanguage.choose("Loading…"), for: .disabled); launchButton.setNeedsUpdateConfiguration()

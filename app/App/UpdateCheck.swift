@@ -5,9 +5,9 @@ import UIKit
 /// It reads the release page's redirect to its tag: GitHub's API allows 60 requests an hour per
 /// address, which players sharing a mobile carrier's address would run out of.
 enum UpdateCheck {
-    private static let latestRelease = URL(string: "https://github.com/hutaolee264/GTA-NEW-GEN/releases/latest")!
+    private static let latestRelease = URL(string: "https://github.com/Living-NG/GTA-NEW-GEN-2/releases/latest")!
     /// The Releases topic of the Telegram group.
-    private static let releasesTopic = URL(string: "https://github.com/hutaolee264/GTA-NEW-GEN/actions")!
+    private static let releasesTopic = URL(string: "https://github.com/Living-NG/GTA-NEW-GEN-2/actions")!
     private static let shownKey = "updatePromptShownFor"
 
     static func run(from presenter: UIViewController, log: @escaping (String) -> Void) {
