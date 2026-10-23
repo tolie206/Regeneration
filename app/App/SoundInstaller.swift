@@ -46,7 +46,13 @@ enum SoundInstaller {
   func archive(_ r:RPFArchive,_ depth:Int,_ prefix:String="") throws {
    guard depth<5 else{throw ModError("RPF lồng quá sâu.")}
    for e in r.entries {
-    if e.path.hasSuffix(".rpf"){try archive(r.nested(e),depth+1,prefix+e.path+"/")}
+    if e.path.hasSuffix(".rpf") {
+     // A combined car/sound DLC can also contain encrypted vehicle and language
+     // archives. Audio import must not open or modify those unrelated archives.
+     let lower=e.path.lowercased(),leaf=(lower as NSString).lastPathComponent
+     let audio=lower.hasPrefix("sfx/") || lower.contains("/sfx/") || lower.hasPrefix("audio/") || lower.contains("/audio/") || leaf.hasPrefix("dlc_")
+     if audio {try archive(r.nested(e),depth+1,prefix+e.path+"/")}
+    }
     else if e.path.hasSuffix(".awc") || e.path.hasSuffix(".rel"){try collect(prefix+e.path,r.binary(e))}
    }
   }

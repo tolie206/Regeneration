@@ -595,7 +595,7 @@ final class TouchControlsView: UIView {
             "phone": AppLanguage.choose("Phone"),
             "pause": AppLanguage.choose("Pause menu"),
             "settings": AppLanguage.choose("Settings"),
-            "mods": AppLanguage.choose("Mods"),
+            "mods": "Plugin",
             "lights": AppLanguage.choose("Headlights"),
             "radio": AppLanguage.choose("Radio"),
             "up": AppLanguage.choose("Up"),

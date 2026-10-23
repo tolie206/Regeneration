@@ -1,9 +1,11 @@
 import Foundation
+import Darwin
 #if canImport(FoundationXML)
 import FoundationXML
 #endif
 @main struct RealMods {
  static func main() throws {
+  setbuf(stdout,nil)
   let fm=FileManager.default,root=URL(fileURLWithPath:CommandLine.arguments[1])
   let game=fm.temporaryDirectory.appendingPathComponent("game-test-"+UUID().uuidString)
   try fm.createDirectory(at:game.appendingPathComponent("common/data/levels/gta5"),withIntermediateDirectories:true)
@@ -35,6 +37,7 @@ import FoundationXML
   }
   let audio=try fm.contentsOfDirectory(at:root.appendingPathComponent("audio"),includingPropertiesForKeys:nil).sorted{$0.path<$1.path}
   for url in audio {
+   print("Testing audio: \(url.lastPathComponent)")
    let stage=try SoundInstaller.stage([url]);defer{try? fm.removeItem(at:stage)}
    let (plan,profiles)=try SoundInstaller.build(stage)
    precondition(!profiles.isEmpty && plan.items.count>0)
