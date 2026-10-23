@@ -13,6 +13,7 @@ enum ModVehicleSupport {
   var known=Set(rows.compactMap{$0.first as? String}.filter{$0.lowercased().hasSuffix(".ytd")}.map{URL(fileURLWithPath:$0).deletingPathExtension().lastPathComponent.lowercased()})
   known.insert("vehshare")
   var archives:[(URL,RPFArchive,URL)]=[]
+  var names:[URL:Set<String>]=[:]
   func textures(_ r:RPFArchive,_ depth:Int) {
    guard depth<5 else{return}
    for e in r.entries {
@@ -23,11 +24,15 @@ enum ModVehicleSupport {
   let mods=ModInstaller.installed().filter{$0.enabled && !$0.name.hasPrefix("_newgen_story_")}
   for mod in mods {
    guard let walk=fm.enumerator(at:mod.url,includingPropertiesForKeys:nil,options:.skipsHiddenFiles) else{continue}
-   for case let url as URL in walk where url.lastPathComponent.lowercased()=="dlc.rpf" {
+   for case let url as URL in walk {
+    if url.pathExtension.lowercased()=="yft" {
+     var model=url.deletingPathExtension().lastPathComponent.lowercased();if model.hasSuffix("_hi"){model=String(model.dropLast(3))}
+     if ModPack.validName(model){names[mod.url,default:[]].insert(model)}
+    }
+    guard url.lastPathComponent.lowercased()=="dlc.rpf" else{continue}
     do{let r=try RPFArchive(url:url);textures(r,0);archives.append((url,r,mod.url))}catch{log("Vehicle metadata scan: \(error.localizedDescription)")}
    }
   }
-  var names:[URL:Set<String>]=[:]
   let parentRE=try! NSRegularExpression(pattern:"<parent>\\s*([^<]+)\\s*</parent>")
   let modelRE=try! NSRegularExpression(pattern:"<modelName>\\s*([^<]+)\\s*</modelName>")
   for (url,r,root) in archives {

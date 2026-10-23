@@ -21,7 +21,7 @@ final class MemoryAccessViewController: UITableViewController {
    c.text="Kiểm tra lại quyền và RAM";c.secondaryText="Đo lại bộ nhớ hiện tại; không cấp quyền giả và không ép cấp phát RAM.";cell.accessoryType = .disclosureIndicator
   case 3:
    let cap=GameSettings.shared.memoryCapMB
-   c.text="Dùng toàn bộ RAM iOS cho phép";c.secondaryText=cap==0 ? "Đang tự động: không đặt cap riêng trong app. Vùng nhớ engine ~4 GiB KHÁC tổng RAM của app.":"Cap hiện tại \(cap) MiB. Nhấn để về Tự động; áp dụng lần mở game tiếp theo."
+   c.text="Dùng toàn bộ RAM iOS cho phép";c.secondaryText=cap==0 ? "Đang tự động: không đặt cap riêng trong app. Vùng địa chỉ engine tự chọn khoảng 4–7 GiB theo ngân sách; KHÁC RAM thật của app.":"Cap hiện tại \(cap) MiB. Nhấn để về Tự động; áp dụng lần mở game tiếp theo."
    cell.accessoryType = cap==0 ? .checkmark:.disclosureIndicator
   case 4:
    c.text="Xuất file quyền RAM để ký lại";c.secondaryText="Chia sẻ plist entitlement cho công cụ ký hỗ trợ. Chứng chỉ/profile phải cho phép; không có hộp thoại xin RAM của iOS.";cell.accessoryType = .disclosureIndicator

@@ -1,3 +1,4 @@
+#include "NativeRuntimePolicy.h"
 #include "HostInternal.h"
 #include <dirent.h>
 #include <sys/stat.h>
@@ -430,7 +431,7 @@ static uint64_t pg_engine_memory_mb(void){
    limitMB=memoryCapMB;
   }
   processLimitMB=limitMB;
-  if(limitMB>=4095+3072+512)return limitMB-3072<6144?limitMB-3072:6144;
+  return pg_default_engine_reservation_mb(limitMB);
  }
 #endif
  return 4095;

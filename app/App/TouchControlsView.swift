@@ -452,7 +452,7 @@ final class TouchControlsView: UIView {
     private let pause = ControlButton("pause", icon: "pause", label: AppLanguage.choose("Pause menu"))
     private let settings = ControlButton("settings", icon: "settings", label: AppLanguage.choose("Settings"))
     /// Script mods (GTA-69): shown while one runs; opens the mod tray (ModKeysView).
-    private let mods = ControlButton("mods", icon: "mods", label: AppLanguage.choose("Mods"))
+    private let mods = ControlButton("mods", icon: "mods", label: "Plugin")
     var modsActive = false { didSet { if modsActive != oldValue { updateVisibility(); setNeedsLayout() } } }
     var openMods: (() -> Void)?
     /// Where the Mods control is, for the tray that opens from it.
@@ -652,7 +652,7 @@ final class TouchControlsView: UIView {
 
     private func computeVisible() -> [ControlButton] {
         var list = baseVisible()
-        if (modsActive || editing) && list.contains(settings) { list.append(mods) }
+        if list.contains(settings) { list.append(mods) }
         if !editing { list += shownMissionButtons(besides: list) }
         let playing = !phoneDock && !promptActive && context != .menu
         // A prompt that waits for a character switch gets the switch button (a tap is the game's quick switch). In

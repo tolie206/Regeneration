@@ -268,7 +268,7 @@ final class SettingsViewController: UITableViewController {
                 cell.selectionStyle = .none
                 if row == 0 {
                     content.text = AppLanguage.choose("Resolution")
-                    content.secondaryText = currentSizeText() + AppLanguage.choose(" · changes right away")
+                    content.secondaryText = currentSizeText() + " · áp dụng khi mở lại app"
                     let button = UIButton(type: .system)
                     button.setTitle(resolutionTitle(settings.renderHeight) + " ▾", for: .normal)
                     button.showsMenuAsPrimaryAction = true
@@ -715,7 +715,7 @@ final class SettingsViewController: UITableViewController {
             return
         }
         if sectionKind(indexPath.section) == .mode, indexPath.row == importSaveRow {
-            let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.item, .data], asCopy: true)
+            let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.item, .folder], asCopy: true)
             picker.delegate = savePickerDelegate
             savePickerDelegate.done = { [weak self] outcome in self?.showSaveImport(outcome) }
             present(picker, animated: true)
@@ -995,8 +995,10 @@ final class SavePickerDelegate: NSObject, UIDocumentPickerDelegate {
     var done: ((SaveImport.Outcome) -> Void)?
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let url = urls.first else { return }
-        let outcome = SaveImport.importSave(from: url)
-        DispatchQueue.main.async { self.done?(outcome) }
+        DispatchQueue.global(qos:.userInitiated).async {
+            let outcome=SaveImport.importSave(from:url)
+            DispatchQueue.main.async {self.done?(outcome)}
+        }
     }
 }
 

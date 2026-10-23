@@ -307,7 +307,17 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
             guard let self, let frame = self.touchControls.modsButtonFrame else { return nil }
             return self.touchControls.convert(frame, to: self.modKeys)
         }
-        touchControls.openMods = { [weak self] in self?.modKeys.toggleTray() }
+        touchControls.openMods = { [weak self] in
+            guard let self else{return}
+            if self.modKeys.active {self.modKeys.toggleTray()}
+            else if self.presentedViewController == nil {
+                self.touchControls.reset();self.pauseGame(reason:"Plugin settings")
+                let page=BundledMenyooViewController()
+                let nav=UINavigationController(rootViewController:page);Theme.styleNavigation(nav)
+                page.navigationItem.rightBarButtonItem=UIBarButtonItem(title:"Xong",primaryAction:UIAction{[weak nav] _ in nav?.dismiss(animated:true)})
+                self.present(nav,animated:true)
+            }
+        }
         #if targetEnvironment(simulator)
         // Test: PG_TEST_MODS_TRAY=<seconds> opens the mod tray that long after launch (screenshots).
         if let after = ProcessInfo.processInfo.environment["PG_TEST_MODS_TRAY"].flatMap(Double.init) {
@@ -631,6 +641,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         launchButton.setTitle(AppLanguage.choose("Loading…"), for: .disabled); launchButton.setNeedsUpdateConfiguration()
         appendLog("Native touch controls support held buttons, sprint and weapon selection.")
         installModsForTest()
+        do { try BundledMenyoo.prepare() } catch { appendLog("Built-in Menyoo: \(error.localizedDescription)") }
         do { try BundledVietnamese.prepare() } catch { appendLog("Built-in translation: \(error.localizedDescription)") }
         appendLog(BundledVietnamese.status)
         ModVehicleSupport.prepare(manifestPath:path,log:appendLog)
@@ -1316,7 +1327,11 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         pauseGame(reason: "Settings opened during play")
         let controller = SettingsHomeViewController(engineRunning: engineStarted, runningMode: bootedMode)
         controller.gameModeChanged = { [weak self] in self?.refreshModeChoice() }
-        controller.resolutionChanged = { [weak self] in self?.applyLiveResolution() }
+        controller.resolutionChanged = { [weak self] in
+            guard let self else{return}
+            if self.engineStarted {self.appendLog("Graphics: resolution saved for next app start.")}
+            else {self.applyLiveResolution()}
+        }
         controller.controlsChanged = { [weak self] in self?.touchControls.updateVisibility() }
         controller.editLayout = { [weak self] in self?.showLayoutEditor() }
         controller.targetingChanged = { PGSetTargetingMode(Int32(GameSettings.shared.targetingMode)) }

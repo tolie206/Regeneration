@@ -15,6 +15,10 @@
 // A language choice requested by the native app when the WASM engine boots.
 // This does not guarantee the underlying web game uses the locale or has the necessary fonts.
 const char *PGSelectedGameLanguage(void) {
+  NSUserDefaults *prefs=[NSUserDefaults standardUserDefaults];
+  NSInteger vi=[prefs objectForKey:@"NewGenVietnameseMode"]?[prefs integerForKey:@"NewGenVietnameseMode"]:1;
+  NSString *mods=[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES).firstObject stringByAppendingPathComponent:@"Mods/_newgen_story_vietnamese"];
+  if(vi!=0&&[[NSFileManager defaultManager]fileExistsAtPath:[mods stringByAppendingPathComponent:@".newgen-translation"]])return "en-US";
   NSString *chosen = [[NSUserDefaults standardUserDefaults] stringForKey:@"gtaPortAppLanguage"];
   static const char *supported[] = {
     "en-US", "fr-FR", "it-IT", "de-DE", "es-ES", "ja-JP", "ko-KR",

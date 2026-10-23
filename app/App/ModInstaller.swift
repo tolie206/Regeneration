@@ -48,6 +48,19 @@ enum ModInstaller {
         return work
     }
 
+    static func unpackMany(_ files:[URL]) throws -> URL {
+        guard !files.isEmpty,files.count<=256 else{throw ModError("Chọn từ 1 tới 256 tệp/thư mục.")}
+        if files.count==1{return try unpack(files[0])}
+        let fm=FileManager.default,root=fm.temporaryDirectory.appendingPathComponent("mod-selection-"+UUID().uuidString)
+        try fm.createDirectory(at:root,withIntermediateDirectories:true)
+        do{
+            for (i,file) in files.enumerated(){
+                let stage=try unpack(file);defer{try? fm.removeItem(at:stage)}
+                let dest=root.appendingPathComponent("selection_\(i)");try fm.moveItem(at:stage,to:dest)
+            }
+            return root
+        }catch{try? fm.removeItem(at:root);throw error}
+    }
     private final class Reader { let handle: FileHandle; var block = Data(); init(_ h: FileHandle) { handle = h } }
     private static func extract(_ archive: URL, into folder: URL) throws {
         guard let handle = try? FileHandle(forReadingFrom: archive) else { throw InstallError(.sourceUnreadable, AppLanguage.choose("The file can't be opened.")) }
@@ -327,6 +340,18 @@ enum ModInstaller {
         }
     }
 
+    static func addStockVehicleIndex(_ game:URL,to index:inout GameIndex){
+        let meta=game.appendingPathComponent("common/data/levels/gta5/vehicles.meta")
+        let archive="x64/levels/gta5/vehicles.rpf"
+        guard FileManager.default.fileExists(atPath:game.appendingPathComponent(archive).path),let text=try? String(contentsOf:meta,encoding:.utf8),let re=try? NSRegularExpression(pattern:"<modelName>\\s*([A-Za-z0-9_]+)\\s*</modelName>") else{return}
+        let ns=text as NSString
+        for m in re.matches(in:text,range:NSRange(location:0,length:ns.length)){
+            let model=ns.substring(with:m.range(at:1)).lowercased()
+            for file in [model+".yft",model+"_hi.yft",model+".ytd"] where (index.byName[file] ?? []).filter({!$0.hasPrefix("@")}).isEmpty {
+                index.byName[file,default:[]].append(archive+"/"+file)
+            }
+        }
+    }
     // MARK: Installing and managing
 
     /// Copies the plan's files into Mods/<name>/ (replacing an older install of the same mod).

@@ -163,12 +163,12 @@ final class GameSettings {
         set { gameModeChoice = newValue }
     }
 
-    // Graphics. The default comes from the measured device tier.
+    // Fresh installs start at the lowest preset; existing explicit preferences are preserved.
     lazy var tier = DeviceTier.probe()
     var graphicsPreset: GraphicsPreset {
         // integer(forKey:) also reads "-graphicsPreset 4" given as a launch argument (a string).
         get {
-            guard defaults.object(forKey: "graphicsPreset") != nil, let preset = GraphicsPreset(rawValue: defaults.integer(forKey: "graphicsPreset")) else { return tier.recommended }
+            guard defaults.object(forKey: "graphicsPreset") != nil, let preset = GraphicsPreset(rawValue: defaults.integer(forKey: "graphicsPreset")) else { return GraphicsPreset.liteAvailable ? .lite : .battery }
             return preset == .lite && !GraphicsPreset.liteAvailable ? .battery : preset
         }
         set { defaults.set(newValue.rawValue, forKey: "graphicsPreset") }

@@ -64,7 +64,7 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
             toggle.isEnabled = change != "remove"
             toggle.addAction(UIAction { [weak self] action in
                 guard let self, let toggle = action.sender as? UISwitch else { return }
-                do { try ModInstaller.setEnabled(mod, toggle.isOn) } catch { toggle.isOn = !toggle.isOn; self.show(error) }
+                do { try ModInstaller.setEnabled(mod, toggle.isOn); if mod.name == BundledMenyoo.name {UserDefaults.standard.set(toggle.isOn,forKey:"NewGenMenyooEnabled")} } catch { toggle.isOn = !toggle.isOn; self.show(error) }
                 self.reload()
             }, for: .valueChanged)
             cell.accessoryView = toggle
@@ -85,7 +85,7 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
             guard !busy else { return }
             let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.item, .folder], asCopy: true)
             picker.delegate = self
-            picker.allowsMultipleSelection = importingSound
+            picker.allowsMultipleSelection = true
             present(picker, animated: true)
         } else if indexPath.row == 2 {
             if let url = URL(string: "https://github.com/Living-NG/GTA-NEW-GEN-2/blob/main/docs/MODS.md") { UIApplication.shared.open(url) }
@@ -108,18 +108,23 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
     // MARK: Installing
 
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        guard let url = urls.first else { return }
-        if importingSound {installSound(urls)}else{install(url)}
+        guard !urls.isEmpty else { return }
+        if importingSound {installSound(urls)}else{install(urls)}
     }
 
     /// Unpacks and plans in the background, then asks before copying.
-    func install(_ url: URL) {
+    func install(_ url: URL) { install([url]) }
+    private func install(_ urls: [URL]) {
         busy = true; tableView.reloadData()
         let manifest = EnginePaths.manifest
+        let game = GameFolder.open()
         DispatchQueue.global(qos: .userInitiated).async {
             let result = Result { () -> (ModInstaller.Plan, URL) in
-                let folder = try ModInstaller.unpack(url)
-                let plan = ModInstaller.plan(folder: folder, name: url.lastPathComponent, index: .load(manifest: manifest))
+                let folder = try ModInstaller.unpackMany(urls)
+                var index=ModInstaller.GameIndex.load(manifest:manifest)
+                if let game{ModInstaller.addStockVehicleIndex(game,to:&index)}
+                let name=urls.count==1 ? urls[0].lastPathComponent:"Xe_"+urls[0].deletingPathExtension().lastPathComponent
+                let plan = ModInstaller.plan(folder:folder,name:name,index:index)
                 return (plan, folder)
             }
             DispatchQueue.main.async {

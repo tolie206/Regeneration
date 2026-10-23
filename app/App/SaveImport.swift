@@ -26,6 +26,21 @@ enum SaveImport {
     static func importSave(from url: URL) -> Outcome {
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+        var isDirectory:ObjCBool=false
+        FileManager.default.fileExists(atPath:url.path,isDirectory:&isDirectory)
+        if isDirectory.boolValue || ["zip","rar"].contains(url.pathExtension.lowercased()) {
+            do {
+                let stage=try ModInstaller.unpack(url);defer{try? FileManager.default.removeItem(at:stage)}
+                let files=(FileManager.default.enumerator(at:stage,includingPropertiesForKeys:[.isRegularFileKey],options:[.skipsHiddenFiles])?.allObjects as? [URL] ?? []).filter{
+                    $0.lastPathComponent.range(of:#"^SGTA5\d{4}$"#,options:.regularExpression) != nil
+                }.sorted{$0.path<$1.path}
+                guard let file=files.first(where:{file in
+                    guard let data=try? Data(contentsOf:file),data.count>=64*1024,data.count<=8*1024*1024 else{return false}
+                    return title(of:data) != nil
+                }) else{return .failed("Không tìm thấy save SGTA5 hợp lệ trong gói. Không nhập pc_settings.bin hoặc settings.xml.")}
+                return importSave(from:file)
+            }catch{return .failed("Không mở được gói save: \(error.localizedDescription)")}
+        }
         guard let data = try? Data(contentsOf: url), data.count >= 64 * 1024, data.count <= 8 * 1024 * 1024, let title = title(of: data) else {
             return .failed(AppLanguage.choose("That isn't a GTA V Story save. Story saves are files named like SGTA50000, about 0.5 MB."))
         }

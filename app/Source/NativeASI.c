@@ -1,3 +1,4 @@
+#include "NativeRuntimePolicy.h"
 // Script Hook V mods (.asi) on iOS (GTA-69): a Windows x64 DLL loader, the Windows and Script Hook V
 // functions such DLLs import, and cooperative script threads, on top of the Blink x86-64
 // interpreter. See NativeASI.h.
@@ -55,7 +56,7 @@ static int moduleIndex(uint64_t a) { Module *m = moduleAt(a); return m ? (int)(m
 enum { CO_NEW, CO_READY, CO_WAIT, CO_DEAD };
 typedef struct Co {
   struct Machine *m; uint64_t stack, stackSize, teb, entry, param; int state, module; uint64_t wakeAt;
-  bool script, yield, finished; uint64_t result;  // native result buffer
+  bool script, yield, finished; uint64_t workSinceWait; uint64_t result;  // native result buffer
   uint64_t args[32]; uint32_t argc; uint64_t hash;
   uint64_t tls[64], fls[64];
 } Co;
@@ -91,7 +92,7 @@ static Co *newCo(uint64_t entry, uint64_t param, bool script, int module) {
     co = calloc(1, sizeof *co); co->m = NewMachine(sys, 0); co->stackSize = 1 << 20; co->stack = galloc(co->stackSize);
     co->result = galloc(256); co->teb = makeTeb(co, module); threads[threadCount++] = co;
   }
-  co->entry = entry; co->param = param; co->script = script; co->module = module; co->state = CO_NEW; co->argc = 0;
+  co->entry = entry; co->param = param; co->script = script; co->module = module; co->state = CO_NEW; co->argc = 0; co->workSinceWait = 0;
   co->m->gs.base = co->teb; return co;
 }
 static void startCall(Co *co, uint64_t function, const uint64_t *a, int n) {
@@ -126,10 +127,15 @@ static bool run(Co *co) {
     co->state = CO_DEAD; ok = false;
   } else {
     m->canhalt = true; uint64_t count = 0; runner = pthread_self(); running = 1;
-    // A script that doesn't wait within ~20 million instructions (about 0.1 s) is stuck; it would
-    // freeze the game, so it stops.
-    while (!co->yield && !co->finished && count < 20000000) { ExecuteInstruction(m); count++; }
-    if (count >= 20000000) { Module *mod = moduleAt(m->ip); logf_("ASI %s: a script ran too long without waiting (at +0x%llx); it is stopped.", mod ? mod->name : "?", (unsigned long long)(mod ? m->ip - mod->base : m->ip)); co->state = CO_DEAD; }
+    const uint64_t slice=pg_asi_instruction_slice(co->script,co->workSinceWait);
+    while (!co->yield && !co->finished && count < slice) { ExecuteInstruction(m); count++; }
+    if (co->yield || co->finished) co->workSinceWait=0;
+    else if (co->script) {
+      co->workSinceWait+=count;
+      if(pg_asi_runaway(co->workSinceWait)) {
+        Module *mod=moduleAt(m->ip);logf_("ASI %s: runaway script stopped after 3 billion instructions without waiting.",mod?mod->name:"?");co->state=CO_DEAD;
+      }else{co->yield=true;co->state=CO_WAIT;co->wakeAt=now_us();}
+    }else if(count>=slice){Module *mod=moduleAt(m->ip);logf_("ASI %s: non-script callback exceeded its instruction limit; stopped.",mod?mod->name:"?");co->state=CO_DEAD;}
     running = outer != 0; ticks_instructions += count;
   }
   m->canhalt = false; memcpy(m->onhalt, saved, sizeof saved);

@@ -3,10 +3,13 @@ with zipfile.ZipFile(sys.argv[1]) as z, tempfile.TemporaryDirectory() as folder:
  z.extractall(folder);apps=list((pathlib.Path(folder)/"Payload").glob("*.app"));assert len(apps)==1
  app=apps[0];info=plistlib.loads((app/"Info.plist").read_bytes())
  assert info['CFBundleIdentifier']=='vn.gta.newgen'
- assert info['CFBundleShortVersionString']=='1.4.4' and info['CFBundleVersion']=='1005'
+ assert info['CFBundleShortVersionString']=='1.4.4' and info['CFBundleVersion']=='1006'
  assert info['DTXcode']=='2620' and info['DTXcodeBuild']=='17C52'
  assert info['DTSDKName']=='iphoneos26.2'
  assert (app/'VietnameseAccented.zip').is_file() and (app/'VietnamesePlain.zip').is_file()
+ with zipfile.ZipFile(app/'BundledMenyoo.zip') as m:
+  assert m.testzip() is None and 'menyooStuff/Language/Vietnamese.json' in m.namelist()
+  assert 'LICENSE.txt' in m.namelist() and m.read('Menyoo-iOS.asi')[:2]==b'MZ'
  result=subprocess.run(['codesign','-d','--entitlements',':-',str(app)],capture_output=True,check=True)
  data=result.stdout or result.stderr
  start=data.find(b'<?xml');end=data.find(b'</plist>',start)+len(b'</plist>')

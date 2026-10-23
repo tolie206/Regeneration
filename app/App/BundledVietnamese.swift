@@ -6,14 +6,14 @@ enum BundledVietnamese {
   let root=ModInstaller.modsFolder.appendingPathComponent("_newgen_story_vietnamese")
   let installed=FileManager.default.fileExists(atPath:root.appendingPathComponent(".newgen-translation").path)
   let disabled=FileManager.default.fileExists(atPath:root.path+".off")
-  return "Built-in Vietnamese: mode \(mode), installed \(installed), disabled \(disabled), revision 1.4.4.4."
+  return "Built-in Vietnamese: mode \(mode), installed \(installed), disabled \(disabled), revision 1.4.4.6."
  }
  static func prepare() throws {
   let fm=FileManager.default,defaults=UserDefaults.standard
   let mode=defaults.object(forKey:"NewGenVietnameseMode")==nil ? 1:defaults.integer(forKey:"NewGenVietnameseMode")
   let root=ModInstaller.modsFolder,target=root.appendingPathComponent("_newgen_story_vietnamese")
   let marker=target.appendingPathComponent(".newgen-translation")
-  let revision="1.4.4.4-\(mode)"
+  let revision="1.4.4.6-\(mode)"
   if mode==0 {
    if fm.fileExists(atPath:marker.path){try fm.removeItem(at:target)};return
   }
