@@ -72,6 +72,8 @@ jobs:
           "$RUNNER_TEMP/archive-overlay-test"
           clang -I app/Source app/Tests/log_policy.c -o "$RUNNER_TEMP/log-policy-test"
           "$RUNNER_TEMP/log-policy-test"
+          clang++ -std=c++20 -I app/Source app/Tests/gpu_metrics.cpp -o "$RUNNER_TEMP/gpu-metrics-test"
+          "$RUNNER_TEMP/gpu-metrics-test"
       - name: Test visual intensity rewrite
         run: |
           clang -fobjc-arc -framework Foundation app/Source/VisualEffects.m app/Tests/visual_effects.m -o "$RUNNER_TEMP/visual-test"

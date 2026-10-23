@@ -14,6 +14,7 @@
 #include "BC1ToASTC.h"
 #include "NativeGraphics.h"
 #include "NativeFrameRate.h"
+#include "NativeGPUMetrics.h"
 #import <UIKit/UIKit.h>
 #if __has_include(<MetalFX/MetalFX.h>) && !TARGET_OS_SIMULATOR		// iPhone SDK only
 #import <MetalFX/MetalFX.h>
@@ -43,10 +44,9 @@ static struct TextureStats {
 // against the app's limit; the simulator's GPU is the Mac's, so the simulated limit adds it (EngineHost.c).
 extern "C" uint64_t PGGPUTextureBytes(void) { int64_t v = gTextureStats.gpuBytes.load(); return v > 0 ? (uint64_t)v : 0; }
 // GPU time per frame for the Health line (GTA-116): FPS alone can't tell a busy GPU from a busy CPU.
-static std::atomic<uint64_t> gGPUMicros{0}, gGPUFrames{0};
+static PGGPUWorkWindow gGPUWork;
 extern "C" double PGGPUFrameMilliseconds(void) {
-	uint64_t frames = gGPUFrames.exchange(0), micros = gGPUMicros.exchange(0);
-	return frames ? micros / 1000.0 / frames : 0;
+	return gGPUWork.takeMillisecondsPerFrame();
 }
 // GPU buffers, for the report: how many, what they hold, and what iOS charges (whole 16 KB pages each).
 static struct BufferStats { std::atomic<int64_t> count{0}, bytes{0}, pages{0}, meshCount{0}, meshBytes{0}, cbCount{0}, cbBytes{0}, cbWritten{0}; } gBufferStats;
@@ -337,7 +337,7 @@ static void commit(CommitReason reason, id<CAMetalDrawable> drawable = nil) {
 	[cb addCompletedHandler:^(id<MTLCommandBuffer> done) {
 		if (done.status == MTLCommandBufferStatusError) logOnce("cmderr" + std::to_string(done.error.code), "Metal renderer: command buffer failed: %s", done.error.localizedDescription.UTF8String);
 		double gpu = done.GPUEndTime - done.GPUStartTime;
-		if (gpu > 0 && gpu < 1) { gGPUMicros += (uint64_t)(gpu * 1e6); gGPUFrames++; }
+		gGPUWork.record(gpu, reason == CPresent);
 		for (auto &f : *callbacks) f();
 		delete callbacks;
 		uint64_t prev = r->completed.load();
