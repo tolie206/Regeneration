@@ -6,6 +6,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // The Lite build (PGLiteMode in Info.plist, build_ipa.sh --lite): the engine and renderer read PG_LITE.
         if Theme.isLite && getenv("PG_LITE") == nil { setenv("PG_LITE", "1", 1) }
+        let defaults=UserDefaults.standard
+        if !defaults.bool(forKey:"NewGenV007PerformanceReset") {
+            if GameSettings.shared.frameRateCap == 0 {GameSettings.shared.frameRateCap=60}
+            defaults.set(false,forKey:"NewGenMenyooEnabled")
+            defaults.set(true,forKey:"NewGenV007PerformanceReset")
+        }
         GameSettings.applyExperimentalSwitches()
         ModInstaller.applyPending()
         #if targetEnvironment(simulator)

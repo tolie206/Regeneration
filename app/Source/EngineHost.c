@@ -1,3 +1,4 @@
+#include "NativeLogPolicy.h"
 #include "NativeRuntimePolicy.h"
 #include "HostInternal.h"
 #include <dirent.h>
@@ -72,6 +73,16 @@ static void pg_note_region(const char *message) {
 static void pg_note_engine_memory(const char *line);
 static void pg_note_pool_failure(void);
 void pg_log(const char *message) {
+  static _Atomic int verboseLogs=-1;
+  int verbose=atomic_load(&verboseLogs);
+  if(verbose<0){const char *v=getenv("PG_VERBOSE_LOGS");verbose=v&&strcmp(v,"0");atomic_store(&verboseLogs,verbose);}
+  int kind=verbose?0:pg_verbose_log_class(message);
+  if(kind){
+    static _Atomic uint64_t sampled[4];uint64_t n=atomic_fetch_add(&sampled[kind],1)+1;
+    // Keep the first warnings and logarithmic samples, never flood the log/UI.
+    if(n>3 && (n&(n-1)))return;
+    if(kind!=3){char line[128];snprintf(line,sizeof line,"Diagnostic logs: class %d sampled, %llu lines observed.",kind,(unsigned long long)n);pg_log(line);return;}
+  }
   if (!strncmp(message, "[wasm] region 0x", 16)) pg_note_region(message);
   if (!strncmp(message, "[wasm] mem: malloc arena ", 25)) pg_note_engine_memory(message);	// the address-space guard (GTA-70)
   if (strstr(message, "Failed to allocation virtual memory")) pg_note_pool_failure();	// the pool's free space is in pieces (GTA-128)
@@ -3288,7 +3299,7 @@ void pg_packfile_mounted(w2c_game *instance,u64 packfile,u64 name,u32 result){
  uint64_t entries=*(uint64_t *)pg_pointer(&env,packfile+32,8),names=*(uint64_t *)pg_pointer(&env,packfile+16,8);
  unsigned shift=*(uint8_t *)pg_pointer(&env,packfile+184,1);
  if(!entries||!names)return;
- char line[700];int applied=0;
+ char line[700];int applied=0;bool globalPatched=false;
  for(int i=0;i<count;i++){
   char path[512]={0};uint64_t found=0;
   pg_rpf_walk(entries,names,shift,0,path,0,0,pieces[i].inner,&found);
@@ -3306,9 +3317,11 @@ void pg_packfile_mounted(w2c_game *instance,u64 packfile,u64 name,u32 result){
    e[1]=(uint64_t)(uint32_t)pieces[i].length;
   }
   applied++;
+  if(!strcasecmp(pieces[i].inner,"global.gxt2"))globalPatched=true;
   if(getenv("PG_TEST_MODS")){snprintf(line,sizeof line,"TEST: %s entry now %016llx %016llx (slot at %llu, %llu bytes).",pieces[i].inner,(unsigned long long)e[0],(unsigned long long)e[1],(unsigned long long)pieces[i].offset,(unsigned long long)pieces[i].length);pg_log(line);
    if(i==0){pg_mod_test_entry=found;pg_mod_test_value=e[0];}}
  }
+ if(globalPatched){static _Atomic int languageReports;if(atomic_fetch_add(&languageReports,1)<8){snprintf(line,sizeof line,"Translation: global.gxt2 patched in %.300s; %d/%d overlay files applied.",label,applied,count);pg_log(line);}}
  // The streaming system reloads archive tables often (ReInit); the first openings are enough in the log.
  static _Atomic int reported;
  if(atomic_fetch_add(&reported,1)<24){snprintf(line,sizeof line,"Mods: %.300s opened with %d of %d mod file%s.",label,applied,count,count==1?"":"s");pg_log(line);}

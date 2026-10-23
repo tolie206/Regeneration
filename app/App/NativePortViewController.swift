@@ -387,6 +387,9 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         if GameSettings.shared.frameRateCap == 0 {
             let top = Float(UIScreen.main.maximumFramesPerSecond)
             displayLink?.preferredFrameRateRange = CAFrameRateRange(minimum: min(60, top), maximum: top, preferred: top)
+        } else {
+            // HUD/input polling need not run at 120 Hz for a 60/30 FPS game.
+            displayLink?.preferredFrameRateRange = CAFrameRateRange(minimum:30,maximum:60,preferred:60)
         }
         displayLink?.add(to: .main, forMode: .common)
         #if targetEnvironment(simulator)
@@ -644,6 +647,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         do { try BundledMenyoo.prepare() } catch { appendLog("Built-in Menyoo: \(error.localizedDescription)") }
         do { try BundledVietnamese.prepare() } catch { appendLog("Built-in translation: \(error.localizedDescription)") }
         appendLog(BundledVietnamese.status)
+        appendLog("V007 performance baseline: frame cap \(GameSettings.shared.frameRateCap), built-in Menyoo \(BundledMenyoo.enabled ? "+on":"off"). Changes are reversible in Settings.")
         ModVehicleSupport.prepare(manifestPath:path,log:appendLog)
         SoundAssignments.resolveDuplicatePacks(log:appendLog)
         SoundAssignments.configure()

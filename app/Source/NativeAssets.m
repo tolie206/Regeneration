@@ -220,7 +220,7 @@ static NSString *modTranslate(NSString *relative){
 // .ytd, .ydr, ...) keep their 16-byte header, whose flags also go into the archive entry; other files are
 // stored unencrypted and uncompressed.
 typedef struct { PGModPiece info; char inner[256]; char file[PATH_MAX]; uint64_t skip; int reported; } PGModSlot;
-typedef struct { uint32_t id; char path[512]; uint64_t realSize; int count; PGModSlot *slots; } PGModArchive;
+typedef struct { uint32_t id; char path[512]; uint64_t realSize; int count; PGModSlot *slots; PGModPiece *pieces; } PGModArchive;
 static PGModArchive *modArchives; static int modArchiveCount;
 static PGModArchive *modArchiveFor(uint32_t id){for(int i=0;i<modArchiveCount;i++)if(modArchives[i].id==id)return &modArchives[i];return NULL;}
 int pg_mods_for_archive(const char *enginePath,const PGModPiece **pieces){
@@ -232,9 +232,9 @@ int pg_mods_for_archive(const char *enginePath,const PGModPiece **pieces){
   for(;*s&&n<sizeof path-1;s++)path[n++]=*s=='\\'?'/':*s;
   path[n]=0;
   for(int i=0;i<modArchiveCount;i++)if(!strcasecmp(modArchives[i].path,path)){
-    static __thread PGModPiece list[256];int count=modArchives[i].count<256?modArchives[i].count:256;
-    for(int k=0;k<count;k++)list[k]=modArchives[i].slots[k].info;
-    *pieces=list;return count;
+    // Stable immutable storage built at startup: large language archives must not
+    // be truncated, and a lookup on another archive must not overwrite this list.
+    *pieces=modArchives[i].pieces;return modArchives[i].count;
   }
   return 0;
 }
@@ -378,9 +378,13 @@ static NSArray *applyMods(NSArray *files,NSDictionary *manifest){
         else {slot->info.resource=0;slot->skip=0;slot->info.length=size;slot->info.low=(uint32_t)size;slot->info.high=0;}
         if(slot->info.length>=0xFFFFFF&&slot->info.resource){char line[PATH_MAX+96];snprintf(line,sizeof line,"Mods: %s is over 16 MB; not supported inside archives yet, ignored.",[item[1] lastPathComponent].UTF8String);pg_log(line);continue;}
         slot->info.inner=slot->inner;slot->info.offset=cursor;cursor=align512(cursor+slot->info.length);a->count++;
-        char line[PATH_MAX+128];snprintf(line,sizeof line,"Mods: %s/%s comes from the Mods folder (%llu bytes%s).",a->path,slot->inner,slot->info.length,slot->info.resource?", game resource":"");pg_log(line);
+        if(a->count<=4||getenv("PG_VERBOSE_LOGS")){char line[PATH_MAX+128];snprintf(line,sizeof line,"Mods: %s/%s comes from the Mods folder (%llu bytes%s).",a->path,slot->inner,slot->info.length,slot->info.resource?", game resource":"");pg_log(line);}
       }
       if(!a->count)continue;
+      a->pieces=calloc((size_t)a->count,sizeof *a->pieces);
+      if(!a->pieces){pg_log("Mods: archive overlay table allocation failed; archive left unchanged.");continue;}
+      for(int k=0;k<a->count;k++)a->pieces[k]=a->slots[k].info;
+      {char summary[650];snprintf(summary,sizeof summary,"Mods: prepared %d overlay files for %s (complete list, no 256-file limit).",a->count,a->path);pg_log(summary);}
       merged[index]=@[files[index][0],@(cursor),files[index][2]];
       modArchiveCount++;
     }
