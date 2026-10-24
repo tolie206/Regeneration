@@ -94,16 +94,22 @@ jobs:
           clang -fobjc-arc -framework Foundation app/Source/VisualEffects.m app/Tests/visual_effects.m -o "$RUNNER_TEMP/visual-test"
           cd app
           "$RUNNER_TEMP/visual-test"
-      - name: Build Mugoat-NewGen-Regeneration-R002
+      - name: Verify new supplied vehicle imports before IPA compilation
+        run: |
+          python3 tools/assemble_repair_inputs.py "$RUNNER_TEMP/repair-mods"
+          cd app
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift Tests/SoundTestStubs.swift Tests/repair_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/repair-test"
+          "$RUNNER_TEMP/repair-test" "$RUNNER_TEMP/repair-mods"
+      - name: Build Mugoat-NewGen-Regeneration-R003
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify IPA entitlements
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R002.ipa
+          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R003.ipa
       - uses: actions/upload-artifact@v4
         with:
-          name: Mugoat-NewGen-Regeneration-R002
-          path: Mugoat-NewGen-Regeneration-R002.ipa
+          name: Mugoat-NewGen-Regeneration-R003
+          path: Mugoat-NewGen-Regeneration-R003.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()

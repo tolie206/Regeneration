@@ -18,6 +18,7 @@ import FoundationXML
  let thai=try ModInstaller.unpack(root.appendingPathComponent("thai.rar"));defer{try? fm.removeItem(at:thai)}
  let plan=ModInstaller.plan(folder:thai,name:"repair-thai",index:index)
  try check(plan.items.count==3,"Thai RAR must route all 3 resources, including +hi.ytd: \(plan.skipped)")
+ try check(plan.items.allSatisfy{$0.target.hasPrefix("x64/levels/gta5/vehicles.rpf/")},"Thai resource left in pending instead of actual vehicle archive")
  try check(Set(plan.items.map{($0.target as NSString).lastPathComponent})==Set(["bati2.yft","bati2.ytd","bati2+hi.ytd"]),"Thai target names changed")
  let installed=try ModInstaller.install(plan);defer{try? fm.removeItem(at:installed)}
  for item in plan.items{try check(Data(contentsOf:item.source)==Data(contentsOf:installed.appendingPathComponent(item.target)),"Replace bytes changed")}
