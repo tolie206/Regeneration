@@ -1,0 +1,9 @@
+{
+  "app/Source/EngineHost.c": "bd4e1b17ccb308e7e1e16408040dd8b3a18cbe93a2e882cc5c271a82cf52d184",
+  "app/Source/NativeMemoryBudget.h": "734f2f8f85129742415e09398e9b5316e962e0ac3fef8ade7eb5a43076fe2727",
+  "app/Source/MetalRenderer/MRRenderer.mm": "ab20028de6d6168c6c93562731a99635b32634c23c5ad89e742d7ac452c80ed7",
+  "app/Source/MetalRenderer/MRShaders.mm": "f6d2c8fccb03e380f069664089d461fdb4c9232ac1e1ef96ca02f6598dcadfd0",
+  "app/App/GraphicsOptions.swift": "a15fc57817044c54a57f1697b1b1e626ede272b636d5332f00522a7bf149e3f7",
+  "app/App/StreamingSettings.swift": "b9b08a8980a155a53d2d44beef11697c37fc4796aadf26ea8dd8bbfe57c7e9af",
+  "app/Source/NativeTurbo.inc": "b455a184515db41229ff71a5b37ac040fb03ce9714e4e8d36005dc51b1b66a14"
+}

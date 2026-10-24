@@ -1,0 +1,42 @@
+name: Validate regeneration repair (no IPA)
+on:
+  push:
+    branches: [regeneration-mod-repair]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: regeneration-repair-validation
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require private repository
+        run: test '${{ github.event.repository.private }}' = true
+      - name: Existing regression tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Verify and assemble actual sample packages
+        run: python3 tools/assemble_repair_inputs.py "$RUNNER_TEMP/repair-mods"
+      - name: Compile production importer and compatibility validator
+        run: |
+          cd app
+          clang -c App/GameInstaller/GameInstallerShim.c -I Vendor/libarchive.xcframework/macos-arm64/Headers -o "$RUNNER_TEMP/archive.o"
+          clang -c Source/SoundInflate.c -o "$RUNNER_TEMP/inflate.o"
+          python3 ../tools/extract_compatibility_test.py "$RUNNER_TEMP/compat.c"
+          clang -c "$RUNNER_TEMP/compat.c" -o "$RUNNER_TEMP/compat.o"
+          clang -c Tests/SoundTestStubs.c -o "$RUNNER_TEMP/stubs.o"
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift Tests/SoundTestStubs.swift Tests/repair_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/repair-test"
+      - name: Confirm original branch reproduces importer defect
+        run: |
+          git show d32687d5c691f5512637c692f5101734282ebb48:app/App/ModInstaller.swift > "$RUNNER_TEMP/ModInstaller-baseline.swift"
+          cd app
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller "$RUNNER_TEMP/ModInstaller-baseline.swift" App/SoundArchive.swift Tests/SoundTestStubs.swift Tests/repair_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/baseline-repair-test"
+          if "$RUNNER_TEMP/baseline-repair-test" "$RUNNER_TEMP/repair-mods"; then echo 'ERROR: defect was not reproduced on baseline'; exit 1; fi
+          rm -rf "$RUNNER_TEMP/repair-mods/game"
+      - name: Test import, registration resources and rollback (not rendered appearance)
+        run: '"$RUNNER_TEMP/repair-test" "$RUNNER_TEMP/repair-mods"'

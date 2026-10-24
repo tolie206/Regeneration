@@ -1,0 +1,82 @@
+{
+  "size": 232368817,
+  "sha256": "f2cc8a808f270461a674378b5c8fe3f85560236f24d9b2d53eab843c6513dade",
+  "parts": [
+    {
+      "name": "repair-0000.part",
+      "size": 16777216,
+      "sha256": "af9c348ddc6eca3142af4ea8596479ee3d6d648fafb022213c295ed275379738"
+    },
+    {
+      "name": "repair-0001.part",
+      "size": 16777216,
+      "sha256": "e5678e95408afeb08f7aef890a5320349bab6f41ef2525636fd0607aecfe0c24"
+    },
+    {
+      "name": "repair-0002.part",
+      "size": 16777216,
+      "sha256": "766e2d5fd48d26d338c7193d876594dc7247954786d50b1311e93cf096c7d126"
+    },
+    {
+      "name": "repair-0003.part",
+      "size": 16777216,
+      "sha256": "3930bea5539b856fe00ef7864f890b76e2f6594d3a3b5348777b5f4659563487"
+    },
+    {
+      "name": "repair-0004.part",
+      "size": 16777216,
+      "sha256": "4888885f42bab6157e33ccd15948a1580deee13310a0134ff822f6e16a35e9fd"
+    },
+    {
+      "name": "repair-0005.part",
+      "size": 16777216,
+      "sha256": "17dc84be9cf62eaef6783a3b38b3ecc518e5768ffa74466a8f52f267668bfd9c"
+    },
+    {
+      "name": "repair-0006.part",
+      "size": 16777216,
+      "sha256": "2418b080927d52fc365ebfc8228b6df9610b442c16ef1261265f1f555d20f831"
+    },
+    {
+      "name": "repair-0007.part",
+      "size": 16777216,
+      "sha256": "50a7daaeb9f4a649be696c468e79b32f72bb45d7d6433bef93c9e7ba4e4b218a"
+    },
+    {
+      "name": "repair-0008.part",
+      "size": 16777216,
+      "sha256": "a4bf750e8a40a6acf4a6b09787b4d38b8a261b2842219279938d2352772461eb"
+    },
+    {
+      "name": "repair-0009.part",
+      "size": 16777216,
+      "sha256": "5dd1554197a9c80e0601854d3b1308a085fd4b3d50af5abed1de03fd10db6101"
+    },
+    {
+      "name": "repair-0010.part",
+      "size": 16777216,
+      "sha256": "2a72e1e5c7d029884ba8e2b689efb92451aa0ea4fbf4a7ee4f25dff2a03310c1"
+    },
+    {
+      "name": "repair-0011.part",
+      "size": 16777216,
+      "sha256": "dad2bade9fdd1d65d8b0d470e0934c39ab83ed656298a39081af62aba038eb04"
+    },
+    {
+      "name": "repair-0012.part",
+      "size": 16777216,
+      "sha256": "f4daa1e5dd51790a437a49f6ca9e8beec10be7df1324bc9e67f8b9ad0ee78256"
+    },
+    {
+      "name": "repair-0013.part",
+      "size": 14265009,
+      "sha256": "034f14b92350d167314f5b467a48f6bee474719a63873b1301ea1bf4a7951606"
+    }
+  ],
+  "files": {
+    "thai.rar": "b526e06b5124756a38c8d9716a03c8663b7c0f4a2311b41ed9e25c4891459c02",
+    "audi.zip": "105e0454b0dec25e8608a2f390dc01e8e750f16e54ff1272cbd028ac156e8c9a",
+    "vf8.zip": "353bb0d8a6af4500766086189fa22b6c77334bebf835ddabf7f60e9d77fb40a3",
+    "vehicles.meta": "21b5b06eee0e607bb6d716eb212236a5fd39fd1a7f861f5f3827c50626342f80"
+  }
+}

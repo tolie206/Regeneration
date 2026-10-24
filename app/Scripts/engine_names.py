@@ -83,6 +83,8 @@ HOST_FUNCTIONS = {
     'PG_FN_SET_TV_CHANNEL': 'graphics_commands::CommandSetTVChannel(int)',
     'PG_FN_DO_AUTO_SAVE': 'misc_commands::CommandDoAutoSave()',
     'PG_FN_GET_ENTITY_MODEL': 'entity_commands::CommandGetEntityModel(int)',
+    'PG_FN_SPAWN_ENTITY_VISIBLE': 'entity_commands::CommandIsEntityVisible(int)',
+    'PG_FN_SPAWN_ENTITY_ALPHA': 'entity_commands::CommandGetEntityAlpha(int)',
     'PG_FN_GET_ENTITY_SPEED': 'entity_commands::CommandGetEntitySpeed(int)',
     'PG_FN_GET_PED_DRAWABLE': 'ped_commands::CommandGetPedDrawableVariation(int, int)',
     'PG_FN_GET_PED_TEXTURE': 'ped_commands::CommandGetPedTextureVariation(int, int)',

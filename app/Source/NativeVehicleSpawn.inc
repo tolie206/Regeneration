@@ -21,6 +21,9 @@ u32 PG_FN_CREATE_VEHICLE(w2c_game*, u32, u64, f32, u32, u32, u32);
 void PG_FN_SET_PED_INTO_VEHICLE(w2c_game*, u32, u32, u32);
 u32 PG_FN_GROUND_VEHICLE(w2c_game*, u32, f32);
 u32 PG_FN_ENTITY_EXISTS(w2c_game*, u32);
+u32 PG_FN_GET_ENTITY_MODEL(w2c_game*, u32);
+u32 PG_FN_SPAWN_ENTITY_VISIBLE(w2c_game*, u32);
+u32 PG_FN_SPAWN_ENTITY_ALPHA(w2c_game*, u32);
 u32 PG_FN_ENTITY_OWNED(w2c_game*, u32, u32);
 void PG_FN_DELETE_VEHICLE(w2c_game*, u64);
 u32 PG_FN_VEHICLE_OCCUPANT(w2c_game*, u32, u32, u32);
@@ -247,8 +250,13 @@ static void pg_vehicle_menu_step(w2c_game *instance, u64 vector) {
         v[0] -= sinf(angle) * distance; v[2] += cosf(angle) * distance; v[4] += 0.5f;
         pg_log("Vehicle menu: model loaded; creating the vehicle.");
         u32 vehicle = PG_FN_CREATE_VEHICLE(instance, model, vector, heading, 0, 0, 1);
-        result = vehicle ? PGVehicleSpawnSucceeded : PGVehicleSpawnFailed;
-        if (vehicle) {
+        bool exists = vehicle && PG_FN_ENTITY_EXISTS(instance, vehicle);
+        uint32_t actualModel = exists ? PG_FN_GET_ENTITY_MODEL(instance, vehicle) : 0;
+        result = exists && actualModel == model ? PGVehicleSpawnSucceeded : PGVehicleSpawnFailed;
+        char verification[256];
+        snprintf(verification,sizeof verification,"Vehicle spawn verification: requested 0x%08x, handle %u, exists %d, actual model 0x%08x, visible flag %u, alpha %u. Engine state only; rendered pixels not verified.",model,vehicle,exists,actualModel,exists?PG_FN_SPAWN_ENTITY_VISIBLE(instance,vehicle):0,exists?PG_FN_SPAWN_ENTITY_ALPHA(instance,vehicle):0);
+        pg_log(verification);
+        if (exists && actualModel == model) {
           // Boats keep the height they were created at (on the water).
           if (category != PG_CLASS_BOAT) PG_FN_GROUND_VEHICLE(instance, vehicle, 5.0f);
           if (enter && PG_FN_VEHICLE_SEATS(instance, model) > 0) PG_FN_SET_PED_INTO_VEHICLE(instance, ped, vehicle, (u32)-1);

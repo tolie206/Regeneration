@@ -178,6 +178,27 @@ enum ModInstaller {
             .compactMap { try? String(contentsOf: $0.url, encoding: .utf8) ?? String(contentsOf: $0.url, encoding: .isoLatin1) }
             .joined(separator: "\n").lowercased().replacingOccurrences(of: "\\", with: "/")
         var done = Set<String>()
+        // A download may contain both the SP DLC and a FiveM copy of the same car.
+        // Never stage that second copy as loose replacements or global metadata.
+        var addonModels = Set<String>()
+        for file in files where file.url.lastPathComponent.lowercased() == "dlc.rpf" {
+            guard versionReason(file.url) == nil, let archive = try? RPFArchive(url: file.url) else { continue }
+            for entry in archive.entries where entry.path.hasSuffix("vehicles.meta") {
+                guard let data = try? archive.metadata(entry), let text = String(data: data, encoding: .utf8),
+                      let re = try? NSRegularExpression(pattern: "<modelName>\\s*([A-Za-z0-9_]+)\\s*</modelName>") else { continue }
+                let ns = text as NSString
+                for match in re.matches(in: text, range: NSRange(location: 0, length: ns.length)) {
+                    addonModels.insert(ns.substring(with: match.range(at: 1)).lowercased())
+                }
+            }
+        }
+        for file in files {
+            let parts = file.rel.lowercased().split(separator: "/").map(String.init)
+            if parts.contains("fivem") && parts.contains(where: { addonModels.contains($0) }) {
+                done.insert(file.rel)
+                plan.skipped.append((file.rel, "Bản FiveM trùng xe Add-On; dùng gói DLC, không ghi đè dữ liệu gốc."))
+            }
+        }
 
         // OpenIV packages: kept whole; the loader installs them as OpenIV would.
         for file in files where file.url.pathExtension.lowercased() == "oiv" {
@@ -227,7 +248,7 @@ enum ModInstaller {
             if junkNames.contains(lower) || documentExtensions.contains(ext) { continue }
             if loaderFiles.contains(lower) || pcOnlyFiles.contains(lower) { plan.skipped.append((file.rel, AppLanguage.choose("not needed on iPhone"))); continue }
             // The mod also has an OpenIV package: that is the install; loose copies are the manual way.
-            if plan.kinds.contains("oiv") && gameExtensions.contains(ext) { plan.skipped.append((file.rel, AppLanguage.choose("installed by the mod's OpenIV package"))); continue }
+            if plan.kinds.contains("oiv") && gameExtensions.contains(ext) && lower != "dlc.rpf" { plan.skipped.append((file.rel, AppLanguage.choose("installed by the mod's OpenIV package"))); continue }
             if let reason = unsupportedReason(file.rel) { plan.leaveOut(file.rel, unsupported: reason); continue }
             if let reason = versionReason(file.url) { plan.leaveOut(file.rel, unsupported: reason); continue }
             // Already laid out like the game (x64e.rpf/..., update/x64/dlcpacks/..., common.rpf/...).
@@ -350,7 +371,7 @@ enum ModInstaller {
         let ns=text as NSString
         for m in re.matches(in:text,range:NSRange(location:0,length:ns.length)){
             let model=ns.substring(with:m.range(at:1)).lowercased()
-            for file in [model+".yft",model+"_hi.yft",model+".ytd"] where (index.byName[file] ?? []).filter({!$0.hasPrefix("@")}).isEmpty {
+            for file in [model+".yft",model+"_hi.yft",model+".ytd",model+"+hi.ytd"] where (index.byName[file] ?? []).filter({!$0.hasPrefix("@")}).isEmpty {
                 index.byName[file,default:[]].append(archive+"/"+file)
             }
         }
@@ -362,14 +383,37 @@ enum ModInstaller {
     static func install(_ plan: Plan) throws -> URL {
         let fm = FileManager.default
         let target = modsFolder.appendingPathComponent(plan.name)
-        try? fm.removeItem(at: target)
-        try? fm.removeItem(at: modsFolder.appendingPathComponent(plan.name + ".off"))
+        let staging = modsFolder.appendingPathComponent(".install-" + UUID().uuidString)
+        let backup = modsFolder.appendingPathComponent(".rollback-" + UUID().uuidString)
+        let disabled = modsFolder.appendingPathComponent(plan.name + ".off")
+        var previous: URL? = nil
+        defer { try? fm.removeItem(at: staging) }
+        try fm.createDirectory(at: staging, withIntermediateDirectories: true)
+        var targets = Set<String>()
         for item in plan.items {
-            let to = item.target.split(separator: "/").reduce(target) { $0.appendingPathComponent(String($1)) }
+            let components = item.target.split(separator: "/").map(String.init)
+            guard !components.isEmpty, !item.target.hasPrefix("/"),
+                  !components.contains(".."), !components.contains("."),
+                  !item.target.contains("\\"), targets.insert(item.target.lowercased()).inserted else {
+                throw ModError("Đường dẫn mod không an toàn hoặc trùng: \(item.target)")
+            }
+            let to = components.reduce(staging) { $0.appendingPathComponent($1) }
             try fm.createDirectory(at: to.deletingLastPathComponent(), withIntermediateDirectories: true)
-            try? fm.removeItem(at: to)
             try fm.copyItem(at: item.source, to: to)
+            let sourceSize = try fm.attributesOfItem(atPath: item.source.path)[.size] as? NSNumber
+            let copiedSize = try fm.attributesOfItem(atPath: to.path)[.size] as? NSNumber
+            guard sourceSize == copiedSize else { throw ModError("Chép mod không đầy đủ: \(item.target)") }
         }
+        guard !plan.items.isEmpty else { throw ModError("Gói mod không có tệp để cài.") }
+        if fm.fileExists(atPath: target.path) { previous = target }
+        else if fm.fileExists(atPath: disabled.path) { previous = disabled }
+        if let previous { try fm.moveItem(at: previous, to: backup) }
+        do { try fm.moveItem(at: staging, to: target) }
+        catch {
+            if let previous { try? fm.moveItem(at: backup, to: previous) }
+            throw error
+        }
+        if previous != nil { try? fm.removeItem(at: backup) }
         return target
     }
 
