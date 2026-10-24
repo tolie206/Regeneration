@@ -187,10 +187,15 @@ enum GraphicsConfiguration {
         let (width, height) = size(for: preset, renderHeight: settings.renderHeight, screen: screen, matchScreenShape: tv || settings.matchScreenShape)
         // The player's own details replace the preset's (GTA-84).
         let overrides = settings.graphicsOverrides
-        let options = preset.engineOptions.map { option -> String in
+        var options = preset.engineOptions.map { option -> String in
             let name = String(option.dropFirst().prefix { $0 != "=" })
             return overrides[name].map { "-\(name)=\($0)" } ?? option
         }
+        // The pinned engine exposes MaxLODScale independently of the ordinary lodScale.
+        if let value = StreamingSettings.distanceScale {
+            options.append("-MaxLODScale=\(value)")
+        }
+        StreamingSettings.applyTextureBudget()
         let own = GraphicsDetail.all.compactMap { detail in overrides[detail.option].map { "\(detail.option) \($0)" } }
         // The engine and renderer read PG_LITE when they start, after this. The Lite build always sets it.
         if preset == .lite { setenv("PG_LITE", "1", 1) } else if !Theme.isLite { unsetenv("PG_LITE") }

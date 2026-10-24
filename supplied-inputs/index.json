@@ -1,0 +1,64 @@
+{
+  "bytes": 524141691,
+  "sha256": "e5b53e8db49f262c9650e97fc9333012978a6c911a374e10e6209bd339896dcc",
+  "parts": [
+    "owner-0000.part",
+    "owner-0001.part",
+    "owner-0002.part",
+    "owner-0003.part",
+    "owner-0004.part",
+    "owner-0005.part",
+    "owner-0006.part",
+    "owner-0007.part",
+    "owner-0008.part",
+    "owner-0009.part",
+    "owner-0010.part",
+    "owner-0011.part",
+    "owner-0012.part",
+    "owner-0013.part",
+    "owner-0014.part",
+    "owner-0015.part",
+    "owner-0016.part",
+    "owner-0017.part",
+    "owner-0018.part",
+    "owner-0019.part",
+    "owner-0020.part",
+    "owner-0021.part",
+    "owner-0022.part",
+    "owner-0023.part",
+    "owner-0024.part",
+    "owner-0025.part",
+    "owner-0026.part",
+    "owner-0027.part",
+    "owner-0028.part",
+    "owner-0029.part",
+    "owner-0030.part",
+    "owner-0031.part"
+  ],
+  "samples": {
+    "cars/laferrari.rar": {
+      "bytes": 198738160,
+      "sha256": "3c0b4dac18c66133bc885a46e890fcd4ce69b4843e7ddb7f50bbd95ffb94aca4"
+    },
+    "cars/sh150.zip": {
+      "bytes": 11323408,
+      "sha256": "21c072dc0b37bd2d258ec7b8436067e97da66199daae420eb5194f08b4f48df0"
+    },
+    "cars/vision.zip": {
+      "bytes": 33254133,
+      "sha256": "764b6551f43717195891dc641d1f96e2c12b7fc64b17067ac01382cc73655ba7"
+    },
+    "sound/engines.zip": {
+      "bytes": 74278927,
+      "sha256": "228c32c295731b9433b0c0fc6c91245ddf1c69b8e2b96dda5b9d75f065d04fdf"
+    },
+    "skins/nier.rar": {
+      "bytes": 198960813,
+      "sha256": "3e7d9a6dbd60e22c3347dca61157ea4b3cf3688eeb80891bc7aec77ce926990d"
+    },
+    "menyoo/menyoo.zip": {
+      "bytes": 7585582,
+      "sha256": "433a6e62d1e163db7489b98ce99673e947188c2354039fc29baff5b38954f58d"
+    }
+  }
+}

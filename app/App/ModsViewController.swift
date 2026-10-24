@@ -7,6 +7,8 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
     private var mods: [ModInstaller.Installed] = []
     private var busy = false
     private var importingSound = false
+    private var importingSkin = false
+    private var femaleSkin = true
 
     init() { super.init(style: .insetGrouped) }
     required init?(coder: NSCoder) { fatalError() }
@@ -21,7 +23,7 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
     private func reload() { mods = ModInstaller.installed(); tableView.reloadData() }
 
     override func numberOfSections(in tableView: UITableView) -> Int { 2 }
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { section == 0 ? 6 : max(mods.count, 1) }
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { section == 0 ? 7 : max(mods.count, 1) }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         section == 1 ? AppLanguage.choose("Installed") : nil
     }
@@ -37,8 +39,8 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
         cell.accessoryView = nil; cell.accessoryType = .none; cell.selectionStyle = .default
         if indexPath.section == 0 {
             content.text = [busy ? AppLanguage.choose("Reading the mod…") : AppLanguage.choose("Install a mod…"),
-                            AppLanguage.choose("Show the Mods folder in Files"), AppLanguage.choose("Mods guide"), "Nhập âm thanh xe…", "Chọn tiếng cho xe…", "Việt hoá cốt truyện…"][indexPath.row]
-            content.image = UIImage(systemName: ["square.and.arrow.down", "folder", "book", "waveform", "speaker.wave.2", "character.bubble"][indexPath.row])
+                            AppLanguage.choose("Show the Mods folder in Files"), AppLanguage.choose("Mods guide"), "Nhập âm thanh xe…", "Chọn tiếng cho xe…", "Việt hoá cốt truyện…", "Nhập skin addon (Menyoo)…"][indexPath.row]
+            content.image = UIImage(systemName: ["square.and.arrow.down", "folder", "book", "waveform", "speaker.wave.2", "character.bubble", "person.crop.rectangle"][indexPath.row])
             content.textProperties.color = tintColor()
         } else if mods.isEmpty {
             content.text = AppLanguage.choose("No mods installed yet")
@@ -78,9 +80,25 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard indexPath.section == 0 else { return }
+        if indexPath.row == 6 {
+            guard !busy, !ModInstaller.gameRunning else { show(ModError("Nhập skin trước khi vào game; tắt hẳn và mở lại app nếu đang chơi.")); return }
+            importingSound = false; importingSkin = true
+            let menu = UIAlertController(title: "Loại skin addon", message: "Chọn ZIP/RAR/thư mục hoặc nhiều file cùng lúc. Mỗi model cần đủ YDD, YFT, YMT, YTD. Gói 2B/A2 chọn Nữ.", preferredStyle: .alert)
+            for female in [true, false] {
+                menu.addAction(UIAlertAction(title: female ? "Nữ (2B/A2)" : "Nam", style: .default) { _ in
+                    self.femaleSkin = female
+                    let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.item, .folder], asCopy: true)
+                    picker.delegate = self; picker.allowsMultipleSelection = true
+                    self.present(picker, animated: true)
+                })
+            }
+            menu.addAction(UIAlertAction(title: "Hủy", style: .cancel))
+            present(menu, animated: true); return
+        }
         if indexPath.row == 5 { chooseTranslation();return }
         if indexPath.row == 4 { chooseSound();return }
         if indexPath.row == 0 || indexPath.row == 3 {
+            importingSkin = false
             importingSound = indexPath.row == 3
             guard !busy else { return }
             let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.item, .folder], asCopy: true)
@@ -124,7 +142,15 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
                 var index=ModInstaller.GameIndex.load(manifest:manifest)
                 if let game{ModInstaller.addStockVehicleIndex(game,to:&index)}
                 let name=urls.count==1 ? urls[0].lastPathComponent:"Xe_"+urls[0].deletingPathExtension().lastPathComponent
-                let plan = ModInstaller.plan(folder:folder,name:name,index:index)
+                let plan: ModInstaller.Plan
+                do {
+                    if self.importingSkin { plan = try SkinInstaller.plan(folder:folder,name:name,female:self.femaleSkin) }
+                    else if SoundInstaller.isSoundOnly(folder) {
+                        guard !ModInstaller.gameRunning else { throw ModError("Nhập audio trước khi vào game; hãy tắt hẳn và mở lại app.") }
+                        plan = try SoundInstaller.build(folder).0
+                    } else { plan = ModInstaller.plan(folder:folder,name:name,index:index) }
+                }
+                catch { try? FileManager.default.removeItem(at:folder); throw error }
                 return (plan, folder)
             }
             DispatchQueue.main.async {

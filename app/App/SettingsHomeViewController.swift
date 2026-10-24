@@ -47,6 +47,7 @@ final class SettingsHomeViewController: UITableViewController {
             running ? AppLanguage.current.name : "\(settings.gameMode.title) · \(AppLanguage.current.name)"
         }, sections: [.language, .mode]))
         if !engineRunning {
+            list.append(Category(icon: "viewfinder", title: "Tầm nhìn và texture (4 GB)", summary: { "Extended Distance Scaling · Extended Texture Budget" }, sections: [], page: { StreamingSettingsViewController() }))
             list.append(Category(icon: "folder", title: AppLanguage.choose("Game files"), summary: {
                 AppLanguage.choose("Where the game is, checking and downloading its files")
             }, sections: [.files]))

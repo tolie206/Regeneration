@@ -3,6 +3,28 @@ import Foundation
 /// Startup-only DLC audio import. REL54 conversion is identical to the tested
 /// Mugoat converter; samples and wavepack directory names remain unchanged.
 enum SoundInstaller {
+ /// Route a sound-only DLC through REL conversion even when imported from the general Mods row.
+ /// Keeping the raw PC DLC bypassed conversion and registered silent engine profiles on iOS.
+ static func isSoundOnly(_ folder: URL) -> Bool {
+  let fm=FileManager.default
+  var audio=false,vehicle=false
+  func scan(_ r:RPFArchive,_ depth:Int) {
+   guard depth<5 else{return}
+   for e in r.entries {
+    if e.path.hasSuffix("vehicles.meta") || e.path.hasSuffix(".yft") || e.path.hasSuffix(".ydd"){vehicle=true}
+    if e.path.hasSuffix(".dat54.rel"){audio=true}
+    if e.path.hasSuffix(".rpf"),let child=try? r.nested(e){scan(child,depth+1)}
+   }
+  }
+  if let walk=fm.enumerator(at:folder,includingPropertiesForKeys:nil) {
+   for case let url as URL in walk {
+    if url.pathExtension.lowercased()=="rpf",let r=try? RPFArchive(url:url){scan(r,0)}
+    if url.lastPathComponent.lowercased().hasSuffix(".dat54.rel"){audio=true}
+    if ["yft","ydd"].contains(url.pathExtension.lowercased()){vehicle=true}
+   }
+  }
+  return audio && !vehicle
+ }
  static func stage(_ urls:[URL]) throws -> URL {
   let fm=FileManager.default, stage=fm.temporaryDirectory.appendingPathComponent("sound-"+UUID().uuidString)
   try fm.createDirectory(at:stage,withIntermediateDirectories:true)

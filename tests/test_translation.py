@@ -25,4 +25,8 @@ class Translation(unittest.TestCase):
   for key,value in catalog['strings'].items():
    vi=value.get('localizations',{}).get('vi',{}).get('stringUnit',{}).get('value')
    if vi:self.assertEqual(sorted(re.findall(r'\{arg[0-9]+\}',key)),sorted(re.findall(r'\{arg[0-9]+\}',vi)),key)
+ def test_every_launcher_catalog_label_has_vietnamese(self):
+  catalog=json.loads((ROOT/'app/App/Localizable.xcstrings').read_text(encoding='utf8'))
+  for key,value in catalog['strings'].items():
+   self.assertTrue(value.get('localizations',{}).get('vi',{}).get('stringUnit',{}).get('value'),key)
 if __name__=='__main__':unittest.main()

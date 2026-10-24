@@ -35,8 +35,10 @@ enum ModInstaller {
         let fm = FileManager.default
         let work = fm.temporaryDirectory.appendingPathComponent("mod-install-\(UUID().uuidString)")
         try fm.createDirectory(at: work, withIntermediateDirectories: true)
+        var complete = false
+        defer { if !complete { try? fm.removeItem(at: work) } }
         let ext = file.pathExtension.lowercased()
-        if ["zip", "rar", "tar", "gz"].contains(ext) {
+        if ["zip", "rar", "tar", "gz", "oiv"].contains(ext) {
             try extract(file, into: work)
         } else if ext == "7z" {
             throw InstallError(.unsupported, AppLanguage.choose("7z archives can't be opened here yet. Unpack it on a computer or with an app, then install the files."))
@@ -45,6 +47,7 @@ enum ModInstaller {
             fm.fileExists(atPath: file.path, isDirectory: &isDir)
             try fm.copyItem(at: file, to: work.appendingPathComponent(file.lastPathComponent))
         }
+        complete = true
         return work
     }
 

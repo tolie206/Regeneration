@@ -1,4 +1,4 @@
-name: Build MuLone
+name: Build Mugoat Regeneration
 on:
   workflow_dispatch:
   push:
@@ -74,21 +74,29 @@ jobs:
           "$RUNNER_TEMP/log-policy-test"
           clang++ -std=c++20 -I app/Source app/Tests/gpu_metrics.cpp -o "$RUNNER_TEMP/gpu-metrics-test"
           "$RUNNER_TEMP/gpu-metrics-test"
+      - name: Test all owner-supplied vehicle, engine sound and addon skin archives
+        run: |
+          python3 tools/owner_test_inputs.py assemble supplied-inputs "$RUNNER_TEMP/owner-mods"
+          clang -std=c11 -pthread app/Tests/sound_runtime.c -o "$RUNNER_TEMP/sound-runtime-test"
+          "$RUNNER_TEMP/sound-runtime-test"
+          cd app
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/SkinInstaller.swift App/BundledMenyoo.swift App/StreamingSettings.swift Tests/SoundTestStubs.swift Tests/owner_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/owner-mod-test"
+          "$RUNNER_TEMP/owner-mod-test" "$RUNNER_TEMP/owner-mods"
       - name: Test visual intensity rewrite
         run: |
           clang -fobjc-arc -framework Foundation app/Source/VisualEffects.m app/Tests/visual_effects.m -o "$RUNNER_TEMP/visual-test"
           cd app
           "$RUNNER_TEMP/visual-test"
-      - name: Build MuLone-V007
+      - name: Build Mugoat-NewGen-Regeneration-R001
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify IPA entitlements
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa MuLone-V007.ipa
+          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R001.ipa
       - uses: actions/upload-artifact@v4
         with:
-          name: MuLone-V007
-          path: MuLone-V007.ipa
+          name: Mugoat-NewGen-Regeneration-R001
+          path: Mugoat-NewGen-Regeneration-R001.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()

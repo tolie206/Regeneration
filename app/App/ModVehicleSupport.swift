@@ -21,7 +21,7 @@ enum ModVehicleSupport {
     if e.path.hasSuffix(".rpf"),let child=try? r.nested(e){textures(child,depth+1)}
    }
   }
-  let mods=ModInstaller.installed().filter{$0.enabled && !$0.name.hasPrefix("_newgen_story_")}
+  let mods=ModInstaller.installed().filter{$0.enabled && !$0.name.hasPrefix("_newgen_story_") && !fm.fileExists(atPath:$0.url.appendingPathComponent("skin-models.json").path)}
   for mod in mods {
    guard let walk=fm.enumerator(at:mod.url,includingPropertiesForKeys:nil,options:.skipsHiddenFiles) else{continue}
    for case let url as URL in walk {
