@@ -80,7 +80,7 @@ jobs:
           clang -std=c11 -pthread app/Tests/sound_runtime.c -o "$RUNNER_TEMP/sound-runtime-test"
           "$RUNNER_TEMP/sound-runtime-test"
           cd app
-          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/SkinInstaller.swift App/BundledMenyoo.swift App/StreamingSettings.swift Tests/SoundTestStubs.swift Tests/owner_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/owner-mod-test"
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/ModVehicleSupport.swift App/SkinInstaller.swift App/BundledMenyoo.swift App/StreamingSettings.swift Tests/SoundTestStubs.swift Tests/owner_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/owner-mod-test"
           "$RUNNER_TEMP/owner-mod-test" "$RUNNER_TEMP/owner-mods"
       - name: Test visual intensity rewrite
         run: |

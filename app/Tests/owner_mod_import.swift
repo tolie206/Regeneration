@@ -15,10 +15,19 @@ import FoundationXML
    let stage=try ModInstaller.unpack(root.appendingPathComponent("cars/"+name));defer{try? fm.removeItem(at:stage)}
    let plan=ModInstaller.plan(folder:stage,name:name,index:.init())
    precondition(plan.items.count==1 && plan.items[0].target.hasSuffix("/dlc.rpf"),"Vehicle rejected: \(name): \(plan.skipped)")
-   let r=try RPFArchive(url:plan.items[0].source)
+   let original=try RPFArchive(url:plan.items[0].source)
+   let installed=try ModInstaller.install(plan);defer{try? fm.removeItem(at:installed)}
+   let manifest=root.appendingPathComponent("owner-manifest.json")
+   try JSONSerialization.data(withJSONObject:["files":[[Any]]()]).write(to:manifest)
+   ModVehicleSupport.prepare(manifestPath:manifest.path,log:{print($0)})
+   let r=try RPFArchive(url:installed.appendingPathComponent(plan.items[0].target))
    let metas=r.entries.filter{$0.path.hasSuffix("vehicles.meta")}
    precondition(!metas.isEmpty)
    for e in metas { let data=try r.metadata(e);precondition(XMLParser(data:data).parse()) }
+   for e in original.entries where e.path.hasSuffix(".rpf") {
+    let after=r.entries.first{$0.path==e.path}!
+    precondition(e.size==after.size && original.bytes[e.offset..<(e.offset+e.size)]==r.bytes[after.offset..<(after.offset+after.size)],"Nested vehicle assets changed: \(e.path)")
+   }
    print("PASS owner vehicle archive: \(name), \(r.entries.count) outer entries")
   }
   let sound=try SoundInstaller.stage([root.appendingPathComponent("sound/engines.zip")]);defer{try? fm.removeItem(at:sound)}

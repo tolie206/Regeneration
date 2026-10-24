@@ -41,6 +41,9 @@ enum ModVehicleSupport {
     for e in r.entries where e.path.hasSuffix("vehicles.meta") {
      let data=try r.metadata(e)
      guard var text=String(data:data,encoding:.utf8) else{continue}
+     // Some PC packs use a long run of dashes as an XML comment. XML forbids
+     // internal "--"; retain a valid separator without touching any game fields.
+     text=text.replacingOccurrences(of:"<!-{3,}>",with:"<!-- separator -->",options:.regularExpression)
      let ns=text as NSString
      for m in modelRE.matches(in:text,range:NSRange(location:0,length:ns.length)) {
       let name=ns.substring(with:m.range(at:1)).trimmingCharacters(in:.whitespacesAndNewlines).lowercased()
