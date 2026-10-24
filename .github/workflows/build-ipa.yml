@@ -36,6 +36,7 @@ jobs:
           xcrun clang --version
       - name: Validate private build inputs
         run: |
+          python3 tools/release_metadata.py
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/game-files"
           python3 app/Scripts/check_game_files.py --mirror "$RUNNER_TEMP/game-files"
       - name: Install tools

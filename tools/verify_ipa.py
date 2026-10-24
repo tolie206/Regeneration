@@ -1,9 +1,12 @@
 import zipfile,plistlib,sys,subprocess,tempfile,pathlib
+from release_metadata import validate_sources
+expected=validate_sources()
 with zipfile.ZipFile(sys.argv[1]) as z, tempfile.TemporaryDirectory() as folder:
  z.extractall(folder);apps=list((pathlib.Path(folder)/"Payload").glob("*.app"));assert len(apps)==1
  app=apps[0];info=plistlib.loads((app/"Info.plist").read_bytes())
  assert info['CFBundleIdentifier']=='vn.gta.newgen'
- assert info['CFBundleShortVersionString']=='1.4.4' and info['CFBundleVersion']=='1010'
+ for key,value in expected.items():
+  assert info.get(key)==value, f'IPA {key}={info.get(key)!r}; expected {value!r}'
  assert info['DTXcode']=='2620' and info['DTXcodeBuild']=='17C52'
  assert info['DTSDKName']=='iphoneos26.2'
  assert (app/'VietnameseAccented.zip').is_file() and (app/'VietnamesePlain.zip').is_file()

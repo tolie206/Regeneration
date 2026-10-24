@@ -3,6 +3,10 @@
 Base: `regeneration` at `1ff094d` (V007), not `main` at `f9422f5`.
 Bundle version: 1010. Output: `Mugoat-NewGen-Regeneration-R001.ipa`.
 
+## Build metadata correction
+
+Run `40065259521` compiled successfully and produced an IPA, then failed its post-build version check. `app/project.yml` still declared build 1007, so XcodeGen overwrote the intended 1010 in `Info.plist`. Both now declare 1010. A pre-build source consistency gate rejects mismatches before compiling, and the final IPA verifier checks the packaged values against those consistent sources with an explicit diagnostic. Regression tests cover stale build and marketing versions. The final IPA version, toolchain, bundled resources and memory entitlement checks remain enabled.
+
 ## Changes
 
 - Preserve the branch's renderer, heap, streaming guard and asset-reclamation policy. No later `main` reclaim/recovery changes were merged.
