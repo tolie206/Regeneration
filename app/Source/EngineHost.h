@@ -2,6 +2,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include "TurboModel.h"
+PGTurboConfig PGTurboDefaultConfig(void);
+bool PGSetTurboConfig(PGTurboConfig config);
+bool PGTurboTelemetry(float *rpm, float *boost, unsigned *gear);
 
 typedef void (*PGLogCallback)(const char *, void *);
 typedef struct {

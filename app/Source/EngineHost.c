@@ -2337,6 +2337,7 @@ static uint64_t pg_wasm_text(uint64_t *slot, const char *text) {
   return *slot;
 }
 static uint64_t pg_f32_arg(float value) { uint32_t bits; memcpy(&bits, &value, 4); return bits; }
+#include "NativeTurbo.inc"
 static void pg_trackify_tick(w2c_game *instance) {
   static double lastData, lastPing; static bool wasOpen;
   if (PGGameStatus() & 16) return;
@@ -2402,6 +2403,7 @@ void pg_asi_script_tick(w2c_game *instance, u64 thread) {
   pg_submarine_depth_tick(instance);
   pg_cheats_menu_tick(instance);
   pg_sound_mod_tick(instance);
+  pg_turbo_tick(instance);
   pg_trackify_tick(instance);
 #if TARGET_OS_SIMULATOR
   pg_debug_tick(instance, true);

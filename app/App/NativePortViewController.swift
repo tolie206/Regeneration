@@ -648,7 +648,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         do { try SkinInstaller.updateMenyooList() } catch { appendLog("Menyoo addon skin list: \(error.localizedDescription)") }
         do { try BundledVietnamese.prepare() } catch { appendLog("Built-in translation: \(error.localizedDescription)") }
         appendLog(BundledVietnamese.status)
-        appendLog("Regeneration R001: frame cap \(GameSettings.shared.frameRateCap), Menyoo \(BundledMenyoo.enabled ? "on":"off"), extended distance \(StreamingSettings.distanceScale ?? "automatic"), texture budget \(StreamingSettings.textureBudgetMB) MiB (0=automatic).")
+        appendLog("Regeneration R002 (turbo experimental): frame cap \(GameSettings.shared.frameRateCap), Menyoo \(BundledMenyoo.enabled ? "on":"off"), extended distance \(StreamingSettings.distanceScale ?? "automatic"), texture budget \(StreamingSettings.textureBudgetMB) MiB (0=automatic).")
         ModVehicleSupport.prepare(manifestPath:path,log:appendLog)
         SoundAssignments.resolveDuplicatePacks(log:appendLog)
         SoundAssignments.configure()

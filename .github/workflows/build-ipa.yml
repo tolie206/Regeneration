@@ -55,6 +55,12 @@ jobs:
           clang -c Tests/SoundTestStubs.c -o "$RUNNER_TEMP/stubs.o"
           swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/ModVehicleSupport.swift App/SoundAssignments.swift Tests/SoundTestStubs.swift Tests/sound_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/sound-test"
           "$RUNNER_TEMP/sound-test" "$GITHUB_WORKSPACE/tests/fixtures/h2r"
+      - name: Test native turbo physics and script bridge
+        run: |
+          clang -std=c11 -Wall -Wextra -Werror -I app/Source app/Tests/turbo_model.c -lm -o "$RUNNER_TEMP/turbo-model"
+          "$RUNNER_TEMP/turbo-model"
+          clang -std=c11 -Wall -Wextra -Werror -pthread -I app/Source app/Tests/turbo_runtime.c -lm -o "$RUNNER_TEMP/turbo-runtime"
+          "$RUNNER_TEMP/turbo-runtime"
       - name: Test real supplied vehicle, sound and save packages
         run: |
           python3 tools/assemble_test_inputs.py "$RUNNER_TEMP/real-mods"
@@ -88,16 +94,16 @@ jobs:
           clang -fobjc-arc -framework Foundation app/Source/VisualEffects.m app/Tests/visual_effects.m -o "$RUNNER_TEMP/visual-test"
           cd app
           "$RUNNER_TEMP/visual-test"
-      - name: Build Mugoat-NewGen-Regeneration-R001
+      - name: Build Mugoat-NewGen-Regeneration-R002
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify IPA entitlements
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R001.ipa
+          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R002.ipa
       - uses: actions/upload-artifact@v4
         with:
-          name: Mugoat-NewGen-Regeneration-R001
-          path: Mugoat-NewGen-Regeneration-R001.ipa
+          name: Mugoat-NewGen-Regeneration-R002
+          path: Mugoat-NewGen-Regeneration-R002.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()

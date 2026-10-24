@@ -196,6 +196,7 @@ enum GraphicsConfiguration {
             options.append("-MaxLODScale=\(value)")
         }
         StreamingSettings.applyTextureBudget()
+        if !TurboSettings.apply() { TurboSettings.config=PGTurboDefaultConfig();TurboSettings.apply() }
         let own = GraphicsDetail.all.compactMap { detail in overrides[detail.option].map { "\(detail.option) \($0)" } }
         // The engine and renderer read PG_LITE when they start, after this. The Lite build always sets it.
         if preset == .lite { setenv("PG_LITE", "1", 1) } else if !Theme.isLite { unsetenv("PG_LITE") }
