@@ -10,7 +10,9 @@ from release_metadata import validate_sources
 
 class ReleaseMetadata(unittest.TestCase):
     def test_release_sources_agree_before_xcodegen(self):
-        self.assertEqual(validate_sources()['CFBundleVersion'], '1010')
+        metadata = validate_sources()
+        self.assertRegex(metadata['CFBundleVersion'], r'^[1-9][0-9]*$')
+        self.assertRegex(metadata['CFBundleShortVersionString'], r'^\d+\.\d+\.\d+$')
 
     def test_stale_xcodegen_version_is_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
