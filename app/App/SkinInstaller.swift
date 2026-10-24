@@ -86,7 +86,9 @@ enum SkinInstaller {
         })).sorted()
     }
     static func updateMenyooList() throws {
-        guard let mod = ModInstaller.installed().first(where: { $0.name == BundledMenyoo.name }) else { return }
+        let packages = ModInstaller.installed().filter { $0.name == BundledMenyoo.name }
+        guard packages.count == 1, let mod = packages.first else { return }
+        guard FileManager.default.fileExists(atPath: mod.url.appendingPathComponent(".newgen-menyoo").path) else { return }
         let file = mod.url.appendingPathComponent("menyooStuff/PedList.xml")
         var text = try String(contentsOf: file, encoding: .utf8)
         let begin = "<!-- NewGen addon peds -->", end = "<!-- /NewGen addon peds -->"

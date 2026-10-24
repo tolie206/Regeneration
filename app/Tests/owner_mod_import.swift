@@ -83,6 +83,11 @@ import FoundationXML
   let owned=ModInstaller.modsFolder.appendingPathComponent(BundledMenyoo.name)
   precondition(!fm.fileExists(atPath:owned.path));try fm.createDirectory(at:owned.deletingLastPathComponent(),withIntermediateDirectories:true)
   try fm.moveItem(at:menyoo,to:owned);defer{try? fm.removeItem(at:owned)}
+  let untouched=try Data(contentsOf:owned.appendingPathComponent("menyooStuff/PedList.xml"))
+  try SkinInstaller.updateMenyooList()
+  let afterUnowned=try Data(contentsOf:owned.appendingPathComponent("menyooStuff/PedList.xml"))
+  precondition(untouched==afterUnowned,"Unowned Menyoo package modified")
+  try "2".write(to:owned.appendingPathComponent(".newgen-menyoo"),atomically:true,encoding:.utf8)
   try SkinInstaller.updateMenyooList();try SkinInstaller.updateMenyooList()
   let pedList=try String(contentsOf:owned.appendingPathComponent("menyooStuff/PedList.xml"),encoding:.utf8)
   precondition(pedList.components(separatedBy:"<!-- NewGen addon peds -->").count==2)
