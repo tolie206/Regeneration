@@ -279,7 +279,7 @@ int main(void) {
   assert(!PGQueueCheat(PGCheatSetWeather, -1));
   assert(!PGQueueCheat(PGCheatSetWeather, 7));
   assert(!PGQueueCheat((PGCheatCommand)99, 0));
-  assert(!PGQueueCheat((PGCheatCommand)5, 1)); // God mode and Never wanted are switches, not actions.
+  assert(!PGQueueCheat((PGCheatCommand)(PGCheatCameraMode + 1), 1)); // God mode and Never wanted are switches, not actions.
   assert(PGQueueCheat(PGCheatRepairVehicle, 0));
   assert(!PGQueueCheat(PGCheatCleanVehicle, 0));
   paused = true; tick(&instance); assert(!repaired && PGGetCheatStatus() == PGCheatWaiting);

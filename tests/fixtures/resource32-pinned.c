@@ -74,7 +74,7 @@ u32 w2c_game_f6050(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
   var_j0 = 12009552ull;
   var_j0 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j0));
   var_l9 = var_j0;
-  var_L5: 
+  var_L5:
     var_i0 = var_l15;
     var_j1 = var_l9;
     var_i2 = var_l14;
@@ -533,7 +533,7 @@ u32 w2c_game_f6050(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
     var_l8 = var_j0;
     var_i0 = !(var_j0);
     if (var_i0) {goto var_B26;}
-    var_L27: 
+    var_L27:
       var_i0 = var_l15;
       var_j1 = var_l8;
       var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j1));
@@ -707,7 +707,7 @@ u32 w2c_game_f6050(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
       var_i1 = var_p4;
       var_i0 = var_i0 != var_i1;
       if (var_i0) {
-        var_L34: 
+        var_L34:
           var_j0 = var_l8;
           var_l12 = var_j0;
           var_j0 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 8u));
@@ -1083,7 +1083,7 @@ u32 w2c_game_f6050(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
     var_l11 = var_j0;
     var_j0 = 0ull;
     var_l9 = var_j0;
-    var_L44: 
+    var_L44:
       var_j0 = var_p0;
       var_j1 = var_l9;
       var_j0 += var_j1;
@@ -1237,9 +1237,9 @@ u32 w2c_game_f6050(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
 }
 
 u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 var_p3, u32 var_p4, u32 var_p5, u32 var_p6) {
-  u32 var_l7 = 0, var_l8 = 0, var_l9 = 0, var_l10 = 0, var_l11 = 0, var_l12 = 0, var_l13 = 0, var_l14 = 0, 
+  u32 var_l7 = 0, var_l8 = 0, var_l9 = 0, var_l10 = 0, var_l11 = 0, var_l12 = 0, var_l13 = 0, var_l14 = 0,
       var_l15 = 0, var_l16 = 0, var_l17 = 0, var_l18 = 0, var_l19 = 0;
-  u64 var_l20 = 0, var_l21 = 0, var_l22 = 0, var_l23 = 0, var_l24 = 0, var_l25 = 0, var_l26 = 0, var_l27 = 0, 
+  u64 var_l20 = 0, var_l21 = 0, var_l22 = 0, var_l23 = 0, var_l24 = 0, var_l25 = 0, var_l26 = 0, var_l27 = 0,
       var_l28 = 0, var_l29 = 0;
   FUNC_PROLOGUE;
   uint8_t* const wasm_rt_local_memory_base = NULL;
@@ -1310,7 +1310,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
   var_i0 = var_l15;
   var_i0 = !(var_i0);
   if (var_i0) {goto var_B1;}
-  var_L2: 
+  var_L2:
     var_i0 = var_l13;
     var_j1 = var_p0;
     var_i1 = i32_load16_u_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 312u));
@@ -1361,7 +1361,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
     var_l21 = var_j0;
     var_i0 = 0u;
     var_l8 = var_i0;
-    var_L4: 
+    var_L4:
       var_j0 = var_l21;
       var_i1 = var_l7;
       var_j1 = (u64)(s64)(s32)(var_i1);
@@ -1468,7 +1468,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
       var_l8 = var_i0;
       var_j0 = 0ull;
       var_l20 = var_j0;
-      var_L10: 
+      var_L10:
         var_j0 = var_l23;
         var_j1 = 48ull;
         var_j0 += var_j1;
@@ -1597,7 +1597,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
   var_j1 = 320ull;
   var_j0 += var_j1;
   var_l28 = var_j0;
-  var_L14: 
+  var_L14:
     var_j0 = var_l28;
     var_j0 = i64_load16_u_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 8u));
     var_l29 = var_j0;
@@ -1607,7 +1607,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
     var_l13 = var_i0;
     var_j0 = 0ull;
     var_l24 = var_j0;
-    var_L15: 
+    var_L15:
       var_j0 = var_l24;
       var_j1 = var_l28;
       var_j1 = i64_load16_u_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 8u));
@@ -1661,7 +1661,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
       var_l21 = var_j0;
       var_i0 = 0u;
       var_l8 = var_i0;
-      var_L17: 
+      var_L17:
         var_j0 = var_l21;
         var_i1 = var_l7;
         var_j1 = (u64)(s64)(s32)(var_i1);
@@ -1734,7 +1734,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
           var_l25 = var_j0;
           var_j0 = 0ull;
           var_l20 = var_j0;
-          var_L22: 
+          var_L22:
             var_j0 = var_l23;
             var_j1 = 48ull;
             var_j0 += var_j1;
@@ -1990,7 +1990,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
   var_l22 = var_j0;
   var_i0 = 0u;
   var_l9 = var_i0;
-  var_L33: 
+  var_L33:
     var_j0 = var_l22;
     var_i1 = var_l9;
     var_j1 = (u64)(s64)(s32)(var_i1);
@@ -2090,7 +2090,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
   var_l22 = var_j0;
   var_i0 = i32_load16_u_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 8u));
   var_l9 = var_i0;
-  var_L35: 
+  var_L35:
     var_j0 = var_l20;
     var_j1 = 1ull;
     var_j0 -= var_j1;
@@ -2177,7 +2177,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
     var_l21 = var_j0;
     var_j0 = 0ull;
     var_l20 = var_j0;
-    var_L42: 
+    var_L42:
       var_j0 = var_l21;
       var_j1 = var_l20;
       var_j2 = 3ull;
@@ -2235,7 +2235,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
   var_l16 = var_i0;
   var_i0 = 0u;
   var_l12 = var_i0;
-  var_L44: 
+  var_L44:
     var_i0 = var_l13;
     var_j1 = var_l26;
     var_i1 = i32_load16_u_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 8u));
@@ -2290,7 +2290,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
     var_l21 = var_j0;
     var_i0 = 0u;
     var_l8 = var_i0;
-    var_L47: 
+    var_L47:
       var_j0 = var_l21;
       var_i1 = var_l7;
       var_j1 = (u64)(s64)(s32)(var_i1);
@@ -2405,7 +2405,7 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
         var_l25 = var_j0;
         var_j0 = 0ull;
         var_l20 = var_j0;
-        var_L53: 
+        var_L53:
           var_j0 = var_l23;
           var_j1 = 48ull;
           var_j0 += var_j1;
@@ -2800,13 +2800,13 @@ u32 w2c_game_f6176(w2c_game* instance, u64 var_p0, u32 var_p1, u32 var_p2, u64 v
 }
 
 void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
-  u32 var_l1 = 0, var_l2 = 0, var_l3 = 0, var_l4 = 0, var_l5 = 0, var_l6 = 0, var_l7 = 0, var_l8 = 0, 
-      var_l9 = 0, var_l10 = 0, var_l11 = 0, var_l12 = 0, var_l13 = 0, var_l14 = 0, var_l15 = 0, var_l16 = 0, 
-      var_l17 = 0, var_l18 = 0, var_l19 = 0, var_l20 = 0, var_l21 = 0, var_l22 = 0, var_l23 = 0, var_l24 = 0, 
+  u32 var_l1 = 0, var_l2 = 0, var_l3 = 0, var_l4 = 0, var_l5 = 0, var_l6 = 0, var_l7 = 0, var_l8 = 0,
+      var_l9 = 0, var_l10 = 0, var_l11 = 0, var_l12 = 0, var_l13 = 0, var_l14 = 0, var_l15 = 0, var_l16 = 0,
+      var_l17 = 0, var_l18 = 0, var_l19 = 0, var_l20 = 0, var_l21 = 0, var_l22 = 0, var_l23 = 0, var_l24 = 0,
       var_l25 = 0;
-  u64 var_l26 = 0, var_l27 = 0, var_l28 = 0, var_l29 = 0, var_l30 = 0, var_l31 = 0, var_l32 = 0, var_l33 = 0, 
-      var_l34 = 0, var_l35 = 0, var_l36 = 0, var_l37 = 0, var_l38 = 0, var_l39 = 0, var_l40 = 0, var_l41 = 0, 
-      var_l42 = 0, var_l43 = 0, var_l44 = 0, var_l45 = 0, var_l46 = 0, var_l47 = 0, var_l48 = 0, var_l49 = 0, 
+  u64 var_l26 = 0, var_l27 = 0, var_l28 = 0, var_l29 = 0, var_l30 = 0, var_l31 = 0, var_l32 = 0, var_l33 = 0,
+      var_l34 = 0, var_l35 = 0, var_l36 = 0, var_l37 = 0, var_l38 = 0, var_l39 = 0, var_l40 = 0, var_l41 = 0,
+      var_l42 = 0, var_l43 = 0, var_l44 = 0, var_l45 = 0, var_l46 = 0, var_l47 = 0, var_l48 = 0, var_l49 = 0,
       var_l50 = 0, var_l51 = 0, var_l52 = 0;
   f32 var_l53 = 0, var_l54 = 0;
   FUNC_PROLOGUE;
@@ -2814,9 +2814,9 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
   uint64_t wasm_rt_local_memory_size = 0;
   (void)wasm_rt_local_memory_base;
   (void)wasm_rt_local_memory_size;
-  u32 var_i0, var_i1, var_i2, var_i3, var_i4, var_i5, var_i6, var_i8, 
+  u32 var_i0, var_i1, var_i2, var_i3, var_i4, var_i5, var_i6, var_i8,
       var_i9, var_i10;
-  u64 var_j0, var_j1, var_j2, var_j3, var_j4, var_j5, var_j6, var_j7, 
+  u64 var_j0, var_j1, var_j2, var_j3, var_j4, var_j5, var_j6, var_j7,
       var_j8, var_j9, var_j10;
   f32 var_f0, var_f1, var_f2, var_f3;
   f64 var_d1;
@@ -2845,7 +2845,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
   var_j1 = 199192ull;
   var_j0 += var_j1;
   var_l26 = var_j0;
-  var_L1: 
+  var_L1:
     var_j0 = var_p0;
     var_i0 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 199456u));
     var_i0 = !(var_i0);
@@ -3112,10 +3112,10 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
     var_l11 = var_i0;
     var_i0 = 0u;
     var_l1 = var_i0;
-    var_L9: 
+    var_L9:
       var_j0 = 0ull;
       var_l32 = var_j0;
-      var_L11: 
+      var_L11:
         var_i0 = var_l6;
         var_i1 = 32u;
         var_i0 = (u32)((s32)var_i0 >= (s32)var_i1);
@@ -3425,7 +3425,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
   var_j0 += var_j1;
   var_j0 = w2c_game_f2858(instance, var_j0);
   var_l46 = var_j0;
-  var_L20: 
+  var_L20:
     var_j0 = 11607304ull;
     var_i1 = var_l21;
     var_i2 = 1u;
@@ -3499,7 +3499,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
     var_j1 = 400ull;
     var_j0 += var_j1;
     var_l32 = var_j0;
-    var_L23: 
+    var_L23:
       var_i0 = var_l1;
       var_i0 = !(var_i0);
       if (var_i0) {
@@ -3578,7 +3578,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
       var_l51 = var_j1;
       var_i1 = 4u;
       var_l17 = var_i1;
-      var_L32: 
+      var_L32:
         var_j1 = var_l26;
         var_j2 = 1ull;
         var_j1 += var_j2;
@@ -3749,7 +3749,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
           var_l9 = var_i1;
           var_i1 = 0u;
           var_l1 = var_i1;
-          var_L42: 
+          var_L42:
             var_j1 = var_l48;
             var_i2 = var_l1;
             var_i3 = var_l9;
@@ -3897,7 +3897,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
         w2c_game_f6055(instance, var_i1);
         goto var_B38;
         var_B39:;
-        var_L45: 
+        var_L45:
           var_j1 = var_l30;
           var_i2 = var_l1;
           var_j2 = (u64)(s64)(s32)(var_i2);
@@ -3982,7 +3982,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
           var_j1 = 11607312ull;
           var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j1));
           var_l6 = var_i1;
-          var_L51: 
+          var_L51:
             var_j1 = var_l37;
             var_j2 = 18446744073709551552ull;
             var_j1 -= var_j2;
@@ -4024,7 +4024,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
         }
         var_j1 = 0ull;
         var_l26 = var_j1;
-        var_L57: 
+        var_L57:
           var_j1 = var_l47;
           var_j2 = var_l26;
           var_j3 = 6224ull;
@@ -4135,7 +4135,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
           var_j1 = 11607872ull;
           var_j1 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j1));
           var_l33 = var_j1;
-          var_L62: 
+          var_L62:
             var_j1 = var_l33;
             var_i2 = var_l1;
             var_j2 = (u64)(s64)(s32)(var_i2);
@@ -4308,7 +4308,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
               var_i1 = var_l1;
               var_j1 = (u64)(var_i1);
               var_l33 = var_j1;
-              var_L72: 
+              var_L72:
                 var_j1 = var_l45;
                 var_j2 = 6ull;
                 var_j1 <<= (var_j2 & 63);
@@ -4324,7 +4324,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
                 var_l30 = var_j1;
                 var_j1 = 0ull;
                 var_l42 = var_j1;
-                var_L75: 
+                var_L75:
                   var_i1 = var_l6;
                   var_j2 = var_l30;
                   var_j3 = var_l42;
@@ -5363,7 +5363,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
                 var_i1 = var_l2;
                 var_j1 = (u64)(var_i1);
                 var_l28 = var_j1;
-                var_L108: 
+                var_L108:
                   var_j1 = var_l35;
                   var_j2 = 6ull;
                   var_j1 <<= (var_j2 & 63);
@@ -5379,7 +5379,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
                   var_l26 = var_j1;
                   var_j1 = 0ull;
                   var_l31 = var_j1;
-                  var_L111: 
+                  var_L111:
                     var_i1 = var_l1;
                     var_j2 = var_l26;
                     var_j3 = var_l31;
@@ -5516,7 +5516,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
               var_i2 = i32_load8_u_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j2, 3121u));
               var_i1 |= var_i2;
               if (var_i1) {
-                var_L118: 
+                var_L118:
                   var_j1 = 11607224ull;
                   var_j2 = var_l33;
                   var_j3 = var_l31;
@@ -5578,7 +5578,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
                 var_l28 = var_j1;
                 var_j1 = 0ull;
                 var_l35 = var_j1;
-                var_L121: 
+                var_L121:
                   var_j1 = var_l35;
                   var_j2 = 6ull;
                   var_j1 <<= (var_j2 & 63);
@@ -5594,7 +5594,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
                   var_l26 = var_j1;
                   var_j1 = 0ull;
                   var_l31 = var_j1;
-                  var_L124: 
+                  var_L124:
                     var_i1 = var_l1;
                     var_j2 = var_l26;
                     var_j3 = var_l31;
@@ -5816,7 +5816,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
             if (var_i1) {
               var_j1 = 0ull;
               var_l31 = var_j1;
-              var_L132: 
+              var_L132:
                 var_j1 = 11607224ull;
                 var_j2 = var_l33;
                 var_j3 = var_l31;
@@ -5878,7 +5878,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
               var_l28 = var_j1;
               var_j1 = 0ull;
               var_l35 = var_j1;
-              var_L135: 
+              var_L135:
                 var_j1 = var_l35;
                 var_j2 = 6ull;
                 var_j1 <<= (var_j2 & 63);
@@ -5894,7 +5894,7 @@ void w2c_game_f6213(w2c_game* instance, u64 var_p0) {
                 var_l26 = var_j1;
                 var_j1 = 0ull;
                 var_l31 = var_j1;
-                var_L138: 
+                var_L138:
                   var_i1 = var_l1;
                   var_j2 = var_l26;
                   var_j3 = var_l31;
@@ -6585,7 +6585,7 @@ u64 w2c_game_f1891(w2c_game* instance, u64 var_p0, u64 var_p1, u64 var_p2) {
   if (var_i0) {goto var_B5;}
   var_j0 = 255ull;
   var_l7 = var_j0;
-  var_L6: 
+  var_L6:
     var_j0 = var_l6;
     var_j1 = var_l9;
     var_j0 += var_j1;
@@ -6754,7 +6754,7 @@ u32 w2c_game_f1892(w2c_game* instance, u64 var_p0, u64 var_p1, u64 var_p2) {
     var_l4 = var_j0;
     var_j0 = 0ull;
     var_l3 = var_j0;
-    var_L2: 
+    var_L2:
       var_j0 = var_l3;
       var_j1 = var_l7;
       var_j0 += var_j1;
@@ -6926,7 +6926,7 @@ u32 w2c_game_f1882(w2c_game* instance, u64 var_p0, u64 var_p1, u32 var_p2, u64 v
   var_j1 = 0ull;
   var_i0 = (u64)((s64)var_j0 <= (s64)var_j1);
   if (var_i0) {goto var_B2;}
-  var_L3: 
+  var_L3:
     var_j0 = var_l6;
     var_j1 = 1ull;
     var_j0 -= var_j1;
@@ -7211,7 +7211,7 @@ u32 w2c_game_f1882(w2c_game* instance, u64 var_p0, u64 var_p1, u32 var_p2, u64 v
   if (var_i0) {
     var_j0 = 0ull;
     var_l4 = var_j0;
-    var_L17: 
+    var_L17:
       var_j0 = var_p0;
       var_j0 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 32u));
       var_j1 = var_l4;
@@ -7566,7 +7566,7 @@ u32 w2c_game_f1897(w2c_game* instance, u64 var_p0, u64 var_p1, u64 var_p2, u32 v
     var_j1 = 56ull;
     var_j0 += var_j1;
     var_p2 = var_j0;
-    var_L6: 
+    var_L6:
       var_j0 = var_p1;
       var_i0 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 64u));
       var_i0 = !(var_i0);
@@ -7953,7 +7953,7 @@ u64 w2c_game_f1901(w2c_game* instance, u64 var_p0, u64 var_p1, u64 var_p2, u32 v
       i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 64u), var_i1);
       w2c_game_f2928(instance);
     }
-    var_L10: 
+    var_L10:
       var_i0 = var_p3;
       var_j1 = var_p1;
       var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 48u));
@@ -8093,10 +8093,10 @@ u64 w2c_game_f1904(w2c_game* instance, u64 var_p0, u64 var_p1) {
   return var_j0;
 }
 
-u64 w2c_game_f2041(w2c_game* instance, u32 var_p0, u64 var_p1, u32 var_p2, u32 var_p3, u64 var_p4, u64 var_p5, u32 var_p6, u32 var_p7, 
+u64 w2c_game_f2041(w2c_game* instance, u32 var_p0, u64 var_p1, u32 var_p2, u32 var_p3, u64 var_p4, u64 var_p5, u32 var_p6, u32 var_p7,
     u64 var_p8) {
   u32 var_l22 = 0, var_l23 = 0, var_l24 = 0, var_l25 = 0, var_l26 = 0, var_l27 = 0, var_l28 = 0;
-  u64 var_l9 = 0, var_l10 = 0, var_l11 = 0, var_l12 = 0, var_l13 = 0, var_l14 = 0, var_l15 = 0, var_l16 = 0, 
+  u64 var_l9 = 0, var_l10 = 0, var_l11 = 0, var_l12 = 0, var_l13 = 0, var_l14 = 0, var_l15 = 0, var_l16 = 0,
       var_l17 = 0, var_l18 = 0, var_l19 = 0, var_l20 = 0, var_l21 = 0;
   v128 var_l29 = simde_wasm_i64x2_make(0, 0), var_l30 = simde_wasm_i64x2_make(0, 0), var_l31 = simde_wasm_i64x2_make(0, 0);
   FUNC_PROLOGUE;
@@ -8105,7 +8105,7 @@ u64 w2c_game_f2041(w2c_game* instance, u32 var_p0, u64 var_p1, u32 var_p2, u32 v
   (void)wasm_rt_local_memory_base;
   (void)wasm_rt_local_memory_size;
   u32 var_i0, var_i1, var_i2, var_i3, var_i4, var_i5, var_i6, var_i7;
-  u64 var_j0, var_j1, var_j2, var_j3, var_j4, var_j5, var_j6, var_j7, 
+  u64 var_j0, var_j1, var_j2, var_j3, var_j4, var_j5, var_j6, var_j7,
       var_j8;
   f32 var_f1;
   v128 var_o0, var_o1, var_o2, var_o3;
@@ -8286,7 +8286,7 @@ u64 w2c_game_f2041(w2c_game* instance, u32 var_p0, u64 var_p1, u32 var_p2, u32 v
   var_l16 = var_j0;
   var_i0 = !(var_j0);
   if (var_i0) {goto var_B5;}
-  var_L14: 
+  var_L14:
     var_j0 = 9738720ull;
     var_j0 = i64_atomic_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j0));
     var_l11 = var_j0;
@@ -8309,7 +8309,7 @@ u64 w2c_game_f2041(w2c_game* instance, u32 var_p0, u64 var_p1, u32 var_p2, u32 v
     if (var_i2) {
       var_j2 = 18446744073709551614ull;
     } else {
-      var_L18: 
+      var_L18:
         var_i2 = var_l23;
         var_i3 = 1u;
         var_i2 += var_i3;
@@ -8442,7 +8442,7 @@ u64 w2c_game_f2041(w2c_game* instance, u32 var_p0, u64 var_p1, u32 var_p2, u32 v
   var_j0 += var_j1;
   var_l21 = var_j0;
   var_l9 = var_j0;
-  var_L21: 
+  var_L21:
     var_j0 = var_l16;
     var_i0 = !(var_j0);
     if (var_i0) {
@@ -8510,7 +8510,7 @@ u64 w2c_game_f2041(w2c_game* instance, u32 var_p0, u64 var_p1, u32 var_p2, u32 v
   var_l16 = var_j0;
   var_j0 = 0ull;
   var_l13 = var_j0;
-  var_L24: 
+  var_L24:
     var_j0 = var_l10;
     var_j1 = 192ull;
     var_j0 += var_j1;
@@ -8653,7 +8653,7 @@ u64 w2c_game_f2041(w2c_game* instance, u32 var_p0, u64 var_p1, u32 var_p2, u32 v
     var_l13 = var_j0;
     var_j0 = 0ull;
     var_l9 = var_j0;
-    var_L32: 
+    var_L32:
       var_j0 = var_l17;
       var_j1 = var_l9;
       var_j2 = 4ull;
@@ -8735,7 +8735,7 @@ u64 w2c_game_f2041(w2c_game* instance, u32 var_p0, u64 var_p1, u32 var_p2, u32 v
       var_l11 = var_j0;
       var_j0 = 0ull;
       var_l9 = var_j0;
-      var_L36: 
+      var_L36:
         var_j0 = var_p1;
         var_j1 = var_l9;
         var_j2 = 24ull;
