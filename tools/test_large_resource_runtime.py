@@ -35,7 +35,7 @@ static u64 i64_load_shared(void *a,u64 b,void *c,u64 offset){(void)a;(void)b;(vo
 static u32 i32_load_shared(void *a,u64 b,void *c,u64 offset){(void)a;(void)b;(void)c;u32 v;memcpy(&v,pg_pointer(0,offset,4),4);return v;}
 static u64 i64_load32_u_shared(void *a,u64 b,void *c,u64 offset){return i32_load_shared(a,b,c,offset);}
 uint32_t pg_mods_large_resource_size(const char *archive,const char *name,uint32_t system,uint32_t graphics){
- return !strcmp(archive,"dlc_vf8:/vehicles.rpf")&&!strcmp(name,"vf8.yft")&&system==0xa01a1786u&&graphics==0x20000000u?17512137u:0;
+ return !strcmp(archive,"dlc_vf8:/x64/levels/gta5/vehicles/vehicles.rpf")&&!strcmp(name,"vf8.yft")&&system==0xa01a1786u&&graphics==0x20000000u?17512137u:0;
 }
 """+s+engine_bodies+r"""
 static void put64(size_t at,uint64_t value){memcpy(memory+at,&value,8);}
@@ -46,7 +46,7 @@ int main(void){
  memory[2048]=0;strcpy((char*)memory+2049,"vf8.yft");
  put64(entry,lo);put64(entry+8,0x20000000a01a1786ull);
  assert(pg_large_rpf_size(0,entry,0xffffff)==0xffffff);
- pg_large_archive_mounted(128,"dlc_vf8:/vehicles.rpf");
+ pg_large_archive_mounted(128,"dlc_vf8:/x64/levels/gta5/vehicles/vehicles.rpf");
  assert(pg_large_rpf_size(0,entry,0xffffff)==17512137u);
  w2c_game instance={0};put64(4096+40,entry);
  assert(w2c_game_f1898_old(&instance,0,4096)==0xffffffu);

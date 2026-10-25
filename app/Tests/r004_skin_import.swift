@@ -1,6 +1,8 @@
 import Foundation
+import Darwin
 @main struct R004SkinTest {
  static func main() throws {
+  setbuf(stdout,nil)
   let fm = FileManager.default, root = URL(fileURLWithPath:CommandLine.arguments[1])
   precondition(SkinInstaller.normalizedName("MỸ Nhân ĐẸP 01\t") == "mynhandep01")
   let stage = try ModInstaller.unpack(root.appendingPathComponent("ryoubi.rar"));defer{try? fm.removeItem(at:stage)}
@@ -50,8 +52,9 @@ import Foundation
   ModVehicleSupport.prepareLargeResources(log:{print($0)})
   let indexData=try Data(contentsOf:ModInstaller.modsFolder.appendingPathComponent(".newgen-resource32.json"))
   let sizeIndex=try JSONSerialization.jsonObject(with:indexData) as! [String:[String:NSNumber]]
-  precondition(sizeIndex["dlc_vf8:/vehicles.rpf|vf8.yft"]?["size"]?.intValue == 17512137)
-  precondition(sizeIndex["dlc_vf8:/vehicles.rpf|vf8_hi.yft"]?["size"]?.intValue == 17502433)
+  print("Actual extended-resource paths: \(sizeIndex.keys.sorted())")
+  precondition(sizeIndex["dlc_vf8:/x64/levels/gta5/vehicles/vehicles.rpf|vf8.yft"]?["size"]?.intValue == 17512137)
+  precondition(sizeIndex["dlc_vf8:/x64/levels/gta5/vehicles/vehicles.rpf|vf8_hi.yft"]?["size"]?.intValue == 17502433)
   precondition(sizeIndex.count == 2)
   try indexData.write(to:root.appendingPathComponent(".newgen-resource32.json"))
   print("PASS actual VF8 large-resource index: both YFT lengths exceed24bits and remain exact; no geometry/texture change")

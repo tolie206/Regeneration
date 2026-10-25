@@ -11,9 +11,9 @@ static NSString *modsFolder(void){return fixtureRoot;}
 """+s[a:b]+r"""
 int main(int argc,char **argv){@autoreleasepool{
  assert(argc==2);fixtureRoot=@(argv[1]);
- assert(pg_mods_large_resource_size("dlc_vf8:/vehicles.rpf","vf8.yft",0xa01a1786,0x20000000)==17512137);
- assert(pg_mods_large_resource_size("DLC_VF8:\\VEHICLES.RPF","VF8_HI.YFT",0xa01a1786,0x20000000)==17502433);
- assert(pg_mods_large_resource_size("dlc_vf8:/vehicles.rpf","vf8.yft",0,0)==0);
+ assert(pg_mods_large_resource_size("dlc_vf8:/x64/levels/gta5/vehicles/vehicles.rpf","vf8.yft",0xa01a1786,0x20000000)==17512137);
+ assert(pg_mods_large_resource_size("DLC_VF8:\\X64\\LEVELS\\GTA5\\VEHICLES\\VEHICLES.RPF","VF8_HI.YFT",0xa01a1786,0x20000000)==17502433);
+ assert(pg_mods_large_resource_size("dlc_vf8:/x64/levels/gta5/vehicles/vehicles.rpf","vf8.yft",0,0)==0);
  assert(pg_mods_large_resource_size("other:/vehicles.rpf","vf8.yft",0xa01a1786,0x20000000)==0);
 }return 0;}
 """)
