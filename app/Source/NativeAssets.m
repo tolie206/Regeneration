@@ -119,6 +119,23 @@ static NSString *modsFolder(void){
   if(test&&*test)return @(test);
   return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES).firstObject stringByAppendingPathComponent:@"Mods"];
 }
+// Immutable pre-boot resource-size index produced by the Swift RPF validator.
+uint32_t pg_mods_large_resource_size(const char *archive,const char *resource,uint32_t system,uint32_t graphics){
+ static NSDictionary *index;static dispatch_once_t once;
+ dispatch_once(&once,^{
+  NSData *data=[NSData dataWithContentsOfFile:[modsFolder() stringByAppendingPathComponent:@".newgen-resource32.json"]];
+  id value=data?[NSJSONSerialization JSONObjectWithData:data options:0 error:nil]:nil;
+  index=[value isKindOfClass:NSDictionary.class]?value:@{};
+ });
+ NSString *label=[@(archive) stringByReplacingOccurrencesOfString:@"\\" withString:@"/"].lowercaseString;
+ if([label hasPrefix:@"platform:/"])label=[@"x64/" stringByAppendingString:[label substringFromIndex:10]];
+ if([label hasPrefix:@"/game/"])label=[label substringFromIndex:6];
+ NSString *key=[NSString stringWithFormat:@"%@|%@",label,@(resource).lowercaseString];
+ NSDictionary *entry=index[key];if(![entry isKindOfClass:NSDictionary.class])return 0;
+ uint64_t size=[entry[@"size"] unsignedLongLongValue];
+ if([entry[@"system"] unsignedIntValue]!=system||[entry[@"graphics"] unsignedIntValue]!=graphics||size<0xffffff||size>256ull*1024*1024)return 0;
+ return (uint32_t)size;
+}
 // Mods made for GTA V Enhanced (the 2025 PC edition, GTA-87) keep their models and textures in newer resource
 // versions, and the game here (the original PC version) stops on them: "Code is expecting version 162 but
 // file adder.yft has version 171". Checked before the game starts and by the installer: a loose resource by

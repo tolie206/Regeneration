@@ -1,0 +1,11 @@
+1891	rage::fiPackfile::FindFileBegin(char const*, rage::fiFindData&) const
+1892	rage::fiPackfile::FindFileNext(fiHandle__*, rage::fiFindData&) const
+1897	rage::fiPackfile::ReadInternal(rage::fiPackfileState&, void*, int) const
+1898	rage::fiPackfile::Size(fiHandle__*) const
+1899	rage::fiPackfile::Size64(fiHandle__*) const
+1901	rage::fiPackfile::Seek64(fiHandle__*, long, rage::fiSeekWhence) const
+1904	rage::fiPackfile::GetFileSize(char const*) const
+2041	rage::pgStreamer::Read(unsigned int, rage::datResourceChunk*, int, unsigned int, void (*)(void*, void*, unsigned int, unsigned int), void*, rage::pgStreamer::Device, unsigned int, void*, float)
+6050	rage::strStreamingInfoManager::RegisterObject(char const*, unsigned int, int, bool&, bool, rage::fiPackEntry*, bool)
+6176	rage::strStreamingInfoManager::GetNextFilesOnCdNew(unsigned int, bool, rage::strIndex*, int, unsigned int, unsigned int)
+6213	rage::strStreamingLoader::LoadRequestedObjects()

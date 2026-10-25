@@ -650,6 +650,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         appendLog(BundledVietnamese.status)
         appendLog("Regeneration R004 (scene/skin repair): frame cap \(GameSettings.shared.frameRateCap), Menyoo \(BundledMenyoo.enabled ? "on":"off"), extended distance \(StreamingSettings.distanceScale ?? "automatic"), texture budget \(StreamingSettings.textureBudgetMB) MiB (0=automatic).")
         ModVehicleSupport.prepare(manifestPath:path,log:appendLog)
+        ModVehicleSupport.prepareLargeResources(log:appendLog)
         SoundAssignments.resolveDuplicatePacks(log:appendLog)
         SoundAssignments.configure()
         noticeMods()
@@ -1358,7 +1359,14 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
             return
         }
         appendLog("Vehicle menu: requested \(vehicle.name) (enter: \(enter)).")
-        monitorMenuAction(title: vehicle.title) {
+        let requestedAt = Date()
+        monitorMenuAction(title: vehicle.title, progress: {
+            let seconds = Int(Date().timeIntervalSince(requestedAt))
+            if PGGetVehicleSpawnStatus() == PGVehicleSpawnLoading { return "\(vehicle.name): đang tải model (\(seconds) giây)…" }
+            if PGPauseMenuActive() { return "\(vehicle.name): đang chờ đóng menu tạm dừng…" }
+            if PGLoadSceneActive() { return "\(vehicle.name): đang chờ tải chuyển cảnh hoàn tất…" }
+            return "\(vehicle.name): đang chờ gameplay (\(seconds) giây, trạng thái \(PGGameStatus()))…"
+        }) {
             switch PGGetVehicleSpawnStatus() {
             case PGVehicleSpawnWaiting, PGVehicleSpawnLoading: return nil
             case PGVehicleSpawnSucceeded: return AppLanguage.interpolate(AppLanguage.choose("Vehicle spawned: {arg0}"), [vehicle.title])
@@ -1390,7 +1398,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
     }
     /// Leaves the pause menu Settings opened, then shows a note at the top until `result` has an answer
     /// (checked four times a second), and that answer for 5 s.
-    private func monitorMenuAction(title: String, result: @escaping () -> String?) {
+    private func monitorMenuAction(title: String, progress: (() -> String)? = nil, result: @escaping () -> String?) {
         touchControls.reset()
         if PGPauseMenuActive() { PGRequestPauseMenu() }
         vehicleSpawnTimer?.invalidate()
@@ -1425,7 +1433,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
             // does, the note shouldn't stay up forever.
             let answer = result() ?? (Date().timeIntervalSince(started) > 60
                 ? AppLanguage.choose("The game didn't respond. Return to normal gameplay and try again.") : nil)
-            guard let message = answer else { return }
+            guard let message = answer else { if let text = progress?() { label?.text = text }; return }
             timer.invalidate()
             self?.vehicleSpawnTimer = nil
             label?.text = message

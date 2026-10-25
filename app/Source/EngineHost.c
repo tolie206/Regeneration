@@ -3281,11 +3281,13 @@ static int pg_audio_rel_walk(uint64_t entries,uint64_t names,unsigned shift,uint
  }
  return renamed;
 }
+#include "NativeLargeResources.inc"
 void pg_packfile_mounted(w2c_game *instance,u64 packfile,u64 name,u32 result){
  (void)instance;
  if(!result)return;
  const char *label=pg_string(&env,name);
  pg_game_index(label,packfile);
+ pg_large_archive_mounted(packfile,label);
  size_t labelLength=strlen(label);
  if(labelLength>8&&!strcasecmp(label+labelLength-7,"dlc.rpf")&&(label[labelLength-8]=='/'||label[labelLength-8]=='\\')){   // "platform:\dlcPacks\<pack>\dlc.rpf"
   uint64_t entries=*(uint64_t *)pg_pointer(&env,packfile+32,8),names=*(uint64_t *)pg_pointer(&env,packfile+16,8);

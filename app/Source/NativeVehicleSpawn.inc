@@ -193,6 +193,7 @@ static void pg_vehicle_menu_step(w2c_game *instance, u64 vector) {
   static double began;
   static bool requested;
   static u64 requestOwner;
+  static double loadingReported;
   pthread_mutex_lock(&vehicleMenuLock);
   PGVehicleSpawnStatus status = vehicleSpawnStatus;
   uint32_t model = vehicleSpawnModel;
@@ -209,7 +210,12 @@ static void pg_vehicle_menu_step(w2c_game *instance, u64 vector) {
   }
   // Settings closes the pause menu; wait for the game to really be playing again.
   bool ready = !PGPauseMenuActive() && PGGameStatus() == 0 && !PGLoadSceneActive();
-  if (!requested && !ready) return;
+  if (!requested && !ready) {
+    static double reported;static uint32_t lastState;
+    uint32_t state=PGGameStatus()|(PGPauseMenuActive()?0x100:0)|(PGLoadSceneActive()?0x200:0);
+    if(state!=lastState||now-reported>=2000){char line[160];snprintf(line,sizeof line,"Vehicle wait: model 0x%08x, %.1f s, gameplay/pause/scene bits 0x%x; model request has not started.",model,(now-queuedAt)/1000,state);pg_log(line);reported=now;lastState=state;}
+    return;
+  }
   u64 previous = pg_asi_enter_script(instance);
   u64 active = *(u64 *)pg_pointer(&env, instance->w2c_g1 + 3088, 8);
   u64 owner = active ? PG_FN_CURRENT_SCRIPT_HANDLER(instance) : 0;
@@ -228,11 +234,12 @@ static void pg_vehicle_menu_step(w2c_game *instance, u64 vector) {
     else if (!pg_vehicle_memory_available()) result = PGVehicleSpawnLowMemory;
     else {
       pg_log("Vehicle menu: loading the model.");
-      PG_FN_REQUEST_MODEL(instance, model); requested = true; requestOwner = owner; began = now;
+      PG_FN_REQUEST_MODEL(instance, model); loadingReported = now; requested = true; requestOwner = owner; began = now;
       pg_vehicle_spawn_status(PGVehicleSpawnLoading);
     }
   }
   if (requested) {
+    if(now-loadingReported>=5000){char line[160];snprintf(line,sizeof line,"Vehicle model wait: 0x%08x, %.1f s since REQUEST_MODEL, gameplay 0x%x.",model,(now-began)/1000,PGGameStatus());pg_log(line);loadingReported=now;}
     if (!ready) result = PGVehicleSpawnNotReady;
     else if (now - began > 30000) result = PGVehicleSpawnTimedOut;
     else if (!pg_vehicle_memory_available()) result = PGVehicleSpawnLowMemory;

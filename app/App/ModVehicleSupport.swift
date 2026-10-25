@@ -90,4 +90,49 @@ enum ModVehicleSupport {
    do{try JSONSerialization.data(withJSONObject:Array(names[mod.url] ?? []).sorted()).write(to:mod.url.appendingPathComponent(".mulone-vehicles.json"),options:.atomic)}catch{log("Vehicle list: \(error.localizedDescription)")}
   }
  }
+ /// Build a pre-boot index for RPF resources whose size uses OpenIV's 32-bit
+ /// extended header. The pinned engine otherwise masks their length to24bits.
+ static func prepareLargeResources(log:(String)->Void) {
+  let fm=FileManager.default
+  var index:[String:[String:UInt64]]=[:]
+  do {
+   for mod in ModInstaller.installed().filter({$0.enabled}) {
+    guard let walk=fm.enumerator(at:mod.url,includingPropertiesForKeys:nil,options:.skipsHiddenFiles) else{continue}
+    for case let url as URL in walk where url.lastPathComponent.lowercased()=="dlc.rpf" {
+     let archive=try RPFArchive(url:url)
+     let setup=archive.entries.first{$0.path=="setup2.xml"}
+     let xml=try setup.map{try archive.metadata($0)}.flatMap{String(data:$0,encoding:.utf8)} ?? ""
+     let re=try NSRegularExpression(pattern:"<deviceName>\\s*([^<]+)\\s*</deviceName>",options:.caseInsensitive)
+     let ns=xml as NSString
+     let device=re.firstMatch(in:xml,range:NSRange(location:0,length:ns.length)).map{ns.substring(with:$0.range(at:1)).lowercased()}
+     let pack=url.deletingLastPathComponent().lastPathComponent.lowercased()
+     func scan(_ a:RPFArchive,_ label:String,_ depth:Int)throws {
+      guard depth<8 else{throw ModError("DLC lồng quá sâu.")}
+      for e in a.entries {
+       if e.path.hasSuffix(".rpf"),let device {
+        try scan(a.nested(e),device+":/"+e.path,depth+1)
+       } else if e.resourceVersion != nil && e.size>=0xffffff {
+        guard e.size<=256*1024*1024 else{throw ModError("Resource vượt256MiB: \(e.path)")}
+        // Verify a complete compressed payload once per scan. Keep bytes intact.
+        _ = try ModResource.normalize(a.resourceData(e),name:e.path)
+        let key=label.lowercased()+"|"+e.path.lowercased()
+        let item:[String:UInt64]=["size":UInt64(e.size),"system":UInt64(e.unpacked),"graphics":UInt64(e.graphicsFlags)]
+        if let old=index[key],old != item{throw ModError("Hai DLC dùng chung đường dẫn resource lớn: \(key)")}
+        index[key]=item
+       }
+      }
+     }
+     try scan(archive,"x64/dlcpacks/"+pack+"/dlc.rpf",0)
+    }
+   }
+   try fm.createDirectory(at:ModInstaller.modsFolder,withIntermediateDirectories:true)
+   try JSONSerialization.data(withJSONObject:index,options:.sortedKeys).write(to:ModInstaller.modsFolder.appendingPathComponent(".newgen-resource32.json"),options:.atomic)
+   log("Large mod resources: \(index.count) verified extended-size entries indexed before boot.")
+  }catch {
+   // A stale index must never be used for changed archives.
+   try? Data("{}".utf8).write(to:ModInstaller.modsFolder.appendingPathComponent(".newgen-resource32.json"),options:.atomic)
+   log("Large resource validation failed: \(error.localizedDescription). Extended-size resources are not enabled.")
+  }
+ }
+
 }
