@@ -2,6 +2,10 @@ import Foundation
 
 /// Boot-only preferences. Automatic preserves the regeneration baseline.
 enum StreamingSettings {
+    static var distanceStreaming: Bool {
+        get { UserDefaults.standard.object(forKey: "distanceStreaming") as? Bool ?? true }
+        set { UserDefaults.standard.set(newValue, forKey: "distanceStreaming") }
+    }
     static let distanceValues = ["0", "0.2", "0.4", "0.6", "0.8", "1"]
     static let textureValues = [384, 512, 640, 768, 1024, 1280]
     static var distanceScale: String? {
@@ -22,7 +26,7 @@ enum StreamingSettings {
         set { UserDefaults.standard.set(textureValues.contains(newValue) ? newValue : 0, forKey: "RegenerationTextureBudget") }
     }
     static func applyTextureBudget() {
-        setenv("PG_DISTANCE_STREAMING", GameSettings.shared.distanceStreaming ? "1" : "0", 1)
+        setenv("PG_DISTANCE_STREAMING", distanceStreaming ? "1" : "0", 1)
         if textureBudgetMB == 0 { unsetenv("PG_VIDEO_MEMORY_MB") }
         else { setenv("PG_VIDEO_MEMORY_MB", String(textureBudgetMB), 1) }
     }

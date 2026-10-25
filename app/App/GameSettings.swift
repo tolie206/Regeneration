@@ -189,11 +189,6 @@ final class GameSettings {
     }
     /// A hardware keyboard and mouse play through the game's own PC controls (on by default).
     /// Settings › Memory cap: the most memory (MB) the game may use, 0 automatic (the app's limit).
-    /// Prefer resident nearby assets; applies at the next game start.
-    var distanceStreaming: Bool {
-        get { defaults.object(forKey: "distanceStreaming") as? Bool ?? true }
-        set { defaults.set(newValue, forKey: "distanceStreaming") }
-    }
     var memoryCapMB: Int {
         get { defaults.integer(forKey: "memoryCapMB") }
         set { defaults.set(max(0, newValue), forKey: "memoryCapMB") }

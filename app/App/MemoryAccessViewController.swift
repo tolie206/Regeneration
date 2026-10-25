@@ -28,13 +28,13 @@ final class MemoryAccessViewController: UITableViewController {
   case 6:
    c.text="Thu hồi theo di chuyển"
    c.secondaryText="Giữ tài nguyên gần nhân vật; không chừa RAM cố định cho host. Chỉ cho phép host yêu cầu dọn sau khi đi xa 160 m hoặc chuyển cảnh. Engine vẫn tự quản lý cache và allocator. Áp dụng lần mở game sau; tắt để về R005."
-   let control=UISwitch();control.isOn=GameSettings.shared.distanceStreaming;control.addTarget(self,action:#selector(distanceStreamingChanged(_:)),for:.valueChanged);cell.accessoryView=control
+   let control=UISwitch();control.isOn=StreamingSettings.distanceStreaming;control.addTarget(self,action:#selector(distanceStreamingChanged(_:)),for:.valueChanged);cell.accessoryView=control
   default:
    c.text="Vì sao không tự nâng lên 5 GB?";c.secondaryText="App đã yêu cầu increased-memory-limit và extended-virtual-addressing trong IPA. iOS quyết định mức thực tế. Nút bên trên không thay chữ ký, không bypass giới hạn và không đổi giới hạn engine để tránh crash."
   }
   c.textProperties.color=Theme.text;c.secondaryTextProperties.color=Theme.secondaryText;c.secondaryTextProperties.numberOfLines=0;cell.contentConfiguration=c;return cell
  }
- @objc private func distanceStreamingChanged(_ sender:UISwitch){GameSettings.shared.distanceStreaming=sender.isOn}
+ @objc private func distanceStreamingChanged(_ sender:UISwitch){StreamingSettings.distanceStreaming=sender.isOn}
  override func tableView(_ tableView:UITableView,didSelectRowAt indexPath:IndexPath){
   tableView.deselectRow(at:indexPath,animated:true)
   if indexPath.row==2 {tier=DeviceTier.probe();GameSettings.shared.tier=tier;tableView.reloadData()}
