@@ -2,6 +2,8 @@
 // switches. Included by EngineHost.c. The app only queues requests here; pg_native_cheats_tick runs
 // them on the game thread during the "main" script's turn (pg_asi_script_tick), where game commands
 // are safe. Running them from UIKit or the controller thread races the engine's own updates.
+void PG_FN_CAMERA_PED_MODE(w2c_game*, u32);
+void PG_FN_CAMERA_VEHICLE_MODE(w2c_game*, u32);
 u32 PG_FN_PED_VEHICLE(w2c_game*, u32, u32);
 void PG_FN_REPAIR_VEHICLE(w2c_game*, u32);
 void PG_FN_VEHICLE_ENGINE_HEALTH(w2c_game*, u32, f32);
@@ -30,9 +32,10 @@ static u32 cheatPreviousMaxWanted; // The wanted limit before Never wanted, give
 static const char *const menuWeather[] = {"CLEAR", "EXTRASUNNY", "CLOUDS", "OVERCAST", "RAIN", "THUNDER", "FOGGY"};
 
 bool PGQueueCheat(PGCheatCommand command, int32_t value) {
-  if ((unsigned)command > PGCheatNaturalWeather) return false;
+  if ((unsigned)command > PGCheatCameraMode) return false;
   if (command == PGCheatSetTime && (value < 0 || value > 23)) return false;
   if (command == PGCheatSetWeather && (value < 0 || value >= (int32_t)(sizeof menuWeather / sizeof *menuWeather))) return false;
+  if (command == PGCheatCameraMode && value != 1 && value != 4) return false;
   pthread_mutex_lock(&cheatMenuLock);
   bool accepted = cheatMenuStatus != PGCheatWaiting;
   if (accepted) { cheatMenuCommand = command; cheatMenuValue = value; cheatMenuQueuedAt = timeMS(CLOCK_MONOTONIC); cheatMenuStatus = PGCheatWaiting; }
@@ -129,6 +132,10 @@ static void pg_native_cheats_action_tick(w2c_game *instance) {
         PG_FN_VEHICLE_DIRT(instance, vehicle, 0.f);
         break;
       }
+      case PGCheatCameraMode:
+        PG_FN_CAMERA_PED_MODE(instance, (u32)value);
+        PG_FN_CAMERA_VEHICLE_MODE(instance, (u32)value);
+        break;
       case PGCheatSetTime: PG_FN_SET_CLOCK(instance, (u32)value, 0, 0); break;
       case PGCheatSetWeather:
         snprintf(pg_pointer(&env, instance->w2c_g0, 32), 32, "%s", menuWeather[value]);

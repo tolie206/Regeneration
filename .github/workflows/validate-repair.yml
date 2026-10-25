@@ -1,7 +1,7 @@
 name: Validate regeneration repair (no IPA)
 on:
   push:
-    branches: [regeneration-mod-repair]
+    branches: [regeneration-mod-repair, regeneration-r004-scene-skins]
   workflow_dispatch:
 permissions:
   contents: read
@@ -40,3 +40,13 @@ jobs:
           rm -rf "$RUNNER_TEMP/repair-mods/game"
       - name: Test import, registration resources and rollback (not rendered appearance)
         run: '"$RUNNER_TEMP/repair-test" "$RUNNER_TEMP/repair-mods"'
+      - name: Test actual Ryoubi resource repair and reject truncated Makima
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path('r004-inputs')
+          for name,sha in json.loads((root/'sha256.json').read_text()).items(): assert hashlib.sha256((root/name).read_bytes()).hexdigest()==sha
+          PY
+          cd app
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/ModVehicleSupport.swift App/SkinInstaller.swift App/BundledMenyoo.swift Tests/SoundTestStubs.swift Tests/r004_skin_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/r004-skins"
+          "$RUNNER_TEMP/r004-skins" "${{ github.workspace }}/r004-inputs"

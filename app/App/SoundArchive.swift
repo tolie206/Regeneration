@@ -219,3 +219,60 @@ enum ModAudio {
         return ModPack.validName(candidate) && hashes.contains(hash(candidate)) ? [candidate]:[]
     }
 }
+
+/// The pinned pgBase page-map encoder only represents pages >=8 KiB. Some valid
+/// PC resources include 512/1024/2048/4096-byte tail pages and trap during placement.
+/// Merge the tail into a padded ordinary page, preserving every virtual/physical
+/// byte and its segment-relative address. Never change textures or geometry.
+enum ModResource {
+    static func segmentSize(_ flags: UInt32) -> Int {
+        let counts = [(27,1,1),(26,1,2),(25,1,4),(24,1,8),(17,127,16),(11,63,32),(7,15,64),(5,3,128),(4,1,256)]
+        return counts.reduce(0) { $0 + Int((flags >> $1.0) & UInt32($1.1)) * $1.2 } * (512 << Int(flags & 15))
+    }
+    static func needsRepair(_ flags: UInt32) -> Bool {
+        let base = 512 << Int(flags & 15)
+        return [(27,1),(26,2),(25,4),(24,8)].contains { flags & (1 << $0.0) != 0 && base * $0.1 < 8192 }
+    }
+    static func paddedFlags(_ flags: UInt32) throws -> UInt32 {
+        let size = segmentSize(flags)
+        for shift in Int(flags & 15)...15 {
+            let unit = 8192 << shift
+            var units = (size + unit - 1) / unit
+            var result = flags & 0xf0000000 | UInt32(shift)
+            for (bit,weight,limit) in [(4,16,1),(5,8,3),(7,4,15),(11,2,63),(17,1,127)] {
+                let count = min(units / weight, limit);units -= count * weight
+                result |= UInt32(count) << bit
+            }
+            if units == 0 { return result }
+        }
+        throw ModError("Resource quá lớn để chuyển page map an toàn.")
+    }
+    static func normalize(_ input: Data, name: String) throws -> Data {
+        guard input.count >= 16, input.starts(with: Data("RSC7".utf8)) else { throw ModError("Resource thiếu header: \(name)") }
+        func word(_ at: Int) -> UInt32 { (0..<4).reduce(0) { $0 | UInt32(input[at+$1]) << (8*$1) } }
+        let system = word(8), graphics = word(12)
+        let virtualSize = segmentSize(system), physicalSize = segmentSize(graphics)
+        guard virtualSize > 0, virtualSize + physicalSize <= 256 * 1024 * 1024 else { throw ModError("Resource vượt ngân sách kiểm tra 256 MiB: \(name)") }
+        var raw = Data(count: virtualSize + physicalSize)
+        let packed = input.subdata(in:16..<input.count)
+        let rawSize = raw.count
+        let ok = raw.withUnsafeMutableBytes { o in packed.withUnsafeBytes { i in gi_inflate_raw(i.baseAddress,UInt32(packed.count),o.baseAddress,UInt32(rawSize)) } }
+        guard ok == 1 else { throw ModError("Resource nén bị thiếu/hỏng: \(name). Tải lại gói mod đầy đủ.") }
+        guard needsRepair(system) || needsRepair(graphics) else { return input }
+        let newSystem = needsRepair(system) ? try paddedFlags(system) : system
+        let newGraphics = needsRepair(graphics) ? try paddedFlags(graphics) : graphics
+        let newVirtual = segmentSize(newSystem), newPhysical = segmentSize(newGraphics)
+        var padded = Data(count:newVirtual + newPhysical)
+        padded.replaceSubrange(0..<virtualSize,with:raw[0..<virtualSize])
+        padded.replaceSubrange(newVirtual..<(newVirtual+physicalSize),with:raw[virtualSize..<raw.count])
+        var compressed = Data(count:padded.count + padded.count/1000 + 128)
+        let capacity = compressed.count
+        let n = compressed.withUnsafeMutableBytes { o in padded.withUnsafeBytes { i in gi_deflate_raw(i.baseAddress,UInt32(padded.count),o.baseAddress,UInt32(capacity)) } }
+        guard n > 0 else { throw ModError("Không thể đóng gói resource: \(name)") }
+        compressed.count = Int(n)
+        var result = Data(input.prefix(16))
+        for (at,value) in [(8,newSystem),(12,newGraphics)] { for i in 0..<4 { result[at+i] = UInt8(truncatingIfNeeded:value >> (8*i)) } }
+        result.append(compressed)
+        return result
+    }
+}

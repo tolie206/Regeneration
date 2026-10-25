@@ -399,6 +399,18 @@ enum ModInstaller {
             }
             let to = components.reduce(staging) { $0.appendingPathComponent($1) }
             try fm.createDirectory(at: to.deletingLastPathComponent(), withIntermediateDirectories: true)
+            // Validate/repage loose resources at install time; originals and the old
+            // installed mod remain untouched if validation fails.
+            let resourceTypes: Set<String> = ["ytd", "ydd", "ydr", "yft", "ymt"]
+            if resourceTypes.contains(item.source.pathExtension.lowercased()) {
+                let original = try Data(contentsOf:item.source,options:.mappedIfSafe)
+                if original.starts(with:Data("RSC7".utf8)) {
+                    let converted = try ModResource.normalize(original,name:item.source.lastPathComponent)
+                    try converted.write(to:to,options:.atomic)
+                    guard try Data(contentsOf:to,options:.mappedIfSafe) == converted else { throw ModError("Chép resource không đầy đủ.") }
+                    continue
+                }
+            }
             try fm.copyItem(at: item.source, to: to)
             let sourceSize = try fm.attributesOfItem(atPath: item.source.path)[.size] as? NSNumber
             let copiedSize = try fm.attributesOfItem(atPath: to.path)[.size] as? NSNumber

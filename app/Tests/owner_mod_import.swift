@@ -61,7 +61,8 @@ import FoundationXML
     let restored=try inner.resourceData(entry)
     let original=files(skins,(entry.path as NSString).pathExtension).first{$0.lastPathComponent.lowercased()==entry.path}!
     let source=try Data(contentsOf:original)
-    precondition(restored==source,"Skin bytes changed: \(entry.path)")
+    let expected = try ModResource.normalize(source,name:entry.path)
+    precondition(restored==expected,"Skin payload conversion differs: \(entry.path)")
    }
   }
   // Multi-select the actual four 2B files, with each in its own picker staging directory.

@@ -9,6 +9,7 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
     private var importingSound = false
     private var importingSkin = false
     private var femaleSkin = true
+    private var skinModelName: String?
 
     init() { super.init(style: .insetGrouped) }
     required init?(coder: NSCoder) { fatalError() }
@@ -84,9 +85,14 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
             guard !busy, !ModInstaller.gameRunning else { show(ModError("Nhập skin trước khi vào game; tắt hẳn và mở lại app nếu đang chơi.")); return }
             importingSound = false; importingSkin = true
             let menu = UIAlertController(title: "Loại skin addon", message: "Chọn ZIP/RAR/thư mục hoặc nhiều file cùng lúc. Mỗi model cần đủ YDD, YFT, YMT, YTD. Gói 2B/A2 chọn Nữ.", preferredStyle: .alert)
+            menu.addTextField { field in
+                field.placeholder = "Tên model ngắn (để trống giữ tên gốc)"
+                field.autocapitalizationType = .none; field.autocorrectionType = .no
+            }
             for female in [true, false] {
                 menu.addAction(UIAlertAction(title: female ? "Nữ (2B/A2)" : "Nam", style: .default) { _ in
                     self.femaleSkin = female
+                    self.skinModelName = SkinInstaller.normalizedName(menu.textFields?.first?.text ?? "")
                     let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.item, .folder], asCopy: true)
                     picker.delegate = self; picker.allowsMultipleSelection = true
                     self.present(picker, animated: true)
@@ -144,7 +150,7 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
                 let name=urls.count==1 ? urls[0].lastPathComponent:"Xe_"+urls[0].deletingPathExtension().lastPathComponent
                 let plan: ModInstaller.Plan
                 do {
-                    if self.importingSkin { plan = try SkinInstaller.plan(folder:folder,name:name,female:self.femaleSkin) }
+                    if self.importingSkin { plan = try SkinInstaller.plan(folder:folder,name:name,female:self.femaleSkin,modelName:self.skinModelName) }
                     else if SoundInstaller.isSoundOnly(folder) {
                         guard !ModInstaller.gameRunning else { throw ModError("Nhập audio trước khi vào game; hãy tắt hẳn và mở lại app.") }
                         plan = try SoundInstaller.build(folder).0

@@ -121,7 +121,7 @@ PGVehicleSpawnStatus PGGetVehicleSpawnStatus(void);
 // 3 overcast, 4 rain, 5 thunder, 6 fog.
 typedef enum {
   PGCheatRepairVehicle, PGCheatCleanVehicle, PGCheatSetTime,
-  PGCheatSetWeather, PGCheatNaturalWeather
+  PGCheatSetWeather, PGCheatNaturalWeather, PGCheatCameraMode
 } PGCheatCommand;
 typedef enum {
   PGCheatIdle, PGCheatWaiting, PGCheatSucceeded, PGCheatNoVehicle, PGCheatNotReady

@@ -19,6 +19,8 @@ TABLE = root / 'Generated/funcnames.tsv'
 HEADER = root / 'Generated/engine-functions.h'
 # Engine functions the host code calls directly (Source/*.c): each gets a macro in HEADER.
 HOST_FUNCTIONS = {
+    'PG_FN_CAMERA_PED_MODE': 'camera_commands::CommandSetFollowPedCamViewMode(int)',
+    'PG_FN_CAMERA_VEHICLE_MODE': 'camera_commands::CommandSetFollowVehicleCamViewMode(int)',
     'PG_FN_TURBO_ENTITY_ADDRESS': 'rage::fwScriptGuid::GetBaseFromGuid(int)',
     'PG_FN_AUDIO_PROFILE': 'rage::audMetadataManager::GetObject_Verify(unsigned int, unsigned int) const',
     'PG_FN_FORCE_AUDIO': 'audio_commands::CommandForceVehicleGameObject(int, char const*)',

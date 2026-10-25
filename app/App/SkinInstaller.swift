@@ -1,10 +1,13 @@
 import Foundation
 
-/// Register non-streamed addon peds as startup DLCs; original model bytes are retained.
+/// Register non-streamed addon peds as startup DLCs; segment-relative model bytes are retained; small resource pages are padded at import.
 /// A complete quartet distinguishes a ped from a loose replacement vehicle.
 enum SkinInstaller {
+    static func normalizedName(_ value: String) -> String {
+        value.folding(options:[.diacriticInsensitive,.caseInsensitive],locale:Locale(identifier:"vi_VN")).lowercased().replacingOccurrences(of:"đ",with:"d").filter { !$0.isWhitespace }
+    }
     static let extensions: Set<String> = ["ydd", "yft", "ymt", "ytd"]
-    static func plan(folder: URL, name: String, female: Bool = true) throws -> ModInstaller.Plan {
+    static func plan(folder: URL, name: String, female: Bool = true, modelName: String? = nil) throws -> ModInstaller.Plan {
         let fm = FileManager.default
         var groups: [String: [String: URL]] = [:]
         guard let walk = fm.enumerator(at: folder, includingPropertiesForKeys: [.isRegularFileKey, .isSymbolicLinkKey]) else { throw ModError("Không đọc được thư mục skin.") }
@@ -14,17 +17,29 @@ enum SkinInstaller {
             let ext = url.pathExtension.lowercased()
             guard info.isRegularFile == true, extensions.contains(ext) else { continue }
             let model = url.deletingPathExtension().lastPathComponent.lowercased()
-            guard ModPack.validName(model) else { throw ModError("Tên model skin chỉ được có chữ, số và dấu gạch dưới: \(model)") }
+            guard ModPack.validName(model) || modelName.map(normalizedName).map({ !$0.isEmpty }) == true else { throw ModError("Tên model skin chỉ được có chữ, số và dấu gạch dưới: \(model)") }
             if let prior = groups[model]?[ext], prior != url { throw ModError("Có nhiều biến thể cùng tên \(model). Hãy chọn riêng một thư mục biến thể.") }
             groups[model, default: [:]][ext] = url
         }
         guard !groups.isEmpty, groups.count <= 32 else { throw ModError("Chọn từ 1 tới 32 skin, mỗi skin đủ YDD, YFT, YMT, YTD. Skin streamed có thư mục thành phần cần gói DLC riêng.") }
-        var plan = ModInstaller.Plan(name: ModInstaller.cleanName(name))
+        let alias = modelName.map(normalizedName).flatMap { $0.isEmpty ? nil : $0 }
+        if let alias {
+            guard groups.count == 1, alias.utf8.count <= 63, ModPack.validName(alias) else { throw ModError("Đổi tên khi nhập một skin; dùng tối đa 63 chữ thường a-z, số hoặc _. Nhập nhiều skin: để trống tên.") }
+        }
+        let installingName = ModInstaller.cleanName(name)
+        let occupied = ModInstaller.installed().filter { $0.name != installingName }.flatMap { mod -> [String] in
+            guard let d = try? Data(contentsOf:mod.url.appendingPathComponent("skin-models.json")), let names = try? JSONSerialization.jsonObject(with:d) as? [String] else { return [] }
+            return names
+        }
+        let incoming = alias.map { [$0] } ?? groups.keys.sorted()
+        guard Set(occupied).isDisjoint(with:incoming) else { throw ModError("Tên model skin đã được dùng. Chọn tên khác hoặc gỡ skin cũ trước.") }
+        var plan = ModInstaller.Plan(name: installingName)
         plan.kinds.insert("skin-addon")
         let output = folder.appendingPathComponent(".newgen-skin-output")
         try fm.createDirectory(at: output, withIntermediateDirectories: true)
-        for model in groups.keys.sorted() {
-            let group = groups[model]!
+        for original in groups.keys.sorted() {
+            let group = groups[original]!
+            let model = alias ?? original
             guard Set(group.keys) == extensions else { throw ModError("Skin \(model) thiếu: \(extensions.subtracting(group.keys).sorted().joined(separator: ", ")). Chọn cả bốn tệp hoặc ZIP/thư mục đầy đủ.") }
             var assets: [String: Data] = [:]
             for ext in extensions {
@@ -34,7 +49,7 @@ enum SkinInstaller {
                 guard data.count >= 16, data.starts(with: Data("RSC7".utf8)) else { throw ModError("Tệp skin không phải RSC7 Legacy: \(url.lastPathComponent)") }
                 var why = [CChar](repeating: 0, count: 200)
                 guard !PGModFileProblem(url.path, &why, why.count) else { throw ModError("Skin không tương thích: \(String(cString: why))") }
-                assets[model + "." + ext] = data
+                assets[model + "." + ext] = try ModResource.normalize(data, name: url.lastPathComponent)
             }
             // One pack per model avoids accumulating every skin's textures in memory.
             let packName = "ngped_" + String(ModAudio.hash(model), radix: 16)
@@ -50,7 +65,7 @@ enum SkinInstaller {
             plan.items.append(.init(source: file, target: "update/x64/dlcpacks/\(packName)/dlc.rpf", note: "Skin addon: \(model)"))
         }
         let list = output.appendingPathComponent("skin-models.json")
-        try JSONSerialization.data(withJSONObject: groups.keys.sorted()).write(to: list)
+        try JSONSerialization.data(withJSONObject: alias.map { [$0] } ?? groups.keys.sorted()).write(to: list)
         plan.items.append(.init(source: list, target: "skin-models.json", note: "Danh sách model cho Menyoo"))
         return plan
     }

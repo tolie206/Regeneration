@@ -21,11 +21,11 @@ import FoundationXML
  try check(plan.items.allSatisfy{$0.target.hasPrefix("x64/levels/gta5/vehicles.rpf/")},"Thai resource left in pending instead of actual vehicle archive")
  try check(Set(plan.items.map{($0.target as NSString).lastPathComponent})==Set(["bati2.yft","bati2.ytd","bati2+hi.ytd"]),"Thai target names changed")
  let installed=try ModInstaller.install(plan);defer{try? fm.removeItem(at:installed)}
- for item in plan.items{try check(Data(contentsOf:item.source)==Data(contentsOf:installed.appendingPathComponent(item.target)),"Replace bytes changed")}
+ for item in plan.items{let source=try Data(contentsOf:item.source);let expected=try ModResource.normalize(source,name:item.source.lastPathComponent);try check(expected==Data(contentsOf:installed.appendingPathComponent(item.target)),"Replace payload conversion differs")}
  // Failed reinstall must not destroy the working install.
  var broken=ModInstaller.Plan(name:plan.name);broken.items=[.init(source:root.appendingPathComponent("missing.yft"),target:"x64/levels/gta5/vehicles.rpf/bati2.yft",note:"")]
  do{_ = try ModInstaller.install(broken);throw ModError("Missing file accepted")}catch{try check(fm.fileExists(atPath:installed.appendingPathComponent(plan.items[0].target).path),"Failed install destroyed previous mod")}
- print("PASS Thai RAR: 3 byte-preserved replacements, failed reinstall rollback")
+ print("PASS Thai RAR: 3 validated resource replacements, failed reinstall rollback")
  for (file,model) in [("audi.zip","sgr8lmsevo"),("vf8.zip","vf8")]{
   let stage=try ModInstaller.unpack(root.appendingPathComponent(file));defer{try? fm.removeItem(at:stage)}
   var expanded=index
