@@ -1,0 +1,4 @@
+[
+  "  // The selection wheels own the stick even when a look finger is down.\n  const bool selectionWheel = (packed & ((1ull << 2) | (1ull << 14))) != 0;\n  if (!selectionWheel && (dx != 0 || dy != 0)) {\n",
+  " // PG_GUARD_SPARE_MB is that margin (512 in the A/B); 0, the default until a device A/B, keeps v1.4.1's rule.\n static uint64_t spare=UINT64_MAX;\n if(spare==UINT64_MAX){const char *v=getenv(\"PG_GUARD_SPARE_MB\");long mb=v?atol(v):0;spare=(uint64_t)(mb>0&&mb<=4096?mb:0)<<20;}\n"
+]
