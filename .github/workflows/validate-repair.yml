@@ -1,7 +1,7 @@
 name: Validate regeneration repair (no IPA)
 on:
   push:
-    branches: [regeneration-mod-repair, regeneration-r004-scene-skins, regeneration-r005-driveby-textures, regeneration-r006-distance-streaming]
+    branches: [regeneration-mod-repair, regeneration-r004-scene-skins, regeneration-r005-driveby-textures, regeneration-r006-distance-streaming, regeneration-r007-reserve-profiles]
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,6 +22,8 @@ jobs:
         run: python3 tools/test_driveby_look.py "$RUNNER_TEMP/driveby.c"
       - name: Distance streaming policy
         run: |
+          swiftc app/App/StreamingSettings.swift app/Tests/streaming_preferences.swift -o "$RUNNER_TEMP/streaming-preferences"
+          "$RUNNER_TEMP/streaming-preferences"
           python3 tools/test_distance_bridge.py "$RUNNER_TEMP/distance-bridge.c"
           clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/distance_streaming.c -o "$RUNNER_TEMP/distance-streaming"
           "$RUNNER_TEMP/distance-streaming"

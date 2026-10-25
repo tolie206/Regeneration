@@ -8,7 +8,7 @@ final class MemoryAccessViewController: UITableViewController {
  required init?(coder:NSCoder){fatalError("init(coder:) has not been implemented")}
  override func viewDidLoad(){super.viewDidLoad();Theme.styleSettingsTable(tableView)}
  override func numberOfSections(in tableView:UITableView)->Int{1}
- override func tableView(_ tableView:UITableView,numberOfRowsInSection section:Int)->Int{7}
+ override func tableView(_ tableView:UITableView,numberOfRowsInSection section:Int)->Int{9}
  override func tableView(_ tableView:UITableView,cellForRowAt indexPath:IndexPath)->UITableViewCell{
   let cell=UITableViewCell(style:.subtitle,reuseIdentifier:nil);var c=cell.defaultContentConfiguration()
   switch indexPath.row {
@@ -27,12 +27,25 @@ final class MemoryAccessViewController: UITableViewController {
    c.text="Xuất file quyền RAM để ký lại";c.secondaryText="Chia sẻ plist entitlement cho công cụ ký hỗ trợ. Chứng chỉ/profile phải cho phép; không có hộp thoại xin RAM của iOS.";cell.accessoryType = .disclosureIndicator
   case 6:
    c.text="Thu hồi theo di chuyển"
-   c.secondaryText="Giữ tài nguyên gần nhân vật; không chừa RAM cố định cho host. Chỉ cho phép host yêu cầu dọn sau khi đi xa 160 m hoặc chuyển cảnh. Engine vẫn tự quản lý cache và allocator. Áp dụng lần mở game sau; tắt để về R005."
+   c.secondaryText="Ưu tiên giữ tài nguyên gần nhân vật; dọn theo khoảng cách bên dưới hoặc chuyển cảnh. Chỉ dọn khẩn cấp khi RAM trống dưới nửa mức dự phòng, tối đa 16 MB/đợt và 2 đợt/giây. Tắt để về chính sách R005; áp dụng lần mở app sau."
    let control=UISwitch();control.isOn=StreamingSettings.distanceStreaming;control.addTarget(self,action:#selector(distanceStreamingChanged(_:)),for:.valueChanged);cell.accessoryView=control
+  case 7:
+   c.text="RAM dự phòng khi thu hồi theo di chuyển"
+   c.secondaryText="Tự động: máy ≤4 GB: 128 MB; 6 GB–dưới 8 GB: 192 MB; từ 8 GB: 256 MB. App bị iOS giới hạn thấp sẽ tự giảm mức dự phòng. Không dùng dải chặn tăng trưởng lớn của R005. Áp dụng lần mở app sau."
+   let button=UIButton(type:.system);button.setTitle(reserveTitle(StreamingSettings.reserveProfileMB)+" ▾",for:.normal);button.showsMenuAsPrimaryAction=true
+   button.menu=UIMenu(children:StreamingSettings.reserveValues.map{value in UIAction(title:reserveTitle(value),state:StreamingSettings.reserveProfileMB==value ? .on:.off){[weak self] _ in StreamingSettings.reserveProfileMB=value;self?.tableView.reloadData()}});button.sizeToFit();cell.accessoryView=button
+  case 8:
+   c.text="Khoảng cách cho phép dọn"
+   c.secondaryText="Mặc định 80 m, bằng một nửa R006. Đây là điều kiện cho phép engine dọn tài nguyên không còn cần, không xoá mọi vật thể ngoài bán kính. Áp dụng lần mở app sau."
+   let button=UIButton(type:.system);button.setTitle("\(StreamingSettings.reclaimDistance) m ▾",for:.normal);button.showsMenuAsPrimaryAction=true
+   button.menu=UIMenu(children:StreamingSettings.reclaimDistances.map{value in UIAction(title:"\(value) m",state:StreamingSettings.reclaimDistance==value ? .on:.off){[weak self] _ in StreamingSettings.reclaimDistance=value;self?.tableView.reloadData()}});button.sizeToFit();cell.accessoryView=button
   default:
    c.text="Vì sao không tự nâng lên 5 GB?";c.secondaryText="App đã yêu cầu increased-memory-limit và extended-virtual-addressing trong IPA. iOS quyết định mức thực tế. Nút bên trên không thay chữ ký, không bypass giới hạn và không đổi giới hạn engine để tránh crash."
   }
   c.textProperties.color=Theme.text;c.secondaryTextProperties.color=Theme.secondaryText;c.secondaryTextProperties.numberOfLines=0;cell.contentConfiguration=c;return cell
+ }
+ private func reserveTitle(_ value:Int)->String{
+  switch value{case -1:return "Tự động (\(StreamingSettings.selectedReserveMB) MB)";case 0:return "Không dự phòng (R006)";case 128:return "Máy ≤4 GB · 128 MB";case 192:return "Máy 6–<8 GB · 192 MB";default:return "Máy ≥8 GB · 256 MB"}
  }
  @objc private func distanceStreamingChanged(_ sender:UISwitch){StreamingSettings.distanceStreaming=sender.isOn}
  override func tableView(_ tableView:UITableView,didSelectRowAt indexPath:IndexPath){

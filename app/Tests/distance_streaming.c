@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <stdio.h>
 int main(void){
- const uint64_t M=1ull<<20;PGDistanceStreaming s={0};
+ const uint64_t M=1ull<<20;PGDistanceStreaming s={.distanceMeters=160};
  pg_distance_sample(&s,1000,true,0,0,0,false);
  for(unsigned t=1001;t<5000;t++){
   pg_distance_sample(&s,t,true,20,0,0,false);
@@ -33,5 +33,31 @@ int main(void){
  assert(pg_distance_budget(&s,16000,4*M,100*M)==4*M);
  assert(pg_distance_budget(&s,16000,4*M,0)==0);
  assert(pg_distance_budget(&s,16000,0,100*M)==0);
- puts("PASS distance policy: stationary residency, 160m, bounded cleanup, no poll storm, transitions, invalid coords, native limits");
+ // R007 profiles: no old growth band, preserve native ceilings, and clamp only the reserve.
+ for(unsigned reserve=128;reserve<=256;reserve+=64){
+  PGDistanceStreaming q={.reserveBytes=(uint64_t)reserve*M};
+  assert(pg_distance_available(&q,1024*M,(reserve+100)*M)==100*M);
+  assert(pg_distance_available(&q,4*M,(reserve+100)*M)==4*M);
+  assert(pg_distance_available(&q,1024*M,(reserve-1)*M)==0);
+  assert(pg_distance_budget(&q,1000,-(int64_t)M,1*M)==-(int64_t)M);
+  assert(pg_distance_budget(&q,1000,1024*M,12*M)==-(int64_t)(16*M));
+  for(unsigned n=0;n<1000000;n++)assert(pg_distance_budget(&q,1001,1024*M,12*M)==0);
+  assert(pg_distance_budget(&q,1499,1024*M,12*M)==0);
+  assert(pg_distance_budget(&q,1500,1024*M,12*M)==-(int64_t)(16*M));
+  assert(pg_distance_budget(&q,2000,1024*M,(reserve+100)*M)==100*M);
+ }
+ PGDistanceStreaming q={.reserveBytes=128*M};
+ pg_distance_sample(&q,1000,true,0,0,0,false);
+ pg_distance_sample(&q,2000,true,79,0,0,false);
+ assert(pg_distance_budget(&q,2000,1024*M,160*M)==32*M);
+ pg_distance_sample(&q,3000,true,80,0,0,false);
+ assert(pg_distance_budget(&q,3000,1024*M,160*M)==-(int64_t)(16*M));
+ assert(pg_distance_budget(&q,3001,1024*M,160*M)==32*M);
+ assert(pg_distance_reserve_for_limit(128,2098)==128*M);
+ assert(pg_distance_reserve_for_limit(256,2098)==128*M);
+ assert(pg_distance_reserve_for_limit(256,3072)==192*M);
+ assert(pg_distance_reserve_for_limit(192,4096)==192*M);
+ assert(pg_distance_reserve_for_limit(256,7096)==256*M);
+ assert(pg_distance_reserve_for_limit(0,2098)==0);
+ puts("PASS R006 opt-out plus R007 profiles: 80m, native limits, bounded emergency, 1M-poll cooldown, low-quota cap");
 }

@@ -47,6 +47,8 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - name: Distance streaming policy
         run: |
+          swiftc app/App/StreamingSettings.swift app/Tests/streaming_preferences.swift -o "$RUNNER_TEMP/streaming-preferences"
+          "$RUNNER_TEMP/streaming-preferences"
           python3 tools/test_distance_bridge.py "$RUNNER_TEMP/distance-bridge.c"
           clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/distance_streaming.c -o "$RUNNER_TEMP/distance-streaming"
           "$RUNNER_TEMP/distance-streaming"
@@ -130,16 +132,16 @@ jobs:
           "$RUNNER_TEMP/sound-runtime-full"
       - name: Verify transition lifecycle guard
         run: python3 tools/test_scene_lifecycle.py "$RUNNER_TEMP/scene-lifecycle.c"
-      - name: Build Mugoat-NewGen-Regeneration-R006
+      - name: Build Mugoat-NewGen-Regeneration-R007
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify IPA entitlements
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R006.ipa
+          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R007.ipa
       - uses: actions/upload-artifact@v4
         with:
-          name: Mugoat-NewGen-Regeneration-R006
-          path: Mugoat-NewGen-Regeneration-R006.ipa
+          name: Mugoat-NewGen-Regeneration-R007
+          path: Mugoat-NewGen-Regeneration-R007.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()

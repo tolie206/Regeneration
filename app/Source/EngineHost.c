@@ -373,7 +373,7 @@ static int64_t weaponGrant(int64_t result){
 uint64_t pg_streaming_available_memory(uint64_t engineAvailable){
  uint64_t available;
  if(!nativeProcessHeadroom(&available))return engineAvailable;
- uint64_t result=pg_distance_streaming_enabled()?(engineAvailable<available?engineAvailable:available):pg_streaming_headroom_budget(engineAvailable,available,guardReserve(),guardBand());
+ uint64_t result=pg_distance_streaming_enabled()?pg_distance_available(&distanceStreaming,engineAvailable,available):pg_streaming_headroom_budget(engineAvailable,available,guardReserve(),guardBand());
  if(pg_distance_streaming_enabled())return result; // Never grant extra bytes past actual headroom.
  int64_t granted=weaponGrant((int64_t)result);
  return granted>(int64_t)result&&(uint64_t)granted<=engineAvailable?(uint64_t)granted:result;
@@ -449,7 +449,7 @@ uint64_t pg_streaming_resource_memory(uint64_t engineAvailable){
 }
 void PGLogStreamingPolicy(void){
  if(!pg_distance_streaming_enabled())return;
- char line[240];snprintf(line,sizeof line,"Distance streaming: last native budget %lld KiB, effective headroom %llu MiB, host reclaim permits used %llu (cumulative); no fixed host reserve.",(long long)(atomic_load(&distanceLastEngineBudget)/1024),(unsigned long long)(atomic_load(&distanceLastHeadroom)>>20),(unsigned long long)atomic_load(&distanceReclaims));pg_log(line);
+ char line[280];snprintf(line,sizeof line,"Distance streaming: last native budget %lld KiB, effective headroom %llu MiB, host reclaims %llu (cumulative); reserve %llu MiB, movement %u m, emergency below %llu MiB.",(long long)(atomic_load(&distanceLastEngineBudget)/1024),(unsigned long long)(atomic_load(&distanceLastHeadroom)>>20),(unsigned long long)atomic_load(&distanceReclaims),(unsigned long long)(distanceStreaming.reserveBytes>>20),distanceStreaming.distanceMeters,(unsigned long long)(distanceStreaming.reserveBytes>>21));pg_log(line);
 }
 // The engine heap's reservation. 4095 MB unless the process may use clearly more: the game's
 // heap hit that ceiling on 8 GB-limit phones while about 1 GB of the limit was still free.
@@ -2868,7 +2868,7 @@ static void *boot(void *ignored) {
   if(limit){char *end;unsigned long mb=strtoul(limit,&end,10);if(end!=limit&&!*end&&mb>=2048&&mb<=8192)simulatedProcessLimit=(uint64_t)mb*1048576;}
 #endif
   if(nativeMemoryGuard)pg_log("Native streaming memory guard enabled (reserve selected from process limit).");
-  pg_log(pg_distance_streaming_enabled()?"Streaming policy: distance-based; no fixed host reserve; reclaim permit after 160 m or an active scene, at most 16 MiB per permit; native cache/heap limits remain.":"Streaming policy: R005 pressure reserve.");
+  pg_log(pg_distance_streaming_enabled()?"Streaming policy: distance-based with selectable small reserve; bounded reclamation; native cache/heap limits remain.":"Streaming policy: R005 pressure reserve.");
   // Device A/B switches (GTA-117, GTA-128), named in the log so each run says which side it was.
   if(nativeMemoryGuard&&getenv("PG_GUARD_SPARE_MB"))pg_log("Memory guard A/B: fast nudges only with PG_GUARD_SPARE_MB to spare.");
   if(nativeMemoryGuard&&getenv("PG_GUARD_POOL_ROOM")&&atoi(getenv("PG_GUARD_POOL_ROOM"))==0)pg_log("Memory guard: the resource pool's free space doesn't count as room (PG_GUARD_POOL_ROOM=0).");
@@ -2878,6 +2878,13 @@ static void *boot(void *ignored) {
   char coresLog[96];snprintf(coresLog,sizeof coresLog,"Native engine worker configuration: %u logical cores.",nativeEngineCores);pg_log(coresLog);
   wasm_rt_init();
   uint64_t engineMB=pg_engine_memory_mb();
+  { const char *v=getenv("PG_DISTANCE_RESERVE_MB");long mb=v?atol(v):128;
+    if(mb!=0&&mb!=128&&mb!=192&&mb!=256)mb=128;
+    distanceStreaming.reserveBytes=pg_distance_reserve_for_limit((uint64_t)mb,processLimitMB);
+    v=getenv("PG_DISTANCE_METERS");long metres=v?atol(v):80;
+    distanceStreaming.distanceMeters=metres==40||metres==60||metres==80||metres==120||metres==160?(uint32_t)metres:80;
+    if(pg_distance_streaming_enabled()){char policy[160];snprintf(policy,sizeof policy,"Distance policy boot: requested reserve %ld MiB, effective reserve %llu MiB, movement %u m; no legacy growth band.",mb,(unsigned long long)(distanceStreaming.reserveBytes>>20),distanceStreaming.distanceMeters);pg_log(policy);}
+  }
   char reserveLog[128];snprintf(reserveLog,sizeof reserveLog,"Reserving %llu MB virtual engine memory, starting with a 3328 MB shared heap.",(unsigned long long)engineMB);pg_log(reserveLog);
 #if defined(PG_HAS_ARM64_SHARED_VECTORS) && !defined(PG_SHARED_SIMD_BYTEWISE)
   pg_log("Shared vector memory uses native ARM64 instructions with bounds checks.");
