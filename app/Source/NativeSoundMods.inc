@@ -20,7 +20,7 @@ bool PGSelectVehicleSound(uint32_t model,const char *profile){
  pthread_mutex_unlock(&soundLock);return true;
 }
 static void pg_sound_mod_tick(w2c_game *instance){
- if(!atomic_load(&soundMonitor)||PGPauseMenuActive()||PGGameStatus()!=0||PGLoadSceneSeconds()!=0)return;
+ if(!atomic_load(&soundMonitor)||PGPauseMenuActive()||PGGameStatus()!=0||PGLoadSceneActive())return;
  static double next;double now=timeMS(CLOCK_MONOTONIC);if(now<next)return;next=now+500;
  u64 previous=pg_asi_enter_script(instance);
  u32 ped=PG_FN_PLAYER_PED_ID(instance),vehicle=ped?PG_FN_PED_VEHICLE(instance,ped,0):0;

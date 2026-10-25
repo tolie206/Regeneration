@@ -24,7 +24,7 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
     private func reload() { mods = ModInstaller.installed(); tableView.reloadData() }
 
     override func numberOfSections(in tableView: UITableView) -> Int { 2 }
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { section == 0 ? 7 : max(mods.count, 1) }
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { section == 0 ? 8 : max(mods.count, 1) }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         section == 1 ? AppLanguage.choose("Installed") : nil
     }
@@ -40,8 +40,8 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
         cell.accessoryView = nil; cell.accessoryType = .none; cell.selectionStyle = .default
         if indexPath.section == 0 {
             content.text = [busy ? AppLanguage.choose("Reading the mod…") : AppLanguage.choose("Install a mod…"),
-                            AppLanguage.choose("Show the Mods folder in Files"), AppLanguage.choose("Mods guide"), "Nhập âm thanh xe…", "Chọn tiếng cho xe…", "Việt hoá cốt truyện…", "Nhập skin addon (Menyoo)…"][indexPath.row]
-            content.image = UIImage(systemName: ["square.and.arrow.down", "folder", "book", "waveform", "speaker.wave.2", "character.bubble", "person.crop.rectangle"][indexPath.row])
+                            AppLanguage.choose("Show the Mods folder in Files"), AppLanguage.choose("Mods guide"), "Nhập âm thanh xe…", "Chọn tiếng cho xe…", "Việt hoá cốt truyện…", "Nhập skin addon (Menyoo)…", "Kiểm tra và sửa skin đã cài…"][indexPath.row]
+            content.image = UIImage(systemName: ["square.and.arrow.down", "folder", "book", "waveform", "speaker.wave.2", "character.bubble", "person.crop.rectangle", "wrench.and.screwdriver"][indexPath.row])
             content.textProperties.color = tintColor()
         } else if mods.isEmpty {
             content.text = AppLanguage.choose("No mods installed yet")
@@ -81,6 +81,22 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard indexPath.section == 0 else { return }
+        if indexPath.row == 7 {
+            guard !busy, !ModInstaller.gameRunning else { show(ModError("Sửa skin trước khi vào game. Tắt hẳn app và mở lại nếu đang chơi.")); return }
+            busy = true; tableView.reloadData()
+            DispatchQueue.global(qos:.userInitiated).async {
+                let result = Result { try SkinInstaller.repairInstalled() }
+                DispatchQueue.main.async {
+                    self.busy = false; self.reload()
+                    switch result {
+                    case .success(let count):
+                        let alert = UIAlertController(title:"Kiểm tra skin hoàn tất",message:"Đã sửa \(count) gói resource. Bản gốc được giữ trong file ẩn .dlc.rpf.before-r004 cạnh DLC. Không thể sửa archive thiếu dữ liệu; các trường hợp đó cần tải lại.",preferredStyle:.alert)
+                        alert.addAction(UIAlertAction(title:"OK",style:.default));self.present(alert,animated:true)
+                    case .failure(let error):self.show(error)
+                    }
+                }
+            };return
+        }
         if indexPath.row == 6 {
             guard !busy, !ModInstaller.gameRunning else { show(ModError("Nhập skin trước khi vào game; tắt hẳn và mở lại app nếu đang chơi.")); return }
             importingSound = false; importingSkin = true

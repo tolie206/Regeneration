@@ -208,7 +208,7 @@ static void pg_vehicle_menu_step(w2c_game *instance, u64 vector) {
     began = 0; pg_vehicle_spawn_status(PGVehicleSpawnNotReady); return;
   }
   // Settings closes the pause menu; wait for the game to really be playing again.
-  bool ready = !PGPauseMenuActive() && PGGameStatus() == 0 && PGLoadSceneSeconds() == 0;
+  bool ready = !PGPauseMenuActive() && PGGameStatus() == 0 && !PGLoadSceneActive();
   if (!requested && !ready) return;
   u64 previous = pg_asi_enter_script(instance);
   u64 active = *(u64 *)pg_pointer(&env, instance->w2c_g1 + 3088, 8);

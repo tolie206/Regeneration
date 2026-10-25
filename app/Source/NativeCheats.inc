@@ -1,3 +1,27 @@
+// PGLoadSceneSeconds truncates the first second to zero and expires at 180 s.
+// Lifecycle safety must use the actual active flag, not that UI duration.
+bool PGLoadSceneActive(void) {
+    if (env.memory.size > 23389293 && atomic_load_explicit((const _Atomic uint8_t *)((const uint8_t *)(void *)env.memory.data + 23389293),memory_order_relaxed) == 1) return true;
+    return atomic_load(&loadSceneSince) > 0;
+}
+// Bounded, read-only transition trace: no fake completion, timeout bypass or reload.
+// Called on the existing main-script tick, not a new timer or worker.
+static void pg_scene_transition_trace(void) {
+    static bool wasLoading; static double started, next;
+    bool loading = PGLoadSceneActive();
+    if (!loading && !wasLoading) return;
+    double now = timeMS(CLOCK_MONOTONIC);
+    if (loading && !wasLoading) { started=now; next=now+3000; }
+    if (loading && now >= next && env.memory.size > 23417974) {
+        const uint8_t *m=(const uint8_t *)(void *)env.memory.data;
+        uint32_t state; uint16_t entities,bounds;
+        memcpy(&state,m+23389296,4);memcpy(&entities,m+23417896,2);memcpy(&bounds,m+23417912,2);
+        char line[240];snprintf(line,sizeof line,"Transition wait %.1f s: phase %u, volume %u, entities %u, bounds %u, collision flags %u/%u/%u, control status 0x%x.",(now-started)/1000,state,m[23417824],entities,bounds,m[23417920],m[23417972],m[23417973],PGGameStatus());pg_log(line);
+        next=now+5000;
+    }
+    if (!loading && wasLoading) { char line[100];snprintf(line,sizeof line,"Transition streaming released after %.1f s; control status 0x%x.",(now-started)/1000,PGGameStatus());pg_log(line); }
+    wasLoading=loading;
+}
 // Settings › Cheats: one-off actions (repair, clean, time, weather) and the God mode and Never wanted
 // switches. Included by EngineHost.c. The app only queues requests here; pg_native_cheats_tick runs
 // them on the game thread during the "main" script's turn (pg_asi_script_tick), where game commands
@@ -85,7 +109,7 @@ static void pg_apply_cheat_switch(w2c_game *instance, PGCheatSwitch cheat, bool 
   }
 }
 static void pg_apply_pending_cheat_switches(w2c_game *instance) {
-  if (PGPauseMenuActive() || PGGameStatus() != 0 || PGLoadSceneSeconds() != 0 ||
+  if (PGPauseMenuActive() || PGGameStatus() != 0 || PGLoadSceneActive() ||
       !PG_FN_PLAYER_PED_ID(instance) || PG_FN_PLAYER_ID(instance) >= 32) return;
   pthread_mutex_lock(&cheatMenuLock);
   unsigned pending = cheatSwitchPending;
@@ -112,7 +136,7 @@ static void pg_native_cheats_action_tick(w2c_game *instance) {
   // Counted from when it was queued: scripts may not run at all while paused, and an action asked
   // for long ago must not suddenly happen when play resumes.
   if (timeMS(CLOCK_MONOTONIC) - queuedAt >= 10000) status = PGCheatNotReady;
-  else if (PGPauseMenuActive() || PGGameStatus() != 0 || PGLoadSceneSeconds() != 0) return;
+  else if (PGPauseMenuActive() || PGGameStatus() != 0 || PGLoadSceneActive()) return;
   else {
     u64 previous = pg_asi_enter_script(instance);
     // The weather name goes on this thread's own engine stack, freed again below.
@@ -159,10 +183,11 @@ static void pg_native_cheats_action_tick(w2c_game *instance) {
 }
 
 static void pg_native_cheats_tick(w2c_game *instance) {
+  pg_scene_transition_trace();
   pg_native_cheats_action_tick(instance);
   pg_apply_pending_cheat_switches(instance);
   if ((!cheatGodMode && !cheatNeverWanted) || PGPauseMenuActive() ||
-      PGGameStatus() != 0 || PGLoadSceneSeconds() != 0) return;
+      PGGameStatus() != 0 || PGLoadSceneActive()) return;
   u64 previous = pg_asi_enter_script(instance);
   u32 player = PG_FN_PLAYER_ID(instance);
   if (player < 32 && PG_FN_PLAYER_PED_ID(instance)) {

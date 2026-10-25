@@ -32,6 +32,17 @@ import Foundation
   let names=try JSONSerialization.jsonObject(with:Data(contentsOf:plan.items.first{$0.target=="skin-models.json"}!.source)) as! [String]
   precondition(names==["mynhandep01"])
   rejected=false;do {let broken=try ModInstaller.unpack(root.appendingPathComponent("makima-truncated.rar"));defer{try? fm.removeItem(at:broken)};_ = try SkinInstaller.plan(folder:broken,name:"broken")} catch {rejected=true};precondition(rejected,"Truncated Makima must never be installed")
+  // Exercise nested archive repair on real original assets, not just the helper.
+  var oldAssets:[String:Data]=[:]
+  for case let url as URL in fm.enumerator(at:stage,includingPropertiesForKeys:nil)! where SkinInstaller.extensions.contains(url.pathExtension.lowercased()) {
+   oldAssets[url.lastPathComponent.lowercased()] = try Data(contentsOf:url)
+  }
+  let oldInner=try VehicleInstaller.pack(oldAssets)
+  let oldArchive=try RPFArchive(bytes:oldInner)
+  let repaired=try ModResource.repairedArchive(oldArchive)!
+  let checked=try RPFArchive(bytes:repaired)
+  let checkedTexture=try checked.resourceData(checked.entries.first{$0.path=="ryoubi.ytd"}!);precondition(checkedTexture == output)
+  let unchanged=try ModResource.repairedArchive(checked);precondition(unchanged == nil)
   print("PASS R004: actual Ryoubi small page repaired; 6144 padding bytes only; both segment payloads identical; corrupt resource/archive rejected; skin rename consistent and idempotent")
   print("NOT TESTED: iPhone rendered pixels, camera appearance or respawn timing")
  }

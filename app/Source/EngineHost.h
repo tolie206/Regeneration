@@ -137,6 +137,7 @@ bool PGCheatEnabled(PGCheatSwitch cheat);
 bool PGSetPersistentCheatEnabled(PGCheatSwitch cheat, bool enabled);
 /// Seconds the engine has been in a load scene (respawn, warp, story transition), 0 when none.
 int PGLoadSceneSeconds(void);
+bool PGLoadSceneActive(void); // lifecycle guard, including first second and long scenes
 /// Whether a script asked for input `action` (the engine's input id) in the last `ms` milliseconds.
 int PGInputPolledWithin(int action, double ms);
 /// Whether a script read input `action` in any way in the last `ms` milliseconds (for diagnostics; GTA-129).

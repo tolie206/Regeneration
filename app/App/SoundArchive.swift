@@ -247,6 +247,24 @@ enum ModResource {
         }
         throw ModError("Resource quá lớn để chuyển page map an toàn.")
     }
+    /// Only rebuilt when an actual resource requires repair; never decode shaders,
+    /// modify metadata semantics, or scan the base game. Used by the manual repair action.
+    static func repairedArchive(_ archive: RPFArchive, depth: Int = 0) throws -> Data? {
+        guard depth < 8, archive.bytes.count <= 128*1024*1024 else { throw ModError("Gói skin quá lớn hoặc lồng quá sâu.") }
+        var files: [String:Data] = [:], changed = false
+        for entry in archive.entries {
+            if entry.resourceVersion != nil {
+                let original = try archive.resourceData(entry)
+                let repaired = try normalize(original,name:entry.path)
+                files[entry.path] = repaired; changed = changed || original != repaired
+            } else if entry.path.hasSuffix(".rpf") {
+                let nested = try archive.nested(entry)
+                if let repaired = try repairedArchive(nested,depth:depth+1) {files[entry.path]=repaired;changed=true}
+                else {files[entry.path]=nested.bytes}
+            } else { files[entry.path] = try archive.binary(entry) }
+        }
+        return changed ? try VehicleInstaller.pack(files) : nil
+    }
     static func normalize(_ input: Data, name: String) throws -> Data {
         guard input.count >= 16, input.starts(with: Data("RSC7".utf8)) else { throw ModError("Resource thiếu header: \(name)") }
         func word(_ at: Int) -> UInt32 { (0..<4).reduce(0) { $0 | UInt32(input[at+$1]) << (8*$1) } }

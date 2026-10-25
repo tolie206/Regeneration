@@ -39,7 +39,7 @@ static void pg_turbo_tick(w2c_game *instance){
     static u32 lastVehicle;static int bones[16];static unsigned boneCount;
     static bool reportedTelemetry,reportedFX;
     static double nextFX,nextRequest;static unsigned requestAttempts;static uint64_t asset,effect,boneName;
-    if(!atomic_load(&turboEnabled)||PGPauseMenuActive()||PGGameStatus()!=0||PGLoadSceneSeconds()!=0){
+    if(!atomic_load(&turboEnabled)||PGPauseMenuActive()||PGGameStatus()!=0||PGLoadSceneActive()){
         atomic_store(&turboVehicle,0);lastVehicle=0;return;
     }
     PGTurboConfig c;float rpm,throttle;double sampled;

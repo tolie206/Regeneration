@@ -94,6 +94,26 @@ enum SkinInstaller {
         let fields = values.map { "<\($0.0)>\($0.1)</\($0.0)>" }.joined()
         return Data(("<?xml version=\"1.0\"?><CPedModelInfo__InitDataList><residentTxd>comp_peds_generic</residentTxd><residentAnims/><InitDatas><Item>" + fields + "<IsStreamedGfx value=\"false\"/><IsHeadBlendPed value=\"false\"/><CanSpawnInCar value=\"true\"/><HDDist value=\"3.0\"/><TargetingThreatModifier value=\"1.0\"/><DefaultRemoveRangeMultiplier value=\"1.0\"/></Item></InitDatas><multiTxdRelationships/></CPedModelInfo__InitDataList>").utf8)
     }
+    /// Explicit pre-game repair, not recurring startup work. Originals kept beside
+    /// the archive as hidden backups, so native mod enumeration cannot mount them.
+    static func repairInstalled() throws -> Int {
+        guard !ModInstaller.gameRunning else { throw ModError("Tắt hẳn game và mở lại app trước khi sửa skin.") }
+        let fm = FileManager.default
+        var repairedCount = 0
+        for mod in ModInstaller.installed() where fm.fileExists(atPath:mod.url.appendingPathComponent("skin-models.json").path) {
+            let files = (fm.enumerator(at:mod.url,includingPropertiesForKeys:[.isRegularFileKey],options:.skipsHiddenFiles)?.allObjects as? [URL] ?? []).filter { $0.lastPathComponent.lowercased() == "dlc.rpf" }
+            for file in files {
+                let archive = try RPFArchive(url:file)
+                guard let data = try ModResource.repairedArchive(archive) else { continue }
+                let backup = file.deletingLastPathComponent().appendingPathComponent(".dlc.rpf.before-r004")
+                if !fm.fileExists(atPath:backup.path) { try fm.copyItem(at:file,to:backup) }
+                // .atomic keeps the old DLC intact if writing fails.
+                try data.write(to:file,options:.atomic)
+                repairedCount += 1
+            }
+        }
+        return repairedCount
+    }
     static func models() -> [String] {
         Array(Set(ModInstaller.installed().filter(\.enabled).flatMap { mod -> [String] in
             guard let data = try? Data(contentsOf: mod.url.appendingPathComponent("skin-models.json")), let names = try? JSONSerialization.jsonObject(with: data) as? [String] else { return [] }
