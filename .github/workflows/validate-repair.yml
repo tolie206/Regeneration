@@ -1,7 +1,7 @@
 name: Validate regeneration repair (no IPA)
 on:
   push:
-    branches: [regeneration-mod-repair, regeneration-r004-scene-skins]
+    branches: [regeneration-mod-repair, regeneration-r004-scene-skins, regeneration-r005-driveby-textures]
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,6 +18,10 @@ jobs:
           fetch-depth: 0
       - name: Require private repository
         run: test '${{ github.event.repository.private }}' = true
+      - name: Drive-by input regression
+        run: python3 tools/test_driveby_look.py "$RUNNER_TEMP/driveby.c"
+      - name: Guard classification regression
+        run: python3 tools/test_guard_margin.py "$RUNNER_TEMP/guard-margin.c"
       - name: Existing regression tests
         run: python3 -m unittest discover -s tests -v
       - name: Verify and assemble actual sample packages

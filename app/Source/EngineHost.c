@@ -317,9 +317,10 @@ static bool nativeProcessHeadroom(uint64_t *headroom){
  // The fast nudges (guardNudge) are for phones with memory to spare beyond the engine's room (8 GB:
  // about 2 GB more). On 5-6 GB phones the two sit within ~100 MB of each other (v1.4.1 logs: median
  // 78 MB), so the engine mode fired there too and threw textures out ~12x faster than v1.4 (GTA-117).
- // PG_GUARD_SPARE_MB is that margin (512 in the A/B); 0, the default until a device A/B, keeps v1.4.1's rule.
+ // Require a 512 MiB margin before accelerating address-space recovery.
+ // Near-equal limits use the existing ordinary nudge; the reserve is unchanged.
  static uint64_t spare=UINT64_MAX;
- if(spare==UINT64_MAX){const char *v=getenv("PG_GUARD_SPARE_MB");long mb=v?atol(v):0;spare=(uint64_t)(mb>0&&mb<=4096?mb:0)<<20;}
+ if(spare==UINT64_MAX){const char *v=getenv("PG_GUARD_SPARE_MB");long mb=v?atol(v):512;spare=(uint64_t)(mb>=0&&mb<=4096?mb:512)<<20;}
  atomic_store(&engineLimited,engine<available&&available-engine>spare);
  if(engine<available){
   available=engine;
@@ -2439,9 +2440,9 @@ void pg_virtual_pad_apply(w2c_game *instance, uint64_t pad) {
   lastSwipePollMS = nowMS;
   const float dx = (float)atomic_exchange(&pendingCameraSwipeX, 0) / PG_CAMERA_SWIPE_SCALE;
   const float dy = (float)atomic_exchange(&pendingCameraSwipeY, 0) / PG_CAMERA_SWIPE_SCALE;
-  // The selection wheels own the stick even when a look finger is down.
-  const bool selectionWheel = (packed & ((1ull << 2) | (1ull << 14))) != 0;
-  if (!selectionWheel && (dx != 0 || dy != 0)) {
+  // TouchControlsView suppresses swipe by gesture role for selection wheels.
+  // L1 is also vehicle aim: a button-bit test here would freeze drive-by look.
+  if (dx != 0 || dy != 0) {
     const float baseX = ((packed >> 32 & 255) - 127.5f) / 127.5f;
     const float baseY = (127.5f - (packed >> 40 & 255)) / 127.5f;
     const float lookX = fmaxf(-1, fminf(1, baseX + pg_camera_swipe_axis(dx, elapsed)));

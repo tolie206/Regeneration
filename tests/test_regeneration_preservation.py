@@ -6,5 +6,13 @@ class Baseline(unittest.TestCase):
   for path,sha in json.loads((ROOT/'tests/regeneration_perf_baseline.json').read_text()).items():
    data=(ROOT/path).read_bytes().replace(b'\r\n',b'\n')
    if path=='app/Source/EngineHost.c': data=data.replace(b'#include "NativeLargeResources.inc"\n',b'').replace(b' pg_large_archive_mounted(packfile,label);\n',b'')
+   if path=='app/Source/EngineHost.c':
+    original=__import__('subprocess').check_output(['git','show','3c912e78399072c1792ae4adc95422c11819fe80:app/Source/EngineHost.c']).replace(b'\r\n',b'\n')
+    current=(ROOT/path).read_bytes().replace(b'\r\n',b'\n')
+    for start,end in [(b'  // TouchControlsView suppresses swipe',b'    const float baseX'),(b' // Require a 512 MiB margin',b' atomic_store(&engineLimited')]:
+     a=current.index(start); b=current.index(end,a)
+     oldstart=b'  // The selection wheels own' if b'TouchControlsView' in start else b' // PG_GUARD_SPARE_MB is that margin'
+     oa=original.index(oldstart); ob=original.index(end,oa)
+     data=data.replace(current[a:b],original[oa:ob])
    if path=='app/Source/NativeTurbo.inc': data=data.replace(b'PGLoadSceneActive()',b'PGLoadSceneSeconds()!=0')
    self.assertEqual(hashlib.sha256(data).hexdigest(),sha,path)

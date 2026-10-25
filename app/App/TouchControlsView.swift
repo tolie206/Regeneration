@@ -1075,7 +1075,7 @@ final class TouchControlsView: UIView {
         case switcher:
             clearCameraTravel()
             roles[id] = .characterWheel(start: point, current: point)
-        case fire, driveBy:
+        case fire, driveBy, driveAim:
             roles[id] = .fireLook(button)
             fireStartedAt = now
             lastFireTime = now
@@ -1277,7 +1277,7 @@ final class TouchControlsView: UIView {
     // MARK: Output
 
     /// Whether the player is aiming; gyro aim runs only then by default.
-    var aiming: Bool { aimActive || fire.pressed || leftFire.pressed || driveBy.pressed }
+    var aiming: Bool { aimActive || fire.pressed || leftFire.pressed || driveBy.pressed || driveAim.pressed }
     /// The plane's right thumb controls throttle/rudder rather than gyro aiming.
     var flyingWithRightStick: Bool { has(isPlaneStick) }
 

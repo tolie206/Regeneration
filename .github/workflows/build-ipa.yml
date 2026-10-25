@@ -45,6 +45,10 @@ jobs:
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
       - name: Check sound import and built-in translation
         run: python3 -m unittest discover -s tests -v
+      - name: Drive-by and guard regression
+        run: |
+          python3 tools/test_driveby_look.py "$RUNNER_TEMP/driveby.c"
+          python3 tools/test_guard_margin.py "$RUNNER_TEMP/guard-margin.c"
       - name: Test real audio importer on macOS
         run: |
           cd app
@@ -119,16 +123,16 @@ jobs:
           "$RUNNER_TEMP/sound-runtime-full"
       - name: Verify transition lifecycle guard
         run: python3 tools/test_scene_lifecycle.py "$RUNNER_TEMP/scene-lifecycle.c"
-      - name: Build Mugoat-NewGen-Regeneration-R004
+      - name: Build Mugoat-NewGen-Regeneration-R005
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify IPA entitlements
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R004.ipa
+          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R005.ipa
       - uses: actions/upload-artifact@v4
         with:
-          name: Mugoat-NewGen-Regeneration-R004
-          path: Mugoat-NewGen-Regeneration-R004.ipa
+          name: Mugoat-NewGen-Regeneration-R005
+          path: Mugoat-NewGen-Regeneration-R005.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()
