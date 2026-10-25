@@ -45,6 +45,9 @@ jobs:
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
       - name: Check sound import and built-in translation
         run: python3 -m unittest discover -s tests -v
+      - name: Typecheck actual memory settings UI with iOS SDK
+        run: |
+          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/StreamingSettings.swift app/App/MemoryAccessViewController.swift app/Tests/MemorySettingsTypecheckStubs.swift
       - name: Distance streaming policy
         run: |
           swiftc app/App/StreamingSettings.swift app/Tests/streaming_preferences.swift -o "$RUNNER_TEMP/streaming-preferences"

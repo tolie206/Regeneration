@@ -20,6 +20,9 @@ jobs:
         run: test '${{ github.event.repository.private }}' = true
       - name: Drive-by input regression
         run: python3 tools/test_driveby_look.py "$RUNNER_TEMP/driveby.c"
+      - name: Typecheck actual memory settings UI with iOS SDK
+        run: |
+          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/StreamingSettings.swift app/App/MemoryAccessViewController.swift app/Tests/MemorySettingsTypecheckStubs.swift
       - name: Distance streaming policy
         run: |
           swiftc app/App/StreamingSettings.swift app/Tests/streaming_preferences.swift -o "$RUNNER_TEMP/streaming-preferences"
