@@ -256,7 +256,7 @@ enum ModResource {
         var raw = Data(count: virtualSize + physicalSize)
         let packed = input.subdata(in:16..<input.count)
         let rawSize = raw.count
-        let ok = raw.withUnsafeMutableBytes { o in packed.withUnsafeBytes { i in gi_inflate_raw(i.baseAddress,UInt32(packed.count),o.baseAddress,UInt32(rawSize)) } }
+        let ok = raw.withUnsafeMutableBytes { o in packed.withUnsafeBytes { i in gi_inflate_resource(i.baseAddress,UInt32(packed.count),o.baseAddress,UInt32(rawSize)) } }
         guard ok == 1 else { throw ModError("Resource nén bị thiếu/hỏng: \(name). Tải lại gói mod đầy đủ.") }
         guard needsRepair(system) || needsRepair(graphics) else { return input }
         let newSystem = needsRepair(system) ? try paddedFlags(system) : system

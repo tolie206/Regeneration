@@ -10,7 +10,7 @@ import Foundation
   func raw(_ d:Data) -> Data {
    let size = ModResource.segmentSize(word(d,8)) + ModResource.segmentSize(word(d,12))
    var out = Data(count:size);let packed = d.subdata(in:16..<d.count)
-   let ok = out.withUnsafeMutableBytes{o in packed.withUnsafeBytes{i in gi_inflate_raw(i.baseAddress,UInt32(packed.count),o.baseAddress,UInt32(size))}}
+   let ok = out.withUnsafeMutableBytes{o in packed.withUnsafeBytes{i in gi_inflate_resource(i.baseAddress,UInt32(packed.count),o.baseAddress,UInt32(size))}}
    precondition(ok==1);return out
   }
   precondition(ModResource.needsRepair(word(input,8)),"Supplied texture must reproduce the small-page problem")
