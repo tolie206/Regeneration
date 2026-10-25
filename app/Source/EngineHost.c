@@ -374,6 +374,7 @@ uint64_t pg_streaming_available_memory(uint64_t engineAvailable){
  uint64_t available;
  if(!nativeProcessHeadroom(&available))return engineAvailable;
  uint64_t result=pg_distance_streaming_enabled()?(engineAvailable<available?engineAvailable:available):pg_streaming_headroom_budget(engineAvailable,available,guardReserve(),guardBand());
+ if(pg_distance_streaming_enabled())return result; // Never grant extra bytes past actual headroom.
  int64_t granted=weaponGrant((int64_t)result);
  return granted>(int64_t)result&&(uint64_t)granted<=engineAvailable?(uint64_t)granted:result;
 }

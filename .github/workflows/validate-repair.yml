@@ -22,6 +22,7 @@ jobs:
         run: python3 tools/test_driveby_look.py "$RUNNER_TEMP/driveby.c"
       - name: Distance streaming policy
         run: |
+          python3 tools/test_distance_bridge.py "$RUNNER_TEMP/distance-bridge.c"
           clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/distance_streaming.c -o "$RUNNER_TEMP/distance-streaming"
           "$RUNNER_TEMP/distance-streaming"
           clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/streaming_health.c -o "$RUNNER_TEMP/streaming-health"
