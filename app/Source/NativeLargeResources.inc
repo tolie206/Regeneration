@@ -36,7 +36,8 @@ static void pg_large_walk(const char *archive,uint64_t entries,uint64_t names,un
   if(count<200000)for(uint32_t k=0;k<count;k++)pg_large_walk(archive,entries,names,shift,first+k,path,n,depth+1);
  }else if((e[0]>>63)&&((e[0]>>16)&0xffffff)==0xffffff){
   uint32_t size=pg_mods_large_resource_size(archive,path,(uint32_t)e[1],(uint32_t)(e[1]>>32));
-  if(size){pg_large_register(entries+16ull*index,size);char line[700];snprintf(line,sizeof line,"Extended resource ready: %.250s/%.250s = %u bytes (24-bit sentinel expanded).",archive,path,size);pg_log(line);}
+  pg_large_register(entries+16ull*index,size?size:0xffffffu); // invalidate even an identical entry reused by an unindexed archive
+  if(size){char line[700];snprintf(line,sizeof line,"Extended resource ready: %.250s/%.250s = %u bytes (24-bit sentinel expanded).",archive,path,size);pg_log(line);}
  }
  path[length]=0;
 }

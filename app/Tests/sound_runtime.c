@@ -14,7 +14,8 @@ static u32 currentVehicle=10;
 static double timeMS(int clock){(void)clock;return now;}
 static int PGPauseMenuActive(void){return 0;}
 static int PGGameStatus(void){return 0;}
-static int PGLoadSceneSeconds(void){return 0;}
+static bool sceneActive;
+static bool PGLoadSceneActive(void){return sceneActive;}
 static u64 pg_asi_enter_script(w2c_game *i){(void)i;return 0;}
 static void pg_asi_leave_script(w2c_game *i,u64 old){(void)i;(void)old;}
 static u32 PG_FN_PLAYER_PED_ID(w2c_game *i){(void)i;return 1;}
@@ -30,6 +31,7 @@ void PG_FN_FORCE_AUDIO(w2c_game *i,u32 v,u64 address){(void)i;assert(v==currentV
 u32 PG_FN_GET_ENTITY_MODEL(w2c_game *i,u32 v){(void)i;(void)v;return 99;}
 int main(void){
  w2c_game instance={1024};PGEnableSoundMods(true);assert(PGSelectVehicleSound(99,"brabus850"));
+ sceneActive=true;pg_sound_mod_tick(&instance);assert(lookupCalls==0&&forced==0);sceneActive=false;
  pg_sound_mod_tick(&instance);assert(lookupCalls==1&&forced==0);
  now=500;pg_sound_mod_tick(&instance);assert(lookupCalls==1);
  now=2000;pg_sound_mod_tick(&instance);assert(lookupCalls==2);

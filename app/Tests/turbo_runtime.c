@@ -15,7 +15,8 @@ static u32 vehicle=10;static unsigned fxCalls,audioCalls,requestCalls,nativeCall
 static double timeMS(int clock){(void)clock;return now;}
 static int PGPauseMenuActive(void){return paused;}
 static int PGGameStatus(void){return 0;}
-static int PGLoadSceneSeconds(void){return 0;}
+static bool sceneActive;
+static bool PGLoadSceneActive(void){return sceneActive;}
 static void pg_log(const char *s){assert(s&&*s);}
 static u64 pg_asi_enter_script(w2c_game *i){(void)i;enters++;return 77;}
 static void pg_asi_leave_script(w2c_game *i,u64 old){(void)i;assert(old==77);leaves++;}
@@ -51,6 +52,7 @@ int main(void){
     assert(PGSetTurboConfig(c));pg_turbo_tick(&game);assert(nativeCalls==0);
     assert(pg_native_turbo_boost(10010,0,.8f,0,2,.02f,.4f)==.4f);
     c.enabled=true;c.forceTurbo=true;c.randomMS=0;assert(PGSetTurboConfig(c));
+    sceneActive=true;unsigned beforeScene=nativeCalls;pg_turbo_tick(&game);assert(nativeCalls==beforeScene);sceneActive=false;
     pg_turbo_tick(&game);assert(toggleCalls==1);
     assert(pg_native_turbo_boost(10011,0,.8f,0,2,.02f,.4f)==.4f);
     now+=250;float value=pg_native_turbo_boost(10010,0,.8f,0,2,.02f,.4f);assert(value>0&&value<1);

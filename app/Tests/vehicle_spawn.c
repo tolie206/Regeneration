@@ -3,6 +3,7 @@
 // clang -std=c11 -fsanitize=address,undefined app/Tests/vehicle_spawn.c -o /tmp/vehicle-spawn && /tmp/vehicle-spawn
 #include "../Source/EngineHost.h"
 #include <assert.h>
+#include <stdatomic.h>
 #include <math.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -13,7 +14,9 @@ typedef uint32_t u32;
 typedef uint64_t u64;
 typedef float f32;
 typedef struct { u64 w2c_g1, w2c_g0; } w2c_game;
-static int env;
+static struct {struct {uint64_t size;void *data;} memory;} env;
+static _Atomic double loadSceneSince;
+static u32 modelFor[2048], pedCameraMode, vehicleCameraMode;
 static unsigned char memory[16000000];
 static double now = 1;
 static u32 gameStatus, category, seats = 2;
@@ -110,6 +113,7 @@ u32 PG_FN_CREATE_VEHICLE(w2c_game *instance, u32 model, u64 vector, f32 heading,
   if (failCreate) return 0;
   u32 vehicle = nextVehicle++;
   assert(vehicle < 2048);
+  modelFor[vehicle]=model;
   existing[vehicle] = owned[vehicle] = true;
   liveVehicles++;
   if (liveVehicles > peakVehicles) peakVehicles = liveVehicles;
@@ -120,6 +124,11 @@ void PG_FN_SET_PED_INTO_VEHICLE(w2c_game *instance, u32 ped, u32 vehicle, u32 se
   occupied[playerVehicle] = false; occupied[vehicle] = true; occupiedSeat[vehicle] = -1; playerVehicle = vehicle; entered++;
 }
 u32 PG_FN_GROUND_VEHICLE(w2c_game *instance, u32 vehicle, f32 height) { grounded++; return 1; }
+void PG_FN_CAMERA_PED_MODE(w2c_game *instance,u32 value){(void)instance;pedCameraMode=value;}
+void PG_FN_CAMERA_VEHICLE_MODE(w2c_game *instance,u32 value){(void)instance;vehicleCameraMode=value;}
+u32 PG_FN_GET_ENTITY_MODEL(w2c_game *instance,u32 vehicle){(void)instance;return modelFor[vehicle];}
+u32 PG_FN_SPAWN_ENTITY_VISIBLE(w2c_game *instance,u32 vehicle){(void)instance;return existing[vehicle];}
+u32 PG_FN_SPAWN_ENTITY_ALPHA(w2c_game *instance,u32 vehicle){(void)instance;(void)vehicle;return 255;}
 u32 PG_FN_ENTITY_EXISTS(w2c_game *instance, u32 vehicle) { return existing[vehicle]; }
 u32 PG_FN_ENTITY_OWNED(w2c_game *instance, u32 vehicle, u32 unused) { return owned[vehicle]; }
 u32 PG_FN_VEHICLE_OCCUPANT(w2c_game *instance, u32 vehicle, u32 seat, u32 includeEntering) {
@@ -134,6 +143,7 @@ void PG_FN_DELETE_VEHICLE(w2c_game *instance, u64 pointer) {
   *(u32 *)pg_pointer(&env, pointer, 4) = 0;
 }
 static void tick(w2c_game *instance) {
+  atomic_store(&loadSceneSince,loadSeconds?now:0);
   *(u64 *)pg_pointer(&env, instance->w2c_g1 + 3088, 8) = 999;
   pg_cheats_menu_tick(instance);
   assert(*(u64 *)pg_pointer(&env, instance->w2c_g1 + 3088, 8) == 999);
@@ -370,6 +380,9 @@ int main(void) {
   PGSetPersistentCheatEnabled(PGCheatGodMode, false);
   tick(&instance); assert(invincibleWrites == oldWrites);
 
+  assert(PGQueueCheat(PGCheatCameraMode,4));tick(&instance);assert(pedCameraMode==4&&vehicleCameraMode==4);
+  assert(PGQueueCheat(PGCheatCameraMode,1));tick(&instance);assert(pedCameraMode==1&&vehicleCameraMode==1);
+  assert(!PGQueueCheat(PGCheatCameraMode,99));
   free(vehicleCatalog);
   puts("VEHICLE SPAWN AND NATIVE CHEAT CHECKS PASSED");
 }

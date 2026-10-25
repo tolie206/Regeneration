@@ -54,6 +54,8 @@ int main(void){
  assert(w2c_game_f1898(&instance,0,4096)==17512137u);
  assert(w2c_game_f1899(&instance,0,4096)==17512137u);
  assert(pg_large_rpf_size(0,entry,1234)==1234);
+ pg_large_archive_mounted(128,"unindexed:/different.rpf");
+ assert(pg_large_rpf_size(0,entry,0xffffff)==0xffffff); // same fingerprint, new archive must invalidate old size
  put64(entry+8,0);assert(pg_large_rpf_size(0,entry,0xffffff)==0xffffff); // reused/mutated entry cannot inherit stale size
  return 0;
 }

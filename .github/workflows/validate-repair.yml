@@ -54,5 +54,13 @@ jobs:
         run: python3 tools/test_native_resource_index.py "$RUNNER_TEMP/resource-index.m" "${{ github.workspace }}/r004-inputs"
       - name: Verify extended resource runtime lookup
         run: python3 tools/test_large_resource_runtime.py "$RUNNER_TEMP/large-resource.c"
+      - name: Verify spawn, camera, turbo and sound transition bridges
+        run: |
+          clang -std=c11 -pthread -fsanitize=address,undefined app/Tests/vehicle_spawn.c -lm -o "$RUNNER_TEMP/vehicle-spawn"
+          "$RUNNER_TEMP/vehicle-spawn"
+          clang -std=c11 -Wall -Wextra -Werror -pthread -I app/Source app/Tests/turbo_runtime.c -lm -o "$RUNNER_TEMP/turbo-runtime-full"
+          "$RUNNER_TEMP/turbo-runtime-full"
+          clang -std=c11 -pthread app/Tests/sound_runtime.c -o "$RUNNER_TEMP/sound-runtime-full"
+          "$RUNNER_TEMP/sound-runtime-full"
       - name: Verify transition lifecycle guard
         run: python3 tools/test_scene_lifecycle.py "$RUNNER_TEMP/scene-lifecycle.c"
