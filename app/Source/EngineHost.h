@@ -195,3 +195,6 @@ double PGGPUFrameMilliseconds(void);		// MRRenderer.mm
 void PGEnableSoundMods(bool enabled);
 uint32_t PGCurrentSoundVehicle(void);
 bool PGSelectVehicleSound(uint32_t model,const char *profile);
+
+// Bounded diagnostic called alongside the 10-second health sample.
+void PGLogStreamingPolicy(void);

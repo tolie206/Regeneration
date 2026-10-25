@@ -82,6 +82,7 @@ void pg_stream_loaded(uint32_t index) {
 }
 
 void pg_stream_removed(uint32_t index) {
+	if (status(index) == NOT_LOADED) return; // Repeated no-op removals are not unloads.
 	os_unfair_lock_lock(&lock);
 	int i = lookup(index + 1);
 	if (i >= 0) erase((uint32_t)i);

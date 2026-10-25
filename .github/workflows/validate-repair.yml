@@ -1,7 +1,7 @@
 name: Validate regeneration repair (no IPA)
 on:
   push:
-    branches: [regeneration-mod-repair, regeneration-r004-scene-skins, regeneration-r005-driveby-textures]
+    branches: [regeneration-mod-repair, regeneration-r004-scene-skins, regeneration-r005-driveby-textures, regeneration-r006-distance-streaming]
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,6 +20,12 @@ jobs:
         run: test '${{ github.event.repository.private }}' = true
       - name: Drive-by input regression
         run: python3 tools/test_driveby_look.py "$RUNNER_TEMP/driveby.c"
+      - name: Distance streaming policy
+        run: |
+          clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/distance_streaming.c -o "$RUNNER_TEMP/distance-streaming"
+          "$RUNNER_TEMP/distance-streaming"
+          clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/streaming_health.c -o "$RUNNER_TEMP/streaming-health"
+          "$RUNNER_TEMP/streaming-health"
       - name: Guard classification regression
         run: python3 tools/test_guard_margin.py "$RUNNER_TEMP/guard-margin.c"
       - name: Existing regression tests

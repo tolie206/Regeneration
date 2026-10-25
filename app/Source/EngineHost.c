@@ -25,6 +25,7 @@ static void pg_mod_test_recheck(void);
 #include <os/proc.h>
 #include <mach/mach.h>
 #include "NativeMemoryBudget.h"
+#include "NativeDistanceStreaming.h"
 
 static struct w2c_env env;
 static struct w2c_wasi__snapshot__preview1 wasi = { .env = &env };
@@ -355,6 +356,14 @@ static uint64_t guardBand(void){
 // model never streamed in, so it was invisible and unusable (GTA-55; simulator at 2098 MB: weapon
 // object 0 for a minute). While the player has a weapon selected on foot with no weapon object
 // (pg_keep_weapon_loaded), the guard gives streaming 64 MB of room.
+static PGDistanceStreaming distanceStreaming;
+static _Atomic int64_t distanceLastEngineBudget;
+static _Atomic uint64_t distanceLastHeadroom,distanceReclaims;
+static bool pg_distance_streaming_enabled(void){
+ static int enabled=-1;
+ if(enabled<0){const char *v=getenv("PG_DISTANCE_STREAMING");enabled=!(v&&atoi(v)==0);}
+ return enabled!=0;
+}
 static _Atomic double weaponGrantUntil;
 static int64_t weaponGrant(int64_t result){
  const int64_t room=64ll<<20;
@@ -364,7 +373,7 @@ static int64_t weaponGrant(int64_t result){
 uint64_t pg_streaming_available_memory(uint64_t engineAvailable){
  uint64_t available;
  if(!nativeProcessHeadroom(&available))return engineAvailable;
- uint64_t result=pg_streaming_headroom_budget(engineAvailable,available,guardReserve(),guardBand());
+ uint64_t result=pg_distance_streaming_enabled()?(engineAvailable<available?engineAvailable:available):pg_streaming_headroom_budget(engineAvailable,available,guardReserve(),guardBand());
  int64_t granted=weaponGrant((int64_t)result);
  return granted>(int64_t)result&&(uint64_t)granted<=engineAvailable?(uint64_t)granted:result;
 }
@@ -423,11 +432,23 @@ static int64_t guardNudge(int64_t result){
 uint64_t pg_streaming_resource_memory(uint64_t engineAvailable){
  uint64_t available;
  int64_t result=(int64_t)engineAvailable;
- if(nativeProcessHeadroom(&available))result=weaponGrant(guardNudge(pg_streaming_resource_budget((int64_t)engineAvailable,available,guardReserve(),guardBand())));
+ if(nativeProcessHeadroom(&available)){
+  if(pg_distance_streaming_enabled()){
+   atomic_store_explicit(&distanceLastEngineBudget,(int64_t)engineAvailable,memory_order_relaxed);
+   atomic_store_explicit(&distanceLastHeadroom,available,memory_order_relaxed);
+   result=pg_distance_budget(&distanceStreaming,(uint64_t)timeMS(CLOCK_MONOTONIC),(int64_t)engineAvailable,available);
+   if(result<0&&(int64_t)engineAvailable>=0)atomic_fetch_add_explicit(&distanceReclaims,1,memory_order_relaxed);
+  }
+  else result=weaponGrant(guardNudge(pg_streaming_resource_budget((int64_t)engineAvailable,available,guardReserve(),guardBand())));
+ }
  if(result>(int64_t)engineAvailable)result=(int64_t)engineAvailable;
  result=heapCeilingBudget(result);
  if(result<(int64_t)engineAvailable&&result<=0)atomic_fetch_add(result<0?&memoryBudgetEvictions:&memoryBudgetClamps,1);
  return (uint64_t)result;
+}
+void PGLogStreamingPolicy(void){
+ if(!pg_distance_streaming_enabled())return;
+ char line[240];snprintf(line,sizeof line,"Distance streaming: last native budget %lld KiB, effective headroom %llu MiB, host reclaim permits used %llu (cumulative); no fixed host reserve.",(long long)(atomic_load(&distanceLastEngineBudget)/1024),(unsigned long long)(atomic_load(&distanceLastHeadroom)>>20),(unsigned long long)atomic_load(&distanceReclaims));pg_log(line);
 }
 // The engine heap's reservation. 4095 MB unless the process may use clearly more: the game's
 // heap hit that ceiling on 8 GB-limit phones while about 1 GB of the limit was still free.
@@ -643,7 +664,7 @@ uint32_t PGGameStatus(void){
  if(!atomic_load(&inputBlock))return 16;
  const uint8_t *m=(const uint8_t *)(void *)env.memory.data;uint64_t size=env.memory.size;
  uint32_t bits=0;uint64_t info,ped,playerInfo,cutscene;uint32_t controls;
- if(pg_context_u64(m,size,20159720,&info)&&info&&pg_context_u64(m,size,info+8,&ped)&&ped&&
+ if(pg_context_u64(m,size,20159720,&info)&&info&&info<=size&&size-info>=16&&pg_context_u64(m,size,info+8,&ped)&&ped&&
     pg_context_u64(m,size,ped+4328,&playerInfo)&&playerInfo&&pg_context_u32(m,size,playerInfo+936,&controls)){
   if(controls)bits|=1;
  }else bits|=16;
@@ -816,6 +837,16 @@ static uint64_t pg_script_global(uint64_t index) {
 // table: Global_99461, 34 words a mission, the script name first; the label at word 8), the player's position,
 // and the replay controller's state (Global_109375: 1 is the Mission failed screen). Harness/gta.py uses the same
 // numbers to start a mission in the simulator at the moment a log describes.
+static void pg_streaming_position_tick(void){
+ if(!pg_distance_streaming_enabled())return;
+ static uint64_t next;
+ uint64_t now=(uint64_t)timeMS(CLOCK_MONOTONIC);if(now<next)return;next=now+250;
+ const uint8_t *m=(const uint8_t *)(void *)env.memory.data;uint64_t size=env.memory.size,info,ped;
+ const bool scene=size>23389293&&atomic_load_explicit((const _Atomic uint8_t *)(m+23389293),memory_order_relaxed)==1;
+ float p[3]={0};bool valid=false;
+ if(!PGPauseMenuActive()&&pg_context_u64(m,size,20159720,&info)&&info&&info<=size&&size-info>=16&&pg_context_u64(m,size,info+8,&ped)&&ped&&ped<=size&&size-ped>=156){memcpy(p,m+ped+144,12);valid=true;}
+ pg_distance_sample(&distanceStreaming,now,valid,p[0],p[1],p[2],scene);
+}
 bool PGStoryContext(char *mission, size_t size, float position[3], int32_t *replayState) {
   mission[0] = 0; position[0] = position[1] = position[2] = 0; *replayState = -1;
   if (!atomic_load(&inputBlock)) return false;
@@ -2836,6 +2867,7 @@ static void *boot(void *ignored) {
   if(limit){char *end;unsigned long mb=strtoul(limit,&end,10);if(end!=limit&&!*end&&mb>=2048&&mb<=8192)simulatedProcessLimit=(uint64_t)mb*1048576;}
 #endif
   if(nativeMemoryGuard)pg_log("Native streaming memory guard enabled (reserve selected from process limit).");
+  pg_log(pg_distance_streaming_enabled()?"Streaming policy: distance-based; no fixed host reserve; reclaim permit after 160 m or an active scene, at most 16 MiB per permit; native cache/heap limits remain.":"Streaming policy: R005 pressure reserve.");
   // Device A/B switches (GTA-117, GTA-128), named in the log so each run says which side it was.
   if(nativeMemoryGuard&&getenv("PG_GUARD_SPARE_MB"))pg_log("Memory guard A/B: fast nudges only with PG_GUARD_SPARE_MB to spare.");
   if(nativeMemoryGuard&&getenv("PG_GUARD_POOL_ROOM")&&atoi(getenv("PG_GUARD_POOL_ROOM"))==0)pg_log("Memory guard: the resource pool's free space doesn't count as room (PG_GUARD_POOL_ROOM=0).");

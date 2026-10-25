@@ -22,6 +22,7 @@ enum StreamingSettings {
         set { UserDefaults.standard.set(textureValues.contains(newValue) ? newValue : 0, forKey: "RegenerationTextureBudget") }
     }
     static func applyTextureBudget() {
+        setenv("PG_DISTANCE_STREAMING", GameSettings.shared.distanceStreaming ? "1" : "0", 1)
         if textureBudgetMB == 0 { unsetenv("PG_VIDEO_MEMORY_MB") }
         else { setenv("PG_VIDEO_MEMORY_MB", String(textureBudgetMB), 1) }
     }

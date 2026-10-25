@@ -69,6 +69,7 @@ void PG_FN_CLEAR_WANTED(w2c_game *instance, u32 player) { assert(player == playe
 u32 PG_FN_GET_WANTED(w2c_game *instance, u32 player) { assert(player == playerID); return wanted; }
 void PG_FN_SET_MAX_WANTED(w2c_game *instance, u32 value) { maxWanted = value; }
 u32 PG_FN_GET_MAX_WANTED(w2c_game *instance) { return maxWanted; }
+static void pg_streaming_position_tick(void) {}
 #include "../Source/NativeCheats.inc"
 #include "../Source/NativeVehicleSpawn.inc"
 static int repaired, cleaned, clockSet = -1, weatherCleared, overridesCleared;

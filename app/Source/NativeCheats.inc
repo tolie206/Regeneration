@@ -183,6 +183,7 @@ static void pg_native_cheats_action_tick(w2c_game *instance) {
 }
 
 static void pg_native_cheats_tick(w2c_game *instance) {
+  pg_streaming_position_tick();
   pg_scene_transition_trace();
   pg_native_cheats_action_tick(instance);
   pg_apply_pending_cheat_switches(instance);
