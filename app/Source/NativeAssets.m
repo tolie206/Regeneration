@@ -132,6 +132,7 @@ uint32_t pg_mods_large_resource_size(const char *archive,const char *resource,ui
  if([label hasPrefix:@"/game/"])label=[label substringFromIndex:6];
  NSString *key=[NSString stringWithFormat:@"%@|%@",label,@(resource).lowercaseString];
  NSDictionary *entry=index[key];if(![entry isKindOfClass:NSDictionary.class])return 0;
+ for(NSString *field in @[@"size",@"system",@"graphics"])if(![entry[field] isKindOfClass:NSNumber.class])return 0;
  uint64_t size=[entry[@"size"] unsignedLongLongValue];
  if([entry[@"system"] unsignedIntValue]!=system||[entry[@"graphics"] unsignedIntValue]!=graphics||size<0xffffff||size>256ull*1024*1024)return 0;
  return (uint32_t)size;
