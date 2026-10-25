@@ -119,23 +119,37 @@ static NSString *modsFolder(void){
   if(test&&*test)return @(test);
   return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES).firstObject stringByAppendingPathComponent:@"Mods"];
 }
-// Immutable pre-boot resource-size index produced by the Swift RPF validator.
-uint32_t pg_mods_large_resource_size(const char *archive,const char *resource,uint32_t system,uint32_t graphics){
- static NSDictionary *index;static dispatch_once_t once;
- dispatch_once(&once,^{
+// Immutable pre-boot resource-size index; ordinary archives need no entry walk.
+static NSDictionary *largeResourceIndex;
+static NSSet *largeResourceArchives;
+static void pg_load_large_resource_index(void){
+ static dispatch_once_t once;dispatch_once(&once,^{
   NSData *data=[NSData dataWithContentsOfFile:[modsFolder() stringByAppendingPathComponent:@".newgen-resource32.json"]];
   id value=data?[NSJSONSerialization JSONObjectWithData:data options:0 error:nil]:nil;
-  index=[value isKindOfClass:NSDictionary.class]?value:@{};
+  largeResourceIndex=[value isKindOfClass:NSDictionary.class]?value:@{};
+  NSMutableSet *archives=[NSMutableSet set];
+  for(id key in largeResourceIndex)if([key isKindOfClass:NSString.class]){NSArray *parts=[key componentsSeparatedByString:@"|"];if(parts.count==2)[archives addObject:parts[0]];}
+  largeResourceArchives=[archives copy];
  });
+}
+static NSString *pg_large_archive_label(const char *archive){
  NSString *label=[@(archive) stringByReplacingOccurrencesOfString:@"\\" withString:@"/"].lowercaseString;
+ label=[label stringByReplacingOccurrencesOfString:@"%platform%" withString:@"x64"];
  if([label hasPrefix:@"platform:/"])label=[@"x64/" stringByAppendingString:[label substringFromIndex:10]];
  if([label hasPrefix:@"/game/"])label=[label substringFromIndex:6];
- NSString *key=[NSString stringWithFormat:@"%@|%@",label,@(resource).lowercaseString];
- NSDictionary *entry=index[key];if(![entry isKindOfClass:NSDictionary.class])return 0;
+ return label;
+}
+bool pg_mods_large_archive_known(const char *archive){@autoreleasepool{pg_load_large_resource_index();return largeResourceArchives.count&&[largeResourceArchives containsObject:pg_large_archive_label(archive)];}}
+uint32_t pg_mods_large_resource_size(const char *archive,const char *resource,uint32_t system,uint32_t graphics){
+ @autoreleasepool{
+ pg_load_large_resource_index();
+ NSString *key=[NSString stringWithFormat:@"%@|%@",pg_large_archive_label(archive),@(resource).lowercaseString];
+ NSDictionary *entry=largeResourceIndex[key];if(![entry isKindOfClass:NSDictionary.class])return 0;
  for(NSString *field in @[@"size",@"system",@"graphics"])if(![entry[field] isKindOfClass:NSNumber.class])return 0;
  uint64_t size=[entry[@"size"] unsignedLongLongValue];
  if([entry[@"system"] unsignedIntValue]!=system||[entry[@"graphics"] unsignedIntValue]!=graphics||size<0xffffff||size>256ull*1024*1024)return 0;
  return (uint32_t)size;
+ }
 }
 // Mods made for GTA V Enhanced (the 2025 PC edition, GTA-87) keep their models and textures in newer resource
 // versions, and the game here (the original PC version) stops on them: "Code is expecting version 162 but

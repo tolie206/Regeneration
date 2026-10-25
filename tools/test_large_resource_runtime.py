@@ -18,6 +18,7 @@ engine_bodies='\n'.join(body(fixture,n).replace('w2c_game_f'+str(n)+'(', 'w2c_ga
 p.write_text(r"""
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdatomic.h>
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
@@ -30,6 +31,7 @@ static struct {int unused;} env;
 static void *pg_pointer(void *e,uint64_t a,size_t n){(void)e;assert(a<=sizeof memory&&n<=sizeof memory-a);return memory+a;}
 static const char *pg_string(void *e,uint64_t a){(void)e;assert(a<sizeof memory);return (const char*)memory+a;}
 static void pg_log(const char *s){(void)s;}
+bool pg_mods_large_archive_known(const char *archive){return strstr(archive,"dlc_vf8:")!=0;}
 static u64 checked_add_u64(u64 a,u64 b){return a+b;}
 static u64 i64_load_shared(void *a,u64 b,void *c,u64 offset){(void)a;(void)b;(void)c;u64 v;memcpy(&v,pg_pointer(0,offset,8),8);return v;}
 static u32 i32_load_shared(void *a,u64 b,void *c,u64 offset){(void)a;(void)b;(void)c;u32 v;memcpy(&v,pg_pointer(0,offset,4),4);return v;}
@@ -40,6 +42,7 @@ uint32_t pg_mods_large_resource_size(const char *archive,const char *name,uint32
 """+s+engine_bodies+r"""
 static void put64(size_t at,uint64_t value){memcpy(memory+at,&value,8);}
 int main(void){
+ pg_large_archive_mounted(8190,"platform:/ordinary.rpf"); // unindexed archives must not be walked
  const uint64_t entry=1024+16,lo=(1ull<<63)|(2ull<<40)|(0xffffffull<<16)|1;
  put64(128+32,1024);put64(128+16,2048);
  put64(1024,0x7fffff00ull<<32);put64(1032,(1ull<<32)|1);
@@ -54,8 +57,11 @@ int main(void){
  assert(w2c_game_f1898(&instance,0,4096)==17512137u);
  assert(w2c_game_f1899(&instance,0,4096)==17512137u);
  assert(pg_large_rpf_size(0,entry,1234)==1234);
+ pg_large_archive_unmount(0,128);
  pg_large_archive_mounted(128,"unindexed:/different.rpf");
  assert(pg_large_rpf_size(0,entry,0xffffff)==0xffffff); // same fingerprint, new archive must invalidate old size
+ pg_large_archive_mounted(128,"dlc_vf8:/x64/levels/gta5/vehicles/vehicles.rpf");
+ assert(pg_large_rpf_size(0,entry,0xffffff)==17512137u); // tombstone reused safely
  put64(entry+8,0);assert(pg_large_rpf_size(0,entry,0xffffff)==0xffffff); // reused/mutated entry cannot inherit stale size
  return 0;
 }

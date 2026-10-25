@@ -41,3 +41,21 @@ for name,sites in patches.items():
   if not include:raise RuntimeError('Missing generated implementation header')
   s=s[:include.end()]+'\n'+declaration+s[include.end():]
  p.write_text(s);print(f'Extended resource sizes: patched {number} ({len(sites)} sites)')
+
+# ReInit deletes/replaces its entry table directly; Shutdown frees it too.
+for name,kind in [('rage::fiPackfile::Shutdown()','void'),('rage::fiPackfile::ReInit(char const*, bool, void*)','u32')]:
+ number=fn(name)
+ head=(f'void w2c_game_f{number}(w2c_game* instance, u64 var_p0) {{' if kind=='void' else
+       f'u32 w2c_game_f{number}(w2c_game* instance, u64 var_p0, u64 var_p1, u32 var_p2, u64 var_p3) {{')
+ for p in sorted((root/'Generated').glob('game_*.c')):
+  s=p.read_text()
+  if head not in s:continue
+  start=s.index(head);end=s.index('\n}\n',start)
+  if 'pg_large_archive_unmount(instance, var_p0)' not in s[start:end]:
+   s=s.replace(head,head+'\n  pg_large_archive_unmount(instance, var_p0);',1)
+   first=re.search(r'^#include "game-[a-z-]*impl.h"$',s,re.M)
+   declaration='extern void pg_large_archive_unmount(w2c_game*, u64);'
+   if declaration not in s:s=s[:first.end()]+'\n'+declaration+s[first.end():]
+   p.write_text(s)
+  break
+ else:raise RuntimeError('Pinned archive lifecycle missing: '+name)

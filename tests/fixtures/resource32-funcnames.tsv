@@ -1,3 +1,5 @@
+1882	rage::fiPackfile::ReInit(char const*, bool, void*)
+1884	rage::fiPackfile::Shutdown()
 1891	rage::fiPackfile::FindFileBegin(char const*, rage::fiFindData&) const
 1892	rage::fiPackfile::FindFileNext(fiHandle__*, rage::fiFindData&) const
 1897	rage::fiPackfile::ReadInternal(rage::fiPackfileState&, void*, int) const

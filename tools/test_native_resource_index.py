@@ -1,16 +1,19 @@
 from pathlib import Path
 import subprocess,sys
 root=Path(__file__).resolve().parents[1];p=Path(sys.argv[1])
-s=(root/'app/Source/NativeAssets.m').read_text();a=s.index('uint32_t pg_mods_large_resource_size(');b=s.index('\n}\n',a)+3
+s=(root/'app/Source/NativeAssets.m').read_text();a=s.index('// Immutable pre-boot resource-size index');b=s.index('// Mods made for GTA V Enhanced',a)
 p.write_text(r"""
 #import <Foundation/Foundation.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <assert.h>
 static NSString *fixtureRoot;
 static NSString *modsFolder(void){return fixtureRoot;}
 """+s[a:b]+r"""
 int main(int argc,char **argv){@autoreleasepool{
  assert(argc==2);fixtureRoot=@(argv[1]);
+ assert(pg_mods_large_archive_known("dlc_vf8:/x64/levels/gta5/vehicles/vehicles.rpf"));
+ assert(!pg_mods_large_archive_known("platform:/levels/gta5/vehicles.rpf"));
  assert(pg_mods_large_resource_size("dlc_vf8:/x64/levels/gta5/vehicles/vehicles.rpf","vf8.yft",0xa01a1786,0x20000000)==17512137);
  assert(pg_mods_large_resource_size("DLC_VF8:\\X64\\LEVELS\\GTA5\\VEHICLES\\VEHICLES.RPF","VF8_HI.YFT",0xa01a1786,0x20000000)==17502433);
  assert(pg_mods_large_resource_size("dlc_vf8:/x64/levels/gta5/vehicles/vehicles.rpf","vf8.yft",0,0)==0);
