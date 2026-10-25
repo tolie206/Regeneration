@@ -335,7 +335,10 @@ static bool nativeProcessHeadroom(uint64_t *headroom){
 // 384 and 256 MB. PG_GUARD_RESERVE_MB and PG_GUARD_BAND_MB change them, for tests and the Lite build.
 static uint64_t guardReserve(void){
  static uint64_t value;
- if(!value){const char *v=getenv("PG_GUARD_RESERVE_MB");long mb=v?atol(v):0;value=(uint64_t)(mb>=128&&mb<=1024?mb:384)<<20;}
+ if(!value){const char *v=getenv("PG_GUARD_RESERVE_MB");long mb=v?atol(v):0;
+  // Low-limit processes otherwise remain below 384 MiB even after useful assets are gone.
+  const long fallback=processLimitMB>0&&processLimitMB<=2560?256:384;
+  value=(uint64_t)(mb>=128&&mb<=1024?mb:fallback)<<20;}
  return value;
 }
 static uint64_t guardBand(void){
@@ -2832,7 +2835,7 @@ static void *boot(void *ignored) {
   const char *limit=getenv("PG_STREAM_MEMORY_LIMIT_MB");
   if(limit){char *end;unsigned long mb=strtoul(limit,&end,10);if(end!=limit&&!*end&&mb>=2048&&mb<=8192)simulatedProcessLimit=(uint64_t)mb*1048576;}
 #endif
-  if(nativeMemoryGuard)pg_log("Native streaming memory guard enabled with 384 MB of reserve.");
+  if(nativeMemoryGuard)pg_log("Native streaming memory guard enabled (reserve selected from process limit).");
   // Device A/B switches (GTA-117, GTA-128), named in the log so each run says which side it was.
   if(nativeMemoryGuard&&getenv("PG_GUARD_SPARE_MB"))pg_log("Memory guard A/B: fast nudges only with PG_GUARD_SPARE_MB to spare.");
   if(nativeMemoryGuard&&getenv("PG_GUARD_POOL_ROOM")&&atoi(getenv("PG_GUARD_POOL_ROOM"))==0)pg_log("Memory guard: the resource pool's free space doesn't count as room (PG_GUARD_POOL_ROOM=0).");

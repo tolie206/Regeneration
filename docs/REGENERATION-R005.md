@@ -8,7 +8,8 @@ Confirmed code defects:
 
 Texture investigation:
 - A16 log: no Metal texture create/decode failures, thousands of streaming clamps, rapidly rising resource unload counts. This supports streaming starvation/churn, not proof that geometry is missing.
-- Existing code documents that address-space fast nudges misclassify near-equal process/engine limits and evict textures much faster. Require 512 MiB spare before using that fast branch; ordinary reclamation, 384 MiB reserve, 256/64 MiB bands, heap ceiling, renderer, shaders and texture quality stay unchanged.
+- Existing code documents that address-space fast nudges misclassify near-equal process/engine limits and evict textures much faster. Require 512 MiB spare before using that fast branch; ordinary reclamation, 256/64 MiB bands, heap ceiling, renderer, shaders and texture quality stay unchanged.
+- New actual grey-texture log: A13 process limit2098 MiB, free265–297 MiB, up to5376 eviction-budget answers per health interval, zero Metal create/decode failures. For process limits <=2560 MiB use256 MiB reserve instead of384; at reported steady headroom this changes continuous negative eviction into the existing hold/nudge state. Larger processes retain384; explicit overrides unchanged. This is pressure relief, not a guarantee of no iOS termination.
 - This addresses a concrete classification weakness. It does NOT prove all grey materials are cured; base data/mod dependencies and actual iPhone recovery must be checked. Do not claim measured FPS improvements without device results.
 
 Validation: production C swipe exercised across all 65536 button combinations, production Swift aiming/mode selection, production guard boundary tests, full previous importer/skin/audio/resource regression suite. Native iOS Release build follows only after validation passes. Host tests cannot establish rendered appearance, target acquisition or phone frame times.

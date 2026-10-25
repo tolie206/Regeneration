@@ -9,8 +9,9 @@ class Baseline(unittest.TestCase):
    if path=='app/Source/EngineHost.c':
     fragments=json.loads((ROOT/'tests/fixtures/r004_reviewed_fragments.json').read_text())
     current=(ROOT/path).read_bytes().replace(b'\r\n',b'\n')
-    for i,(start,end) in enumerate([(b'  // TouchControlsView suppresses swipe',b'    const float baseX'),(b' // Require a 512 MiB margin',b' atomic_store(&engineLimited')]):
+    for i,(start,end) in enumerate([(b'  // TouchControlsView suppresses swipe',b'    const float baseX'),(b' // Require a 512 MiB margin',b' atomic_store(&engineLimited'),(b' if(!value){const char *v=getenv("PG_GUARD_RESERVE_MB")',b' return value;')]):
      a=current.index(start); b=current.index(end,a)
      data=data.replace(current[a:b],fragments[i].encode())
+    data=data.replace(b'Native streaming memory guard enabled (reserve selected from process limit).',b'Native streaming memory guard enabled with 384 MB of reserve.')
    if path=='app/Source/NativeTurbo.inc': data=data.replace(b'PGLoadSceneActive()',b'PGLoadSceneSeconds()!=0')
    self.assertEqual(hashlib.sha256(data).hexdigest(),sha,path)
