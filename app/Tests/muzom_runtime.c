@@ -12,6 +12,11 @@
 // Hash declarations are included again by the production include, so remove its unguarded array here.
 
 typedef uint32_t u32;typedef uint64_t u64;typedef struct{int unused;}w2c_game;
+static w2c_game *pg_asi_game;
+static bool distanceMode=true;
+static bool pg_distance_streaming_enabled(void){return distanceMode;}
+static uint64_t guardReserve(void){return 128ull<<20;}
+static uint64_t guardBand(void){return 64ull<<20;}
 static _Atomic bool started;static uint64_t processLimitMB=2348,room=1024ull<<20;
 static PGDistanceStreaming distanceStreaming={.reserveBytes=128ull<<20};
 static struct{int unused;}env;static unsigned char memory[4096];
@@ -23,7 +28,7 @@ static bool PGPauseMenuActive(void){return paused;}static u32 PGGameStatus(void)
 static double timeMS(clockid_t clock){(void)clock;return clockMS;}
 static bool mz_native_available(uint64_t h){(void)h;return allSupported;}
 static u64 pg_asi_enter_script(w2c_game *p){(void)p;return 0;}static void pg_asi_leave_script(w2c_game*p,u64 n){(void)p;(void)n;}
-static u64 pg_asi_alloc(u64 n){(void)n;return allocationOK?256:0;}
+static u64 pg_asi_alloc(u64 n){(void)n;assert(pg_asi_game);return allocationOK?256:0;}
 static void *pg_pointer(void*p,u64 at,u64 n){(void)p;assert(at+n<=sizeof memory);return memory+at;}
 static void pg_log(const char*s){(void)s;}
 static u32 PG_FN_PLAYER_PED_ID(w2c_game*p){(void)p;return player;}static u32 PG_FN_PLAYER_ID(w2c_game*p){(void)p;return 0;}
@@ -84,6 +89,7 @@ int main(void){
  unsigned killed=0;for(unsigned i=0;i<64;i++)if(mzLive[i].kind==1&&mzLive[i].entity){entities[mzLive[i].entity].dead=true;killed=mzLive[i].entity;break;}
  tick(&g);assert(mzKills==1);for(unsigned i=0;i<45;i++)tick(&g);assert(!entities[killed].exists);
  room=10ull<<20;unsigned created=mzVerified;for(unsigned i=0;i<20;i++)tick(&g);assert(mzVerified==created&&!mzPending.active);room=1024ull<<20;
+ distanceMode=false;room=256ull<<20;created=mzVerified;for(unsigned i=0;i<10;i++)tick(&g);assert(mzVerified==created);distanceMode=true;room=1024ull<<20;
  // Occupied abandoned cars and foreign/reused handles must never be deleted.
  u32 protected=0;for(unsigned i=0;i<64;i++)if(mzLive[i].kind==2&&mzLive[i].entity){protected=mzLive[i].entity;entities[protected].occupied=true;break;}assert(protected);
  entities[1].p[0]+=5000;unsigned del=deletions;tick(&g);assert(deletions>del&&entities[protected].exists);

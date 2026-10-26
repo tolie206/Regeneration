@@ -59,6 +59,7 @@ static void pg_muzom_tick(w2c_game *instance){
  if(!mzChecked){
   mzChecked=true;for(unsigned i=0;i<sizeof mzRequiredNatives/sizeof *mzRequiredNatives;i++)if(!mz_native_available(mzRequiredNatives[i])){mzFailed=true;pg_log("MuZom disabled safely: required native missing; no partial world changes.");return;}
  }
+ pg_asi_game=instance; // pg_asi_frame may have stopped polling when no ASI mods exist.
  u64 previous=pg_asi_enter_script(instance);u32 player=PG_FN_PLAYER_PED_ID(instance);
  if(!player||!PG_FN_CURRENT_SCRIPT_HANDLER(instance)){pg_asi_leave_script(instance,previous);return;}
  if(!mzScratch){mzScratch=pg_asi_alloc(256);if(!mzScratch){mzFailed=true;pg_asi_leave_script(instance,previous);return;}memset(pg_pointer(&env,mzScratch,256),0,256);strcpy(pg_pointer(&env,mzScratch+64,64),"move_m@drunk@verydrunk");MZCALL(REQUEST_ANIM_SET,mzScratch+64);pg_log("MuZom native survival started; scenery/AI are bounded and streamed locally.");}
@@ -82,7 +83,7 @@ static void pg_muzom_tick(w2c_game *instance){
  }
  mzLastPlayer=player;
  if(now>=mzLogAt){char line[180];snprintf(line,sizeof line,"MuZom health: %u infected/corpses, %u abandoned cars, %u scenery, %u kills, %u verified creations; fixed capacity 64.",zombies,cars,props,mzKills,mzVerified);pg_log(line);mzLogAt=now+30000;}
- uint64_t room=UINT64_MAX;bool measured=nativeProcessHeadroom(&room);uint64_t reserve=distanceStreaming.reserveBytes;
+ uint64_t room=UINT64_MAX;bool measured=nativeProcessHeadroom(&room);uint64_t reserve=pg_distance_streaming_enabled()?distanceStreaming.reserveBytes:guardReserve()+guardBand();
  if(!measured)room=UINT64_MAX;
  bool memoryOK=room>=reserve+(128ull<<20);
  if(mzPending.active){
