@@ -29,7 +29,7 @@ static bool paused,scene,allSupported=true,navOK=true,modelsLoaded=true,validMod
 static unsigned wanted;static u32 damagedSurvivor,deathSource=1;
 static u32 gameStatus,owner=42,player=1;static double clockMS=1000;static unsigned nextEntity=2,nativeCalls,requests,releases,attacks,deletions;
 typedef struct{bool exists,owned,dead,occupied,unarmed,frozen;u32 model;unsigned kind;float p[3];}Entity;
-static Entity entities[4096];
+static Entity entities[4096];static u32 combatTarget[4096];
 static bool PGPauseMenuActive(void){return paused;}static u32 PGGameStatus(void){return gameStatus;}static bool PGLoadSceneActive(void){return scene;}
 static double timeMS(clockid_t clock){(void)clock;return clockMS;}
 static bool mz_native_available(uint64_t h){(void)h;return allSupported;}
@@ -80,7 +80,7 @@ static u64 pg_test_call(w2c_game*instance,u64 hash,int n,const u64*a){
  if(hash==MZ_GET_SAFE_COORD_FOR_PED||hash==MZ_GET_CLOSEST_VEHICLE_NODE){assert(n==(hash==MZ_GET_SAFE_COORD_FOR_PED?6:7));if(!navOK)return 0;u64 at=a[hash==MZ_GET_SAFE_COORD_FOR_PED?4:3];float*v=pg_pointer(&env,at,24);memset(v,0,24);v[0]=fl(a[0]);v[2]=fl(a[1]);v[4]=fl(a[2]);return 1;}
  if(hash==MZ_CREATE_PED){assert(n==8&&a[6]==0&&a[7]==1);return make((u32)a[1],1,fl(a[2]),fl(a[3]),fl(a[4]));}
  if(hash==MZ_CREATE_OBJECT_NO_OFFSET){assert(n==7&&a[4]==0);return make((u32)a[0],3,fl(a[1]),fl(a[2]),fl(a[3]));}
- if(hash==MZ_TASK_COMBAT_PED){assert(n==4&&a[0]!=player&&a[1]>0&&a[1]!=a[0]&&a[2]==0&&a[3]==16);attacks++;return 0;}
+ if(hash==MZ_TASK_COMBAT_PED){assert(n==4&&a[0]!=player&&a[1]>0&&a[1]!=a[0]&&a[2]==0&&a[3]==16);attacks++;combatTarget[a[0]]=(u32)a[1];return 0;}
  if(hash==MZ_REMOVE_ALL_PED_WEAPONS){entities[a[0]].unarmed=true;return 0;}
  if(hash==MZ_FREEZE_ENTITY_POSITION){entities[a[0]].frozen=true;return 0;}
  if(hash==MZ_IS_PED_DEAD_OR_DYING)return entities[a[0]].dead;
@@ -132,8 +132,8 @@ int main(void){
  memset(mzLive,0,sizeof mzLive);mzPending.active=false;processLimitMB=2348;room=186ull<<20;
  mzSurvival.cycle=225;for(unsigned i=0;i<60;i++)tick(&g);assert(live(1)==6&&live(2)==0);assert(live(4)==2);
  // No survivors attack the player proactively; self-defense is individual.
- MZLive *ally=NULL;for(unsigned i=0;i<64;i++)if(mzLive[i].kind==4){assert(!mzLive[i].hostile);ally=&mzLive[i];}
- assert(ally);damagedSurvivor=ally->entity;tick(&g);assert(ally->hostile);damagedSurvivor=0;
+ MZLive *ally=NULL;for(unsigned i=0;i<64;i++)if(mzLive[i].kind==4){assert(!mzLive[i].hostile);assert(combatTarget[mzLive[i].entity]&&combatTarget[mzLive[i].entity]!=player);ally=&mzLive[i];}
+ assert(ally);damagedSurvivor=ally->entity;tick(&g);assert(ally->hostile&&combatTarget[ally->entity]==player);damagedSurvivor=0;
  wanted=3;tick(&g);assert(wanted==0);
  // Fast-driving lookahead actually advances the requested position beyond the foot spawn circle.
  memset(mzLive,0,sizeof mzLive);mzPending.active=false;mzPositionAt=clockMS;memcpy(mzPreviousPos,entities[1].p,12);entities[1].p[0]+=25;

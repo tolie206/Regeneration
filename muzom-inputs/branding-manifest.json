@@ -1,0 +1,14 @@
+{
+  "Contents.json": "80b0b2e5ce5f42d06c9cea0234147e7f2bea58ef205c47ce3a82f0abe4b64465",
+  "AppIcon.appiconset/AppIcon-1024.png": "ffb24e1d9574e9072309d9a272c6d2caf6ac44ca586aad4b39d94d5b68a651ad",
+  "AppIcon.appiconset/Contents.json": "5165fc5cab3210346985a40a2eb2bca639039dfa106808a3f869f5477c7241e0",
+  "HomeIcon.imageset/Contents.json": "bc81297b7d102a8f6628dcee247a30fdc21c7c70fc82a01ff58b40f5d9df42a8",
+  "HomeIcon.imageset/HomeIcon@2x.png": "96c7e34397fafad99e7d1e460cd0644414b0d3a9d75a8eed2f1ce003791509a3",
+  "HomeIcon.imageset/HomeIcon@3x.png": "ae09de0173a83d4cc5b501f08f42022304f6eeb40d7afd03c0ccfe4043ddb328",
+  "SettingsBackground.imageset/Contents.json": "abe8406a3cc793eb65c509231ccd30d844fde499ef5261dc6fbc89d5ae359fe4",
+  "SettingsBackground.imageset/settings-bg-ipad.jpg": "db25873bed0e9ad2abc45b348d6620381b1d31dec1925a607272fa1a4e7bf86a",
+  "SettingsBackground.imageset/settings-bg-iphone.jpg": "db25873bed0e9ad2abc45b348d6620381b1d31dec1925a607272fa1a4e7bf86a",
+  "StartBackground.imageset/Contents.json": "ad9b43ea6246de785280bdb1f291aa00a4e89e73bd0a4ff64290f2cc9637d6e5",
+  "StartBackground.imageset/start-bg-ipad.jpg": "db25873bed0e9ad2abc45b348d6620381b1d31dec1925a607272fa1a4e7bf86a",
+  "StartBackground.imageset/start-bg-iphone.jpg": "db25873bed0e9ad2abc45b348d6620381b1d31dec1925a607272fa1a4e7bf86a"
+}
