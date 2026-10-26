@@ -152,7 +152,7 @@ final class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch sectionKind(section) {
         // While the game runs, settings that only take effect at the next start are hidden.
-        case .mode: return engineRunning ? 0 : importSaveRow + 1
+        case .mode: return engineRunning ? 0 : GameMode.allCases.count
         case .graphics: return (engineRunning ? Self.liveGraphicsRows.count : settings.tier.allowed.count + 7 + GraphicsDetail.all.count) + 2
         case .controls: return controlsRows.count
         case .cheats: return engineRunning ? StoryCheats.all.count + storyCheatStart : 0
@@ -184,7 +184,7 @@ final class SettingsViewController: UITableViewController {
         if engineRunning, [.mode, .files].contains(sectionKind(section)) { return nil }
         switch sectionKind(section) {
         case .mode:
-            var text = AppLanguage.choose("Story mode saves stay on this phone between launches. Sandbox keeps its own separate files.")
+            var text = "MuZom chỉ có chế độ sinh tồn Zombie. Tiến trình sinh tồn được lưu riêng trên máy."
             if let runningMode {
                 text = AppLanguage.choose("Changes apply the next time you start the game. ") + text
                 if settings.gameMode != runningMode { text += AppLanguage.interpolate(AppLanguage.choose(" Close and reopen the app to play {arg0}."), [String(describing: settings.gameMode.title)]) }

@@ -6,6 +6,7 @@ enum GameMode: Int, CaseIterable {
     case story = 1
     case sandbox = 2
     case zombie = 4
+    static let allCases: [GameMode] = [.zombie]
     var engineStartMode: Int32 { self == .story ? 1 : 2 }
     var symbol: String { self == .story ? "book.fill" : (self == .zombie ? "exclamationmark.triangle.fill" : "map.fill") }
 
@@ -158,8 +159,8 @@ final class GameSettings {
     }
     static var sandboxMapTitles: [String] { ["GTA V", AppLanguage.choose("GTA VI test map")] }
     var gameModeChoice: GameMode? {
-        get { (defaults.object(forKey: "gameMode") as? Int).flatMap(GameMode.init) }
-        set { defaults.set(newValue?.rawValue, forKey: "gameMode") }
+        get { .zombie }
+        set { defaults.set(GameMode.zombie.rawValue, forKey: "gameMode") }
     }
     /// MuZom defaults to the zombie host mode when an automated caller makes no choice.
     var gameMode: GameMode {

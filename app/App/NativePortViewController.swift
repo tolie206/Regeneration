@@ -52,6 +52,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
     private var queue: MTLCommandQueue?
     private let output = UITextView()
     private let fpsLabel = UILabel()
+    private let zombieHUD = MuZomHUD()
     // Top left, or bottom left while the minimap sits at the top (GTA-131).
     private lazy var fpsAtTop = fpsLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8)
     private lazy var fpsAtBottom = fpsLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
@@ -295,6 +296,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
             self.setNeedsUpdateOfPrefersPointerLocked()
         }
         view.addSubview(touchControls)
+        zombieHUD.attach(to: self)
         // Script mods asking for typed text (a car to spawn by name, a search) get the iPhone keyboard.
         Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in self?.checkModTextRequest() }
         // Script mods' keys (shows itself only while a script mod runs), above the touch controls.
@@ -333,6 +335,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         // Diagnostics overlay sits over the transparent gesture surface but
         // cannot intercept touches (isUserInteractionEnabled=false).
         view.bringSubviewToFront(inputTestLabel)
+        view.bringSubviewToFront(zombieHUD)
         NSLayoutConstraint.activate([
             touchControls.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             touchControls.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -618,6 +621,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         launchButton.isEnabled = false
         home.settingsButton.isHidden = true
         home.layoutButton.isHidden = true
+        do { try MuZomContent.prepare() } catch { appendLog("MuZom content: \(error.localizedDescription)"); launchButton.isEnabled = true; return }
         engineStarted = true
         ModInstaller.gameRunning = true
         playStats.gameStarting(GameSettings.shared.gameMode, sandboxMap: GameSettings.shared.sandboxMap)
@@ -1523,6 +1527,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
             if touchControlsAvailable { fpsLabel.isHidden = !GameSettings.shared.showFPS }
             let fps = PGRenderedFramesPerSecond()
             fpsLabel.text = fps > 0 ? String(format: "%.0f FPS", fps) : "— FPS"
+            zombieHUD.refresh(active: engineStarted && bootedMode == .zombie && touchControlsAvailable && !PGPauseMenuActive())
             lastFPSLabelUpdate = now
         }
         let elapsed = lastControllerPoll.map { now - $0 } ?? (1.0 / 60.0)

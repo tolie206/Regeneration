@@ -201,3 +201,5 @@ void PGLogStreamingPolicy(void);
 
 // Configure only before engine start; zombie mode uses the ordinary Sandbox engine path.
 void PGSetZombieMode(bool enabled);
+
+#include "MuZomSurvival.h"

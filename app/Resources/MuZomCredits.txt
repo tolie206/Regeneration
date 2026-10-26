@@ -4,3 +4,9 @@ Scenery derived from The Dead Among Us Project - Zombie Maps by denedwin.
 https://www.gta5-mods.com/maps/the-dead-among-us-project-menyoo-zombie-maps
 Original XML converted to bounded nearby scenery; peds, fires, custom props, global world-clearing and tasks are not imported. DLL zombie mods are not bundled or executed.
 Original author notes preserved in repository muzom-inputs/dead-among-us/Readme-denedwin.txt.
+
+MuZom V002 supplied assets:
+Human Zombie addon skin; DocZ skin (original notices bundled in MuZomContent.zip).
+Zombie Sounds+ (aba248), source package notes mention Epidemic Sound; original notice retained.
+Realistic Gun Sounds 4.1 sound-only subset by XENORT; credits: 420x420, MaoBO, ThisIsntMyName.
+No gun meta, damage changes, large collision banks or Windows zombie DLL scripts bundled.

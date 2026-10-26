@@ -7,6 +7,11 @@
 #include <math.h>
 #include <assert.h>
 #include <time.h>
+#include "../Source/MuZomSurvival.h"
+static unsigned saves,groans;
+bool PGZombieLoad(MZSurvival*out){(void)out;return false;}
+void PGZombieSave(MZSurvival s){assert(mz_valid_survival(s));saves++;}
+void PGZombieGroan(float v,float p){assert(v>=0&&v<=1&&p>=-1&&p<=1);groans++;}
 #include "../Source/NativeDistanceStreaming.h"
 
 // Hash declarations are included again by the production include, so remove its unguarded array here.
@@ -21,6 +26,7 @@ static _Atomic bool started;static uint64_t processLimitMB=2348,room=1024ull<<20
 static PGDistanceStreaming distanceStreaming={.reserveBytes=128ull<<20};
 static struct{int unused;}env;static unsigned char memory[4096];
 static bool paused,scene,allSupported=true,navOK=true,modelsLoaded=true,validModel=true,failCreate,wrongModel,allocationOK=true;
+static unsigned wanted;static u32 damagedSurvivor;
 static u32 gameStatus,owner=42,player=1;static double clockMS=1000;static unsigned nextEntity=2,nativeCalls,requests,releases,attacks,deletions;
 typedef struct{bool exists,owned,dead,occupied,unarmed,frozen;u32 model;unsigned kind;float p[3];}Entity;
 static Entity entities[4096];
@@ -55,6 +61,7 @@ static u64 pg_test_call(w2c_game*,u64,int,const u64*);
 #include "../Source/NativeMuZom.inc"
 static unsigned model_kind(u32 model){
  for(unsigned i=0;i<MZ_PLACEMENTS_COUNT;i++)if(mzPlacements[i].model==model)return mzPlacements[i].kind;
+ if(model==mz_hash("prop_barrier_work05")||model==mz_hash("prop_rub_binbag_01")||model==mz_hash("prop_crate_11e"))return 3;
  if(model==mz_hash("emperor")||model==mz_hash("ingot")||model==mz_hash("asea"))return 2;
  return 1;
 }
@@ -63,10 +70,16 @@ static u64 pg_test_call(w2c_game*instance,u64 hash,int n,const u64*a){
  if(hash==MZ_IS_MODEL_IN_CDIMAGE)return validModel;
  if(hash==MZ_IS_MODEL_A_PED)return model_kind((u32)a[0])==1;
  if(hash==MZ_HAS_ANIM_SET_LOADED)return 1;
+ if(hash==MZ_GET_PLAYER_WANTED_LEVEL)return wanted;
+ if(hash==MZ_SET_PLAYER_WANTED_LEVEL){wanted=0;return 0;}
+ if(hash==MZ_HAS_ENTITY_BEEN_DAMAGED_BY_ENTITY)return a[0]==damagedSurvivor;
+ if(hash==MZ_GET_PED_SOURCE_OF_DEATH)return player;
+ if(hash==MZ_GET_ENTITY_HEALTH)return 200;
+ if(hash==MZ_GET_AMMO_IN_PED_WEAPON)return 24;
  if(hash==MZ_GET_SAFE_COORD_FOR_PED||hash==MZ_GET_CLOSEST_VEHICLE_NODE){assert(n==(hash==MZ_GET_SAFE_COORD_FOR_PED?6:7));if(!navOK)return 0;u64 at=a[hash==MZ_GET_SAFE_COORD_FOR_PED?4:3];float*v=pg_pointer(&env,at,24);memset(v,0,24);v[0]=fl(a[0]);v[2]=fl(a[1]);v[4]=fl(a[2]);return 1;}
  if(hash==MZ_CREATE_PED){assert(n==8&&a[6]==0&&a[7]==1);return make((u32)a[1],1,fl(a[2]),fl(a[3]),fl(a[4]));}
  if(hash==MZ_CREATE_OBJECT_NO_OFFSET){assert(n==7&&a[4]==0);return make((u32)a[0],3,fl(a[1]),fl(a[2]),fl(a[3]));}
- if(hash==MZ_TASK_COMBAT_PED){assert(n==4&&a[0]!=player&&a[1]==player&&a[2]==0&&a[3]==16);attacks++;return 0;}
+ if(hash==MZ_TASK_COMBAT_PED){assert(n==4&&a[0]!=player&&a[1]>0&&a[1]!=a[0]&&a[2]==0&&a[3]==16);attacks++;return 0;}
  if(hash==MZ_REMOVE_ALL_PED_WEAPONS){entities[a[0]].unarmed=true;return 0;}
  if(hash==MZ_FREEZE_ENTITY_POSITION){entities[a[0]].frozen=true;return 0;}
  if(hash==MZ_IS_PED_DEAD_OR_DYING)return entities[a[0]].dead;
@@ -114,6 +127,26 @@ int main(void){
  assert(live(1)==10);
  processLimitMB=7096;for(unsigned i=0;i<200;i++){tick(&g);assert(live(1)<=14&&live(2)<=4&&live(3)<=32);}
  assert(live(1)==14);
+ // Confirm low-headroom refill, the exact V001 regression: 186 MiB free, 128 MiB reserve.
+ memset(mzLive,0,sizeof mzLive);mzPending.active=false;processLimitMB=2348;room=186ull<<20;
+ mzSurvival.cycle=225;for(unsigned i=0;i<60;i++)tick(&g);assert(live(1)==6&&live(2)==0);assert(live(4)==2);
+ // No survivors attack the player proactively; self-defense is individual.
+ MZLive *ally=NULL;for(unsigned i=0;i<64;i++)if(mzLive[i].kind==4){assert(!mzLive[i].hostile);ally=&mzLive[i];}
+ assert(ally);damagedSurvivor=ally->entity;tick(&g);assert(ally->hostile);damagedSurvivor=0;
+ wanted=3;tick(&g);assert(wanted==0);
+ // Fast-driving lookahead actually advances the requested position beyond the foot spawn circle.
+ memset(mzLive,0,sizeof mzLive);mzPending.active=false;mzPositionAt=clockMS;memcpy(mzPreviousPos,entities[1].p,12);entities[1].p[0]+=25;
+ tick(&g);assert(mzPending.active&&mzPending.kind==1);assert(mzPending.p[0]>entities[1].p[0]+60);
+ // Dawn removes infected and stops new requests; survivors can remain.
+ mzSurvival.cycle=900;for(unsigned i=0;i<20;i++)tick(&g);assert(live(1)==0&&(!mzPending.active||mzPending.kind!=1));
+ // Midnight restarts spawning. Pausing doesn't starve the player or advance game time.
+ float old=mzSurvival.cycle;paused=true;clockMS+=600000;pg_muzom_tick(&g);paused=false;tick(&g);assert(mzSurvival.cycle-old<=1);
+ mzSurvival.cycle=225;for(unsigned i=0;i<60;i++)tick(&g);assert(live(1)>0);
+ // Atomic mailbox can't overwrite an unconsumed purchase.
+ assert(PGZombieAction(1)&&!PGZombieAction(2));tick(&g);PGZombieHUD hud;assert(PGZombieRead(&hud)&&hud.ready&&saves&&groans);
+ // Player-credited kills drop one item exactly once. Capacity never grows.
+ memset(mzLoot,0,sizeof mzLoot);for(unsigned i=0;i<64;i++)if(mzLive[i].kind==1&&mzLive[i].entity){entities[mzLive[i].entity].dead=true;break;}
+ tick(&g);unsigned drops=0;for(unsigned i=0;i<24;i++)drops+=mzLoot[i].active;assert(drops==1);tick(&g);unsigned again=0;for(unsigned i=0;i<24;i++)again+=mzLoot[i].active;assert(again==1);
  (void)active;
  printf("PASS production MuZom runtime: %u verified entities, %u safe deletes; caps/AI/ownership/memory/scene/timeout/respawn coordinates\n",mzVerified,deletions);
  return 0;
