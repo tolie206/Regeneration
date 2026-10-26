@@ -26,7 +26,7 @@ static _Atomic bool started;static uint64_t processLimitMB=2348,room=1024ull<<20
 static PGDistanceStreaming distanceStreaming={.reserveBytes=128ull<<20};
 static struct{int unused;}env;static unsigned char memory[4096];
 static bool paused,scene,allSupported=true,navOK=true,modelsLoaded=true,validModel=true,failCreate,wrongModel,allocationOK=true;
-static unsigned wanted;static u32 damagedSurvivor;
+static unsigned wanted;static u32 damagedSurvivor,deathSource=1;
 static u32 gameStatus,owner=42,player=1;static double clockMS=1000;static unsigned nextEntity=2,nativeCalls,requests,releases,attacks,deletions;
 typedef struct{bool exists,owned,dead,occupied,unarmed,frozen;u32 model;unsigned kind;float p[3];}Entity;
 static Entity entities[4096];
@@ -60,6 +60,7 @@ static u64 pg_f32_arg(float x){u32 n;memcpy(&n,&x,4);return n;}static float fl(u
 static u64 pg_test_call(w2c_game*,u64,int,const u64*);
 #include "../Source/NativeMuZom.inc"
 static unsigned model_kind(u32 model){
+ for(unsigned i=0;i<MZ_CAMPS_COUNT;i++)if(mzCamps[i].model==model)return 3;
  for(unsigned i=0;i<MZ_PLACEMENTS_COUNT;i++)if(mzPlacements[i].model==model)return mzPlacements[i].kind;
  if(model==mz_hash("prop_barrier_work05")||model==mz_hash("prop_rub_binbag_01")||model==mz_hash("prop_crate_11e"))return 3;
  if(model==mz_hash("emperor")||model==mz_hash("ingot")||model==mz_hash("asea"))return 2;
@@ -73,7 +74,7 @@ static u64 pg_test_call(w2c_game*instance,u64 hash,int n,const u64*a){
  if(hash==MZ_GET_PLAYER_WANTED_LEVEL)return wanted;
  if(hash==MZ_SET_PLAYER_WANTED_LEVEL){wanted=0;return 0;}
  if(hash==MZ_HAS_ENTITY_BEEN_DAMAGED_BY_ENTITY)return a[0]==damagedSurvivor;
- if(hash==MZ_GET_PED_SOURCE_OF_DEATH)return player;
+ if(hash==MZ_GET_PED_SOURCE_OF_DEATH)return deathSource;
  if(hash==MZ_GET_ENTITY_HEALTH)return 200;
  if(hash==MZ_GET_AMMO_IN_PED_WEAPON)return 24;
  if(hash==MZ_GET_SAFE_COORD_FOR_PED||hash==MZ_GET_CLOSEST_VEHICLE_NODE){assert(n==(hash==MZ_GET_SAFE_COORD_FOR_PED?6:7));if(!navOK)return 0;u64 at=a[hash==MZ_GET_SAFE_COORD_FOR_PED?4:3];float*v=pg_pointer(&env,at,24);memset(v,0,24);v[0]=fl(a[0]);v[2]=fl(a[1]);v[4]=fl(a[2]);return 1;}
@@ -147,6 +148,14 @@ int main(void){
  // Player-credited kills drop one item exactly once. Capacity never grows.
  memset(mzLoot,0,sizeof mzLoot);for(unsigned i=0;i<64;i++)if(mzLive[i].kind==1&&mzLive[i].entity){entities[mzLive[i].entity].dead=true;break;}
  tick(&g);unsigned drops=0;for(unsigned i=0;i<24;i++)drops+=mzLoot[i].active;assert(drops==1);tick(&g);unsigned again=0;for(unsigned i=0;i<24;i++)again+=mzLoot[i].active;assert(again==1);
+ // Opening mission chain uses proximity and explicit interaction, never auto-completion at a distance.
+ mzSurvival=mz_new_survival();mzEquipped=player;memset(mzLoot,0,sizeof mzLoot);
+ memcpy(entities[1].p,mzShelter,12);assert(PGZombieAction(4));tick(&g);assert(mzSurvival.stage==1&&mzSurvival.cash==60);
+ assert(PGZombieAction(4));tick(&g);assert(mzSurvival.stage==1);
+ memcpy(entities[1].p,mzHospital,12);assert(PGZombieAction(4));tick(&g);assert(mzSurvival.stage==2);
+ deathSource=999;unsigned total=mzSurvival.kills;mz_drop(&g,2,player,mzHospital,clockMS);assert(mzSurvival.kills==total);deathSource=player;
+ for(unsigned i=0;i<5;i++)mz_drop(&g,2,player,mzHospital,clockMS);tick(&g);assert(mzSurvival.stage==3);
+ memset(mzLoot,0,sizeof mzLoot);memcpy(entities[1].p,mzShelter,12);assert(PGZombieAction(4));tick(&g);assert(mzSurvival.stage==4&&mzSurvival.cash==210);
  (void)active;
  printf("PASS production MuZom runtime: %u verified entities, %u safe deletes; caps/AI/ownership/memory/scene/timeout/respawn coordinates\n",mzVerified,deletions);
  return 0;

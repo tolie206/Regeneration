@@ -17,12 +17,15 @@ void PGZombieSave(MZSurvival s){
  dispatch_async(q,^{@autoreleasepool {NSDictionary *j=@{@"version":@1,@"hunger":@(s.hunger),@"thirst":@(s.thirst),@"cycle":@(s.cycle),@"cash":@(s.cash),@"food":@(s.food),@"water":@(s.water),@"medkits":@(s.medkits),@"stage":@(s.stage),@"kills":@(s.kills),@"weapons":@(s.weapons),@"ammo":@(s.ammo),@"shotAmmo":@(s.shotAmmo),@"smgAmmo":@(s.smgAmmo)};NSData *d=[NSJSONSerialization dataWithJSONObject:j options:0 error:nil];if(d)[d writeToURL:mzSaveURL() options:NSDataWritingAtomic error:nil];}});
 }
 // Three preloaded voices, one event per native cooldown. Do not change the game's audio session.
+static NSMutableArray<AVAudioPlayer*> *mzVoices;
+void PGZombiePrepareAudio(void){
+ if(mzVoices)return;mzVoices=[NSMutableArray array];NSURL *root=[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject URLByAppendingPathComponent:@"MuZomAudio"];
+ for(unsigned i=0;i<8;i++){AVAudioPlayer *p=[[AVAudioPlayer alloc] initWithContentsOfURL:[root URLByAppendingPathComponent:[NSString stringWithFormat:@"groan%u.wav",i]] error:nil];if(p){[p prepareToPlay];[mzVoices addObject:p];}}
+}
 void PGZombieGroan(float volume,float pan){
  dispatch_async(dispatch_get_main_queue(),^{
-  static NSMutableArray<AVAudioPlayer*> *voices;static unsigned index;
-  if(!voices){voices=[NSMutableArray array];NSURL *root=[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject URLByAppendingPathComponent:@"MuZomAudio"];
-   for(unsigned i=0;i<8;i++){AVAudioPlayer *p=[[AVAudioPlayer alloc] initWithContentsOfURL:[root URLByAppendingPathComponent:[NSString stringWithFormat:@"groan%u.wav",i]] error:nil];if(p){[p prepareToPlay];[voices addObject:p];}}}
-  unsigned active=0;for(AVAudioPlayer *p in voices)if(p.playing)active++;if(active>=3||!voices.count)return;
-  for(unsigned i=0;i<voices.count;i++){AVAudioPlayer *p=voices[(index++)%voices.count];if(p.playing)continue;p.volume=fminf(1,fmaxf(0,volume));p.pan=fminf(1,fmaxf(-1,pan));p.currentTime=0;[p play];break;}
+  static unsigned index;PGZombiePrepareAudio();
+  unsigned active=0;for(AVAudioPlayer *p in mzVoices)if(p.playing)active++;if(active>=3||!mzVoices.count)return;
+  for(unsigned i=0;i<mzVoices.count;i++){AVAudioPlayer *p=mzVoices[(index++)%mzVoices.count];if(p.playing)continue;p.volume=fminf(1,fmaxf(0,volume));p.pan=fminf(1,fmaxf(-1,pan));p.currentTime=0;[p play];break;}
  });
 }

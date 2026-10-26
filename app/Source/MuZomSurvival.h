@@ -9,6 +9,7 @@ bool PGZombieRead(PGZombieHUD *out);
 bool PGZombieAction(int32_t action);
 bool PGZombieLoad(MZSurvival *out);
 void PGZombieSave(MZSurvival state);
+void PGZombiePrepareAudio(void);
 void PGZombieGroan(float volume,float pan);
 static inline MZSurvival mz_new_survival(void){return (MZSurvival){.hunger=100,.thirst=100,.cycle=225,.food=1,.water=1,.ammo=24};}
 static inline bool mz_valid_survival(MZSurvival s){return isfinite(s.hunger)&&isfinite(s.thirst)&&isfinite(s.cycle)&&s.hunger>=0&&s.hunger<=100&&s.thirst>=0&&s.thirst<=100&&s.cycle>=0&&s.cycle<1200&&s.cash<=1000000&&s.food<=99&&s.water<=99&&s.medkits<=99&&s.stage<=4&&s.kills<=1000000&&s.weapons<=3&&s.ammo<=9999&&s.shotAmmo<=9999&&s.smgAmmo<=9999;}

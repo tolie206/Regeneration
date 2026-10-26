@@ -7,7 +7,7 @@ static _Atomic int mzAction;
 static MZSurvival mzSurvival;
 static bool mzSurvivalLoaded;
 static double mzSurvivalAt,mzSaveAt,mzWeatherAt,mzGroanAt,mzDamageAt,mzEquipAt;
-static int mzWeatherPhase=-1,mzNotice;
+static int mzWeatherPhase=-1,mzNotice,mzWaypointStage=-1;
 static u32 mzEquipped;
 typedef struct{bool active;float p[3];unsigned type;double until;} MZLoot;
 static MZLoot mzLoot[24];
@@ -40,6 +40,7 @@ static void mz_survival_tick(w2c_game *instance,u32 player,const float *pos,doub
   if(mzSurvival.weapons&2)MZCALL(GIVE_WEAPON_TO_PED,player,mz_hash("weapon_microsmg"),mzSurvival.smgAmmo,0,0);
   mzEquipped=player;
  }
+ if(mzWaypointStage!=(int)mzSurvival.stage){const float *destination=mz_objective();if(mzSurvival.stage==2||mzSurvival.stage==4)pg_test_call(instance,MZ_SET_WAYPOINT_OFF,0,NULL);else MZCALL(SET_NEW_WAYPOINT,pg_f32_arg(destination[0]),pg_f32_arg(destination[1]));mzWaypointStage=(int)mzSurvival.stage;}
  bool night=mz_night(mzSurvival);
  if(now>=mzWeatherAt){
   // 15-minute night (18:00-06:00), 5-minute day (06:00-18:00).

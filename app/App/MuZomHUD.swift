@@ -29,7 +29,7 @@ final class MuZomHUD: UIView {
   var next=PGZombieHUD();let ready=PGZombieRead(&next);snapshot=next;isHidden = !active || !ready
   guard !isHidden else{return}
   status.text="\(next.night != 0 ? "Đêm":"Ngày") · \(max(0,next.minutes)) phút | Đói \(next.hunger)% · Khát \(next.thirst)% | $\(next.cash)"
-  hunger.progress=Float(next.hunger)/100;thirst.progress=Float(next.thirst)/100;objective.text=mission
+  hunger.progress=Float(next.hunger)/100;thirst.progress=Float(next.thirst)/100;objective.text=mission + (next.notice == 1 ? " Không đủ vật phẩm/tiền hoặc chưa đúng vị trí." : next.notice == 2 ? " Đã nhặt đồ." : next.notice == 3 ? " Đã cập nhật nhiệm vụ." : "")
   button.setTitle(next.loot != 0 ? "Nhặt vật phẩm / Sinh tồn":next.shop != 0 ? "Cửa hàng / Sinh tồn":"Sinh tồn / Tương tác",for:.normal)
  }
  @objc private func menu(){

@@ -621,7 +621,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         launchButton.isEnabled = false
         home.settingsButton.isHidden = true
         home.layoutButton.isHidden = true
-        do { try MuZomContent.prepare() } catch { appendLog("MuZom content: \(error.localizedDescription)"); launchButton.isEnabled = true; return }
+        do { try MuZomContent.prepare(); PGZombiePrepareAudio() } catch { appendLog("MuZom content: \(error.localizedDescription)"); launchButton.isEnabled = true; return }
         engineStarted = true
         ModInstaller.gameRunning = true
         playStats.gameStarting(GameSettings.shared.gameMode, sandboxMap: GameSettings.shared.sandboxMap)

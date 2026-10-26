@@ -1,6 +1,7 @@
 // MuZom V001. All natives execute only on the existing main-script tick.
 #include "MuZomNatives.h"
 #include "MuZomMapData.h"
+#include "MuZomCampData.h"
 static _Atomic bool mzEnabled;
 void PGSetZombieMode(bool enabled){if(!atomic_load(&started))atomic_store(&mzEnabled,enabled);}
 typedef struct {u32 entity,model;unsigned kind;int placement;double deadAt,nextTask;bool hostile;} MZLive;
@@ -52,7 +53,7 @@ static bool mz_create(w2c_game *instance,double now,u32 player){
   if(MZCALL(HAS_ANIM_SET_LOADED,mzScratch+64)==1)MZCALL(SET_PED_MOVEMENT_CLIPSET,entity,mzScratch+64,pg_f32_arg(0.25f));
  }else if(q->kind==4){MZCALL(SET_PED_RELATIONSHIP_GROUP_HASH,entity,mz_hash("MZSURVIVORS"));MZCALL(REMOVE_ALL_PED_WEAPONS,entity,1);MZCALL(SET_BLOCKING_OF_NON_TEMPORARY_EVENTS,entity,1);MZCALL(SET_ENTITY_HEALTH,entity,200,0);MZCALL(GIVE_WEAPON_TO_PED,entity,mz_hash("weapon_carbinerifle"),300,0,1);
  }else if(q->kind==2){PG_FN_GROUND_VEHICLE(instance,entity,5.f);MZCALL(SET_VEHICLE_ENGINE_HEALTH,entity,pg_f32_arg(250.f));MZCALL(SET_VEHICLE_DIRT_LEVEL,entity,pg_f32_arg(15.f));MZCALL(SET_VEHICLE_DOORS_LOCKED,entity,1);MZCALL(SET_VEHICLE_ENGINE_ON,entity,0,1,0);}
- else {if(q->placement>=0){const MZPlacement *p=&mzPlacements[q->placement];MZCALL(SET_ENTITY_ROTATION,entity,pg_f32_arg(p->pitch),pg_f32_arg(p->roll),pg_f32_arg(p->yaw),2,1);}MZCALL(FREEZE_ENTITY_POSITION,entity,1);}
+ else {if(q->placement>=0){const MZPlacement *p=&mzPlacements[q->placement];MZCALL(SET_ENTITY_ROTATION,entity,pg_f32_arg(p->pitch),pg_f32_arg(p->roll),pg_f32_arg(p->yaw),2,1);}MZCALL(FREEZE_ENTITY_POSITION,entity,1);if(q->placement<0)MZCALL(SET_ENTITY_ROTATION,entity,0,0,pg_f32_arg(q->heading),2,1);}
  mzVerified++;
  if(mzVerified<=6){char line[160];snprintf(line,sizeof line,"MuZom verified entity: kind %u, handle %u, model 0x%08x, visible flag %u (engine state, not pixel proof).",q->kind,entity,q->model,PG_FN_SPAWN_ENTITY_VISIBLE(instance,entity));pg_log(line);}
  return true;
@@ -128,7 +129,7 @@ static void pg_muzom_tick(w2c_game *instance){
  unsigned carCap=processLimitMB<=2560?2:processLimitMB<=5000?3:4;
  unsigned propCap=processLimitMB<=2560?16:processLimitMB<=5000?24:32;
  if(survivors<(processLimitMB<=2560?2u:3u)&&zombies>=zCap/2){
-  float x=pos[0]+35,y=pos[1]+35;
+  float side=(survivors%2)?-1.f:1.f;float x=pos[0]+35*side,y=pos[1]+35;
   if(MZCALL(GET_SAFE_COORD_FOR_PED,pg_f32_arg(x),pg_f32_arg(y),pg_f32_arg(pos[2]),0,mzScratch,14)==1){v=pg_pointer(&env,mzScratch,24);float p[3]={v[0],v[2],v[4]};if(isfinite(p[0])&&isfinite(p[1])&&isfinite(p[2])&&mz_dist2(p,pos)<100.f*100.f&&fabsf(p[2]-pos[2])<12)mz_request(instance,mz_hash(survivors%2?"s_m_y_cop_01":"a_m_m_farmer_01"),4,-1,p,0,now);}
  }else if(zombies<zCap||(memoryOK&&cars<carCap)){
   bool ped=zombies<zCap;
@@ -146,6 +147,7 @@ static void pg_muzom_tick(w2c_game *instance){
    }
   }
  }else if(memoryOK&&props<propCap){
+  for(unsigned i=0;i<MZ_CAMPS_COUNT;i++){const MZPlacement *p=&mzCamps[i];float at[3]={p->x,p->y,p->z};if(!mz_used(-2-(int)i)&&!mz_bad(p->model)&&mz_dist2(at,pos)<100.f*100.f){if(mz_request(instance,p->model,3,-2-(int)i,at,p->yaw,now)){pg_asi_leave_script(instance,previous);return;}}}
   int best=-1;float near=120.f*120.f;
   for(unsigned i=0;i<MZ_PLACEMENTS_COUNT;i++){const MZPlacement *p=&mzPlacements[i];if(p->kind==2&&cars>=carCap)continue;if(mz_bad(p->model)||mz_used((int)i))continue;
    float dx=p->x-pos[0],dy=p->y-pos[1],dz=p->z-pos[2],d=dx*dx+dy*dy+dz*dz;if(d<near&&d>12.f*12.f){near=d;best=(int)i;}}
