@@ -1,0 +1,56 @@
+{
+  "source_counts": {
+    "airport.xml": {
+      "1": 0,
+      "2": 8,
+      "3": 865
+    },
+    "city.xml": {
+      "1": 47,
+      "2": 42,
+      "3": 242
+    },
+    "datunnel.xml": {
+      "1": 0,
+      "2": 0,
+      "3": 402
+    },
+    "freeway.xml": {
+      "1": 0,
+      "2": 62,
+      "3": 373
+    },
+    "motel.xml": {
+      "1": 0,
+      "2": 6,
+      "3": 910
+    },
+    "road.xml": {
+      "1": 0,
+      "2": 16,
+      "3": 645
+    },
+    "sandy.xml": {
+      "1": 0,
+      "2": 63,
+      "3": 769
+    },
+    "street.xml": {
+      "1": 0,
+      "2": 1,
+      "3": 999
+    }
+  },
+  "raw_placements": 5450,
+  "selected": 741,
+  "sha256": {
+    "airport.xml": "43344cce68b0d8c3e5c3c91b6d3fe77b008c62afa31bee9ee312c6ff5d82b0a3",
+    "city.xml": "b540793eb4732a474ed881f336364c928313f69303fc5ce0a3967066114eee99",
+    "datunnel.xml": "01e4de174fa5291d1bc54f2512c8f5814291bafd5901bf91728d9b188d6fe5f8",
+    "freeway.xml": "b94d8f27d0156f6929ff792632e72c19b0e1cebaf93a55005ab0259d1530d476",
+    "motel.xml": "6c632d8443b0fcc705bc1de34b7c9c4f2a4effc1c3ae76724f9dd3925ef31d32",
+    "road.xml": "916db1b3a28e171b35caf79686aba42dd6751a430dcc00da6df6ff1ae0affb8e",
+    "sandy.xml": "fe80f5cd777c9107382576bb48862cdce54ece81d43d045f3d56c4009a8320dd",
+    "street.xml": "cea559dbee109b0dbbe1a4134bd194af223750861c9703e978717130675947f0"
+  }
+}

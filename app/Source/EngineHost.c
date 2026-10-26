@@ -2429,6 +2429,12 @@ static void pg_trackify_tick(w2c_game *instance) {
 #if TARGET_OS_SIMULATOR
 #include "NativeDebugChannel.inc"
 #endif
+static bool mz_native_available(uint64_t hash){
+ size_t low=0,high=sizeof pg_asi_natives/sizeof *pg_asi_natives;
+ while(low<high){size_t mid=(low+high)/2;if(pg_asi_natives[mid].hash<hash)low=mid+1;else high=mid;}
+ return low<sizeof pg_asi_natives/sizeof *pg_asi_natives&&pg_asi_natives[low].hash==hash;
+}
+#include "NativeMuZom.inc"
 void pg_asi_script_tick(w2c_game *instance, u64 thread) {
 #if TARGET_OS_SIMULATOR
   if (thread && strcmp(pg_string(&env, thread + 428), "main")) pg_debug_tick(instance, false);
@@ -2440,6 +2446,7 @@ void pg_asi_script_tick(w2c_game *instance, u64 thread) {
   pg_cheats_menu_tick(instance);
   pg_sound_mod_tick(instance);
   pg_turbo_tick(instance);
+  pg_muzom_tick(instance);
   pg_trackify_tick(instance);
 #if TARGET_OS_SIMULATOR
   pg_debug_tick(instance, true);

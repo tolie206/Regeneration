@@ -198,3 +198,6 @@ bool PGSelectVehicleSound(uint32_t model,const char *profile);
 
 // Bounded diagnostic called alongside the 10-second health sample.
 void PGLogStreamingPolicy(void);
+
+// Configure only before engine start; zombie mode uses the ordinary Sandbox engine path.
+void PGSetZombieMode(bool enabled);

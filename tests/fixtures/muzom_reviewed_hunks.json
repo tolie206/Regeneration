@@ -1,0 +1,12 @@
+{
+  "app/Source/EngineHost.c": [
+    [
+      "#include \"NativeDebugChannel.inc\"\n#endif\nvoid pg_asi_script_tick(w2c_game *instance, u64 thread) {\n#if TARGET_OS_SIMULATOR\n",
+      "#include \"NativeDebugChannel.inc\"\n#endif\nstatic bool mz_native_available(uint64_t hash){\n size_t low=0,high=sizeof pg_asi_natives/sizeof *pg_asi_natives;\n while(low<high){size_t mid=(low+high)/2;if(pg_asi_natives[mid].hash<hash)low=mid+1;else high=mid;}\n return low<sizeof pg_asi_natives/sizeof *pg_asi_natives&&pg_asi_natives[low].hash==hash;\n}\n#include \"NativeMuZom.inc\"\nvoid pg_asi_script_tick(w2c_game *instance, u64 thread) {\n#if TARGET_OS_SIMULATOR\n"
+    ],
+    [
+      "  pg_sound_mod_tick(instance);\n  pg_turbo_tick(instance);\n  pg_trackify_tick(instance);\n#if TARGET_OS_SIMULATOR\n",
+      "  pg_sound_mod_tick(instance);\n  pg_turbo_tick(instance);\n  pg_muzom_tick(instance);\n  pg_trackify_tick(instance);\n#if TARGET_OS_SIMULATOR\n"
+    ]
+  ]
+}

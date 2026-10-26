@@ -1,4 +1,4 @@
-name: Build Mugoat Regeneration
+name: Build MuZom
 on:
   workflow_dispatch:
   push:
@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: newgen-paid
+  group: muzom-paid
   cancel-in-progress: false
 jobs:
   build:
@@ -39,6 +39,7 @@ jobs:
           python3 tools/release_metadata.py
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/game-files"
           python3 app/Scripts/check_game_files.py --mirror "$RUNNER_TEMP/game-files"
+          python3 tools/audit_muzom_natives.py "$RUNNER_TEMP/game-files/b/8b0b5899ed/game.wasm"
       - name: Install tools
         run: brew install xcodegen
       - name: Metal compiler
@@ -48,6 +49,12 @@ jobs:
       - name: Typecheck actual memory settings UI with iOS SDK
         run: |
           xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/StreamingSettings.swift app/App/MemoryAccessViewController.swift app/Tests/MemorySettingsTypecheckStubs.swift
+      - name: Verify MuZom maps and native survival lifecycle
+        run: |
+          python3 tools/test_muzom_modes.py "$RUNNER_TEMP/muzom-modes.swift"
+          python3 tools/muzom_maps.py --check
+          clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/muzom_runtime.c -lm -o "$RUNNER_TEMP/muzom-runtime"
+          "$RUNNER_TEMP/muzom-runtime"
       - name: Distance streaming policy
         run: |
           swiftc app/App/StreamingSettings.swift app/Tests/streaming_preferences.swift -o "$RUNNER_TEMP/streaming-preferences"
@@ -135,16 +142,16 @@ jobs:
           "$RUNNER_TEMP/sound-runtime-full"
       - name: Verify transition lifecycle guard
         run: python3 tools/test_scene_lifecycle.py "$RUNNER_TEMP/scene-lifecycle.c"
-      - name: Build Mugoat-NewGen-Regeneration-R007
+      - name: Build MuZom-V001
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify IPA entitlements
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R007.ipa
+          mv GTA5Port.ipa MuZom-V001.ipa
       - uses: actions/upload-artifact@v4
         with:
-          name: Mugoat-NewGen-Regeneration-R007
-          path: Mugoat-NewGen-Regeneration-R007.ipa
+          name: MuZom-V001
+          path: MuZom-V001.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()

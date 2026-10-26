@@ -66,7 +66,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
     private var lastDeviceLogAt: CFTimeInterval = 0
     private var lastFPSLabelUpdate: CFTimeInterval = 0
     /// The start screen; it hides once the game's world is up.
-    private lazy var home = HomeView(modes: GameMode.allCases.map { ($0.title, $0 == .story ? "book.fill" : "map.fill") }, log: output)
+    private lazy var home = HomeView(modes: GameMode.allCases.map { ($0.title, $0.symbol) }, log: output)
     private var launchButton: UIButton { home.playButton }
     private var preloadLabel: UILabel { home.preloadLabel }
     private var controllerLabel: UILabel { home.controllerLabel }
@@ -625,7 +625,8 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         let mode = GameSettings.shared.gameMode
         bootedMode = mode
         let testMap = mode == .sandbox && GameSettings.shared.sandboxMap == 1
-        PGSetStartMode(testMap ? 3 : Int32(mode.rawValue))
+        PGSetZombieMode(mode == .zombie)
+        PGSetStartMode(testMap ? 3 : mode.engineStartMode)
         let minimap = GameSettings.shared.minimapLayout
         PGSetMinimapLayout(minimap.dx, minimap.dy, minimap.scale)
         PGSetSubtitleRaise(GameSettings.shared.subtitlesAboveHomeBar ? 0.05 : 0)
@@ -648,7 +649,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         do { try SkinInstaller.updateMenyooList() } catch { appendLog("Menyoo addon skin list: \(error.localizedDescription)") }
         do { try BundledVietnamese.prepare() } catch { appendLog("Built-in translation: \(error.localizedDescription)") }
         appendLog(BundledVietnamese.status)
-        appendLog("Regeneration R007 (reserve/distance profiles): frame cap \(GameSettings.shared.frameRateCap), Menyoo \(BundledMenyoo.enabled ? "on":"off"), extended distance \(StreamingSettings.distanceScale ?? "automatic"), texture budget \(StreamingSettings.textureBudgetMB) MiB (0=automatic).")
+        appendLog("MuZom V001 (R007 memory policy): frame cap \(GameSettings.shared.frameRateCap), Menyoo \(BundledMenyoo.enabled ? "on":"off"), extended distance \(StreamingSettings.distanceScale ?? "automatic"), texture budget \(StreamingSettings.textureBudgetMB) MiB (0=automatic).")
         ModVehicleSupport.prepare(manifestPath:path,log:appendLog)
         ModVehicleSupport.prepareLargeResources(log:appendLog)
         SoundAssignments.resolveDuplicatePacks(log:appendLog)

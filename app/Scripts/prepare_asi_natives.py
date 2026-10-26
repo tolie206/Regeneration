@@ -78,3 +78,12 @@ target = root / 'Generated/asi-natives.inc'
 text = '\n'.join(out) + '\n'
 if not target.exists() or target.read_text() != text: target.write_text(text)
 print(f'asi natives: {len(rows)} game commands for mods ({len(wrappers)} through wrappers), {missing} not in this game build')
+
+# MuZom fork: reject a partially supported native set before C compilation.
+muzom=root.parent/'muzom-inputs/native-manifest.json'
+if muzom.exists():
+ import json
+ required=json.loads(muzom.read_text());available={h for h,_,_ in rows}
+ absent=[name for name,h in required.items() if int(h,16) not in available]
+ if absent:raise RuntimeError('MuZom natives absent from generated dispatch: '+repr(absent))
+ print('MuZom: all',len(required),'required natives present in real generated dispatch')

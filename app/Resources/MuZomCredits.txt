@@ -1,0 +1,6 @@
+MuZom V001
+Native zombie gameplay: MuZom fork.
+Scenery derived from The Dead Among Us Project - Zombie Maps by denedwin.
+https://www.gta5-mods.com/maps/the-dead-among-us-project-menyoo-zombie-maps
+Original XML converted to bounded nearby scenery; peds, fires, custom props, global world-clearing and tasks are not imported. DLL zombie mods are not bundled or executed.
+Original author notes preserved in repository muzom-inputs/dead-among-us/Readme-denedwin.txt.

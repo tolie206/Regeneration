@@ -1,7 +1,7 @@
 name: Validate regeneration repair (no IPA)
 on:
   push:
-    branches: [regeneration-mod-repair, regeneration-r004-scene-skins, regeneration-r005-driveby-textures, regeneration-r006-distance-streaming, regeneration-r007-reserve-profiles]
+    branches: [regeneration-mod-repair, regeneration-r004-scene-skins, regeneration-r005-driveby-textures, regeneration-r006-distance-streaming, regeneration-r007-reserve-profiles, muzom-v001]
   workflow_dispatch:
 permissions:
   contents: read
@@ -23,6 +23,12 @@ jobs:
       - name: Typecheck actual memory settings UI with iOS SDK
         run: |
           xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/StreamingSettings.swift app/App/MemoryAccessViewController.swift app/Tests/MemorySettingsTypecheckStubs.swift
+      - name: Verify MuZom maps and native survival lifecycle
+        run: |
+          python3 tools/test_muzom_modes.py "$RUNNER_TEMP/muzom-modes.swift"
+          python3 tools/muzom_maps.py --check
+          clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/muzom_runtime.c -lm -o "$RUNNER_TEMP/muzom-runtime"
+          "$RUNNER_TEMP/muzom-runtime"
       - name: Distance streaming policy
         run: |
           swiftc app/App/StreamingSettings.swift app/Tests/streaming_preferences.swift -o "$RUNNER_TEMP/streaming-preferences"
@@ -88,3 +94,7 @@ jobs:
           cd app
           swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/ModVehicleSupport.swift App/SkinInstaller.swift App/BundledMenyoo.swift App/StreamingSettings.swift Tests/SoundTestStubs.swift Tests/owner_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/owner-mod-test"
           "$RUNNER_TEMP/owner-mod-test" "$RUNNER_TEMP/owner-mods"
+      - name: Verify required MuZom natives in actual pinned game
+        run: |
+          python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/muzom-game-files"
+          python3 tools/audit_muzom_natives.py "$RUNNER_TEMP/muzom-game-files/b/8b0b5899ed/game.wasm"

@@ -1,15 +1,19 @@
 import Foundation
 
-/// How the engine starts: the same two choices as the web build's loading
-/// screen (Story Mode / Sandbox Mode). Raw values are the engine's start mode.
+/// Launcher choices. Zombie is a host mode mapped to the native Sandbox path,
+/// never passed as an unsupported start-mode value to the engine.
 enum GameMode: Int, CaseIterable {
     case story = 1
     case sandbox = 2
+    case zombie = 4
+    var engineStartMode: Int32 { self == .story ? 1 : 2 }
+    var symbol: String { self == .story ? "book.fill" : (self == .zombie ? "exclamationmark.triangle.fill" : "map.fill") }
 
-    var title: String { self == .story ? AppLanguage.choose("Story mode") : AppLanguage.choose("Sandbox") }
+    var title: String { self == .zombie ? "Zombie" : (self == .story ? AppLanguage.choose("Story mode") : AppLanguage.choose("Sandbox")) }
     var detail: String {
         switch self {
         case .story: return AppLanguage.choose("The campaign with missions. Continues your latest save, or starts from the Prologue.")
+        case .zombie: return "Sinh tồn giữa thành phố nhiễm bệnh: zombie truy đuổi, xe bỏ hoang và cảnh quan tải theo khu vực. Bản thử nghiệm MuZom."
         case .sandbox: return AppLanguage.choose("Free roam anywhere on the map with every weapon. No missions.")
         }
     }
@@ -159,7 +163,7 @@ final class GameSettings {
     }
     /// Sandbox was the only mode before the choice existed.
     var gameMode: GameMode {
-        get { gameModeChoice ?? .sandbox }
+        get { gameModeChoice ?? .zombie }
         set { gameModeChoice = newValue }
     }
 
