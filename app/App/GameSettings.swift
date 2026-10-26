@@ -161,7 +161,7 @@ final class GameSettings {
         get { (defaults.object(forKey: "gameMode") as? Int).flatMap(GameMode.init) }
         set { defaults.set(newValue?.rawValue, forKey: "gameMode") }
     }
-    /// Sandbox was the only mode before the choice existed.
+    /// MuZom defaults to the zombie host mode when an automated caller makes no choice.
     var gameMode: GameMode {
         get { gameModeChoice ?? .zombie }
         set { gameModeChoice = newValue }

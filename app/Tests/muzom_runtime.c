@@ -97,9 +97,17 @@ int main(void){
  modelsLoaded=true;assert(mz_request(&g,0x123457,1,-1,p,0,clockMS));clockMS+=6000;tick(&g);assert(!mz_bad(0x123457)&&live(1)==1);
  // Fast travel invalidates pending old-area coordinates without creating in that area.
  assert(mz_request(&g,0x123458,1,-1,p,0,clockMS));entities[1].p[0]+=1000;created=mzVerified;tick(&g);assert(!mzPending.active&&mzVerified==created);
+ // A handler change must not release through the wrong script owner.
+ assert(mz_request(&g,0x123460,1,-1,p,0,clockMS));owner=99;before=releases;tick(&g);assert(!mzPending.active&&releases==before);owner=42;
  // Missing/invalid models are refused before REQUEST_MODEL.
  validModel=false;before=requests;assert(!mz_request(&g,0x123459,1,-1,p,0,clockMS));assert(requests==before);validModel=true;
  mzPending.active=false;unsigned active=live(1);for(unsigned i=0;i<300;i++){tick(&g);assert(live(1)<=6&&live(2)<=2&&live(3)<=16);}
+ // The same fixed-storage runtime scales up only within each quota's caps.
+ entities[1].p[0]=414;entities[1].p[1]=-1225;entities[1].p[2]=39;
+ processLimitMB=4096;for(unsigned i=0;i<200;i++){tick(&g);assert(live(1)<=10&&live(2)<=3&&live(3)<=24);}
+ assert(live(1)==10);
+ processLimitMB=7096;for(unsigned i=0;i<200;i++){tick(&g);assert(live(1)<=14&&live(2)<=4&&live(3)<=32);}
+ assert(live(1)==14);
  (void)active;
  printf("PASS production MuZom runtime: %u verified entities, %u safe deletes; caps/AI/ownership/memory/scene/timeout/respawn coordinates\n",mzVerified,deletions);
  return 0;

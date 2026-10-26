@@ -253,10 +253,10 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         }
         if GameFolder.isChosen { updateServerStatus() }
         else if !GameSettings.shared.assetServer.isEmpty { testAssetServer() }
-        // Debug/automation: --game-mode story|sandbox picks the mode before Play.
+        // Debug/automation: --game-mode story|sandbox|zombie picks the mode before Play.
         let arguments = ProcessInfo.processInfo.arguments
         if let index = arguments.firstIndex(of: "--game-mode"), index + 1 < arguments.count {
-            GameSettings.shared.gameMode = arguments[index + 1] == "story" ? .story : .sandbox
+            GameSettings.shared.gameMode = arguments[index + 1] == "story" ? .story : (arguments[index + 1] == "zombie" ? .zombie : .sandbox)
         }
         refreshModeChoice()
         home.translatesAutoresizingMaskIntoConstraints = false
@@ -593,7 +593,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
     /// The launch screen asks for a mode once; after that it remembers it.
     private func refreshModeChoice() {
         let choice = GameSettings.shared.gameModeChoice
-        home.setMode(choice.flatMap { GameMode.allCases.firstIndex(of: $0) }, detail: choice?.detail ?? AppLanguage.choose("Choose Story mode or Sandbox to play."), enabled: !engineStarted)
+        home.setMode(choice.flatMap { GameMode.allCases.firstIndex(of: $0) }, detail: choice?.detail ?? "Chọn Cốt truyện, Tự do hoặc Zombie để chơi.", enabled: !engineStarted)
         let testMap = GameFolder.isChosen && GameFolder.testMapAvailable
         if !testMap && GameSettings.shared.sandboxMap == 1 { GameSettings.shared.sandboxMap = 0 }
         home.setMap(GameSettings.shared.sandboxMap, visible: choice == .sandbox, enabled: !engineStarted, testMapAvailable: testMap)
