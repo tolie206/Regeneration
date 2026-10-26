@@ -4,7 +4,7 @@
 
 - User-supplied zombie logo/app icon and apocalypse artwork for launcher/settings backgrounds.
 - Zombie-only launcher. Engine remains on the existing native Sandbox startup path.
-- Correct low-headroom actor admission: reserve + 24 MiB for peds; expensive scenery/cars retain reserve + 128 MiB. RAM reserve and R007 streaming protection remain enabled.
+- Correct low-headroom actor admission: reserve + 12 MiB for compact infected, +24 MiB for survivors, +48 MiB for scenery, +128 MiB for cars. RAM reserve and R007 streaming protection remain enabled.
 - Velocity-predicted spawn center (up to 140 m ahead), bounded model requests and stale-position cancellation. Zombie cap remains 6/10/14 by app memory quota.
 - Civilian/police survivors: 2 on low-quota devices, 3 otherwise. Armed, target nearby infected; individual self-defense only after player damage. Separate neutral relationship group; no wanted-star gameplay.
 - Day 5 minutes, night 15 minutes; no owned infected during day. Overcast daylight and foggy night, no rain or renderer modifications.

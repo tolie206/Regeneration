@@ -8,7 +8,7 @@ final class MuZomHUD: UIView {
  func attach(to owner:UIViewController){
   self.owner=owner;translatesAutoresizingMaskIntoConstraints=false;owner.view.addSubview(self)
   backgroundColor=UIColor.black.withAlphaComponent(0.55);layer.cornerRadius=8
-  status.font = .monospacedDigitSystemFont(ofSize:11,weight:.semibold);status.textColor = .white
+  status.font = .monospacedDigitSystemFont(ofSize:11,weight:.semibold);status.textColor = .white;status.adjustsFontSizeToFitWidth=true;status.minimumScaleFactor=0.75
   objective.font = .systemFont(ofSize:11);objective.textColor = .white;objective.numberOfLines=2
   hunger.progressTintColor = .systemOrange;thirst.progressTintColor = .systemCyan
   button.setTitle("Sinh tồn / Tương tác",for:.normal);button.titleLabel?.font = .systemFont(ofSize:12,weight:.semibold);button.addTarget(self,action:#selector(menu),for:.touchUpInside)

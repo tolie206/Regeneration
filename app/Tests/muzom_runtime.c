@@ -132,6 +132,9 @@ int main(void){
  // Confirm low-headroom refill, the exact V001 regression: 186 MiB free, 128 MiB reserve.
  memset(mzLive,0,sizeof mzLive);mzPending.active=false;processLimitMB=2348;room=186ull<<20;
  mzSurvival.cycle=225;for(unsigned i=0;i<60;i++)tick(&g);assert(live(1)==6&&live(2)==0);assert(live(4)==2);
+ // The second A13 log reaches 145 MiB free: compact zombie skins still fit a 12 MiB admission margin.
+ memset(mzLive,0,sizeof mzLive);mzPending.active=false;room=145ull<<20;for(unsigned i=0;i<30;i++)tick(&g);assert(live(1)==6&&live(4)==0&&live(3)==0);
+ room=186ull<<20;for(unsigned i=0;i<30;i++)tick(&g);assert(live(4)==2);
  // No survivors attack the player proactively; self-defense is individual.
  MZLive *ally=NULL;for(unsigned i=0;i<64;i++)if(mzLive[i].kind==4){assert(!mzLive[i].hostile);assert(combatTarget[mzLive[i].entity]&&combatTarget[mzLive[i].entity]!=player);ally=&mzLive[i];}
  assert(ally);damagedSurvivor=ally->entity;tick(&g);assert(ally->hostile&&combatTarget[ally->entity]==player);damagedSurvivor=0;

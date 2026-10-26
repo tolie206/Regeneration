@@ -116,10 +116,10 @@ static void pg_muzom_tick(w2c_game *instance){
  if(now>=mzLogAt){char line[180];snprintf(line,sizeof line,"MuZom health: %u infected/corpses, %u cars, %u scenery, %u survivors, %u kills, %u verified; %s, fixed capacity 64.",zombies,cars,props,survivors,mzKills,mzVerified,night?"night":"day");pg_log(line);mzLogAt=now+30000;}
  uint64_t room=UINT64_MAX;bool measured=nativeProcessHeadroom(&room);uint64_t reserve=pg_distance_streaming_enabled()?distanceStreaming.reserveBytes:guardReserve()+guardBand();
  if(!measured)room=UINT64_MAX;
- bool actorOK=room>=reserve+(24ull<<20);bool memoryOK=room>=reserve+(128ull<<20);
+ bool actorOK=room>=reserve+(12ull<<20),survivorOK=room>=reserve+(24ull<<20),propOK=room>=reserve+(48ull<<20);bool memoryOK=room>=reserve+(128ull<<20);
  if(mzPending.active){
   if(mzPending.owner!=PG_FN_CURRENT_SCRIPT_HANDLER(instance)){mzPending.active=false;}
-  else if(((mzPending.kind==1||mzPending.kind==4)?!actorOK:!memoryOK)||(mzPending.kind==1&&!night)){mz_finish_request(instance);}
+  else if((mzPending.kind==1?!actorOK:mzPending.kind==4?!survivorOK:mzPending.kind==3?!propOK:!memoryOK)||(mzPending.kind==1&&!night)){mz_finish_request(instance);}
   else if((mzPending.p[0]-pos[0])*(mzPending.p[0]-pos[0])+(mzPending.p[1]-pos[1])*(mzPending.p[1]-pos[1])>(mzPending.kind==1?300.f*300.f:140.f*140.f)){mz_finish_request(instance);}
   else if(PG_FN_HAS_MODEL_LOADED(instance,mzPending.model)){if(used<64)mz_create(instance,now,player);mz_finish_request(instance);}
   else if(now-mzPending.began>5000){mz_ban(mzPending.model);mz_finish_request(instance);}
@@ -129,7 +129,7 @@ static void pg_muzom_tick(w2c_game *instance){
  unsigned zCap=!night?0:processLimitMB<=2560?6:processLimitMB<=5000?10:14;
  unsigned carCap=processLimitMB<=2560?2:processLimitMB<=5000?3:4;
  unsigned propCap=processLimitMB<=2560?16:processLimitMB<=5000?24:32;
- if(survivors<(processLimitMB<=2560?2u:3u)&&zombies>=zCap/2){
+ if(survivorOK&&survivors<(processLimitMB<=2560?2u:3u)&&zombies>=zCap/2){
   float side=(survivors%2)?-1.f:1.f;float x=pos[0]+35*side,y=pos[1]+35;
   if(MZCALL(GET_SAFE_COORD_FOR_PED,pg_f32_arg(x),pg_f32_arg(y),pg_f32_arg(pos[2]),0,mzScratch,14)==1){v=pg_pointer(&env,mzScratch,24);float p[3]={v[0],v[2],v[4]};if(isfinite(p[0])&&isfinite(p[1])&&isfinite(p[2])&&mz_dist2(p,pos)<100.f*100.f&&fabsf(p[2]-pos[2])<12)mz_request(instance,mz_hash(survivors%2?"s_m_y_cop_01":"a_m_m_farmer_01"),4,-1,p,0,now);}
  }else if(zombies<zCap||(memoryOK&&cars<carCap)){
@@ -147,7 +147,7 @@ static void pg_muzom_tick(w2c_game *instance){
     u32 model=mz_hash(ped?peds[processLimitMB<=2560?(mz_rand()%4==0?2:0):mz_rand()%3]:vehicles[mz_rand()%3]);mz_request(instance,model,ped?1:2,-1,p,(float)(mz_rand()%360),now);
    }
   }
- }else if(memoryOK&&props<propCap){
+ }else if(propOK&&props<propCap){
   for(unsigned i=0;i<MZ_CAMPS_COUNT;i++){const MZPlacement *p=&mzCamps[i];float at[3]={p->x,p->y,p->z};if(!mz_used(-2-(int)i)&&!mz_bad(p->model)&&mz_dist2(at,pos)<100.f*100.f){if(mz_request(instance,p->model,3,-2-(int)i,at,p->yaw,now)){pg_asi_leave_script(instance,previous);return;}}}
   int best=-1;float near=120.f*120.f;
   for(unsigned i=0;i<MZ_PLACEMENTS_COUNT;i++){const MZPlacement *p=&mzPlacements[i];if(p->kind==2&&cars>=carCap)continue;if(mz_bad(p->model)||mz_used((int)i))continue;
