@@ -10,7 +10,7 @@ static MZLive mzLive[64];static MZPending mzPending;
 static u32 mzBad[64];static unsigned mzBadCount,mzRandom=0x4d755a6f,mzKills,mzVerified;
 static u64 mzScratch;static double mzNext,mzLogAt;static bool mzChecked,mzFailed,mzPoliceSet;static u32 mzLastPlayer;
 #define MZCALL(name,...) pg_test_call(instance,MZ_##name,(int)(sizeof((u64[]){__VA_ARGS__})/sizeof(u64)),(u64[]){__VA_ARGS__})
-static u32 mz_hash(const char *s){u32 h=0;for(;*s;s++){h+=(unsigned char)*s;h+=h<<10;h^=h>>6;}h+=h<<3;h^=h>>11;h+=h<<15;return h;}
+static u32 mz_hash(const char *s){u32 h=0;for(;*s;s++){unsigned char c=(unsigned char)*s;if(c>='A'&&c<='Z')c+=32;h+=c;h+=h<<10;h^=h>>6;}h+=h<<3;h^=h>>11;h+=h<<15;return h;}
 static unsigned mz_rand(void){mzRandom^=mzRandom<<13;mzRandom^=mzRandom>>17;mzRandom^=mzRandom<<5;return mzRandom;}
 #include "NativeMuZomGameplay.inc"
 static float mzPreviousPos[3];static double mzPositionAt;
@@ -79,7 +79,8 @@ static void pg_muzom_tick(w2c_game *instance){
   MZCALL(SET_RELATIONSHIP_BETWEEN_GROUPS,5,infected,allies);MZCALL(SET_RELATIONSHIP_BETWEEN_GROUPS,5,allies,infected);
   MZCALL(SET_RELATIONSHIP_BETWEEN_GROUPS,5,infected,humans);MZCALL(SET_RELATIONSHIP_BETWEEN_GROUPS,3,allies,humans);MZCALL(SET_RELATIONSHIP_BETWEEN_GROUPS,3,humans,allies);
  }
- if(!mzPoliceSet||MZCALL(GET_PLAYER_WANTED_LEVEL,PG_FN_PLAYER_ID(instance))>0){PG_FN_SET_MAX_WANTED(instance,0);u32 id=PG_FN_PLAYER_ID(instance);MZCALL(SET_POLICE_IGNORE_PLAYER,id,1);MZCALL(SET_PLAYER_WANTED_LEVEL,id,0,0);MZCALL(SET_PLAYER_WANTED_LEVEL_NOW,id,0);mzPoliceSet=true;}
+ PG_FN_SET_MAX_WANTED(instance,0);MZCALL(SET_POLICE_IGNORE_PLAYER,PG_FN_PLAYER_ID(instance),1);
+ if(!mzPoliceSet||MZCALL(GET_PLAYER_WANTED_LEVEL,PG_FN_PLAYER_ID(instance))>0){u32 id=PG_FN_PLAYER_ID(instance);MZCALL(SET_PLAYER_WANTED_LEVEL,id,0,0);MZCALL(SET_PLAYER_WANTED_LEVEL_NOW,id,0);mzPoliceSet=true;}
  PG_FN_GET_ENTITY_COORDS(instance,mzScratch,player,1);float *v=pg_pointer(&env,mzScratch,24);float pos[3]={v[0],v[2],v[4]};
  if(!isfinite(pos[0])||!isfinite(pos[1])||!isfinite(pos[2])){pg_asi_leave_script(instance,previous);return;}
  mz_survival_tick(instance,player,pos,now);

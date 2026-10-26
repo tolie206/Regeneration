@@ -90,6 +90,7 @@ static u64 pg_test_call(w2c_game*instance,u64 hash,int n,const u64*a){
 static unsigned live(unsigned kind){unsigned n=0;for(unsigned i=0;i<64;i++)if(mzLive[i].entity&&mzLive[i].kind==kind)n++;return n;}
 static void tick(w2c_game*p){clockMS+=500;pg_muzom_tick(p);}
 int main(void){
+ assert(mz_hash("PLAYER")==0x6f0783f5u&&mz_hash("MZINFECTED")==mz_hash("mzinfected"));
  w2c_game g={0};entities[1]=(Entity){.exists=true,.model=123,.p={-170,-880,29}};
  unsigned before=nativeCalls;pg_muzom_tick(&g);assert(nativeCalls==before); // Story/free mode untouched.
  PGSetZombieMode(true);atomic_store(&started,true);PGSetZombieMode(false);assert(atomic_load(&mzEnabled));
