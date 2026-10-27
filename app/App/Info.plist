@@ -57,5 +57,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Mugoat Online kết nối máy chủ Roleplay trong mạng Wi-Fi của bạn.</string>
 </dict>
 </plist>

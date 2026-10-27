@@ -110,6 +110,7 @@ targets:
     info:
       path: App/Info.plist
       properties:
+        NSLocalNetworkUsageDescription: Mugoat Online kết nối máy chủ Roleplay trong mạng Wi-Fi của bạn.
         CFBundleDisplayName: Mugoat Online
         CFBundleDevelopmentRegion: en
         CFBundleShortVersionString: "0.1.0"

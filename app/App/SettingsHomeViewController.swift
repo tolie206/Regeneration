@@ -33,7 +33,7 @@ final class SettingsHomeViewController: UITableViewController {
                 AppLanguage.choose("Camera, buttons, layout, gyro, controller and keyboard")
             }, sections: [.controls, .gyro]),
         ]
-        list.append(Category(icon: "globe", title: engineRunning ? AppLanguage.choose("Language") : AppLanguage.choose("Game mode and language"), summary: {
+        list.append(Category(icon: "globe", title: AppLanguage.choose("Language"), summary: {
             running ? AppLanguage.current.name : "\(settings.gameMode.title) · \(AppLanguage.current.name)"
         }, sections: [.language]))
         if !engineRunning {
