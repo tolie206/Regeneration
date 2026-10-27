@@ -102,8 +102,8 @@ jobs:
         env:
           DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
         run: |
-          rustup target add aarch64-apple-ios
+          python3 tools/preflight_online_swift.py --swift-only
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/online-files"
           python3 tools/prepare_online_resources.py
           python3 app/Scripts/prepare.py --codegen-only --mirror "$RUNNER_TEMP/online-files"
-          python3 tools/preflight_online_swift.py
+          python3 tools/preflight_online_swift.py --c-only
