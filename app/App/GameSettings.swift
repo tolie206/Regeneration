@@ -149,13 +149,13 @@ final class GameSettings {
     /// nil until the player has chosen on the launch screen.
     /// Sandbox map: 0 the GTA V map, 1 the test level the game files include (env_test).
     var sandboxMap: Int {
-        get { defaults.integer(forKey: "sandboxMap") == 1 ? 1 : 0 }
-        set { defaults.set(newValue == 1 ? 1 : 0, forKey: "sandboxMap") }
+        get { 0 }
+        set { defaults.set(0, forKey: "sandboxMap") }
     }
     static var sandboxMapTitles: [String] { ["GTA V", AppLanguage.choose("GTA VI test map")] }
     var gameModeChoice: GameMode? {
-        get { (defaults.object(forKey: "gameMode") as? Int).flatMap(GameMode.init) }
-        set { defaults.set(newValue?.rawValue, forKey: "gameMode") }
+        get { .sandbox }
+        set { defaults.set(GameMode.sandbox.rawValue, forKey: "gameMode") }
     }
     /// Sandbox was the only mode before the choice existed.
     var gameMode: GameMode {

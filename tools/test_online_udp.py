@@ -10,7 +10,9 @@ def client(name,room='roleplay'):
    while True:
     d=s.recv(1600)
     if d[:2]==bytes([0x47,2]):return s,d[2]
-  except (socket.timeout,ConnectionResetError):time.sleep(.05)
+  except (socket.timeout,ConnectionResetError,ConnectionRefusedError):
+   if p.poll() is not None:raise AssertionError("server exited: "+p.stderr.read().decode(errors="replace"))
+   time.sleep(.05)
  raise AssertionError('server welcome missing')
 def drain(s):
  s.settimeout(.05)

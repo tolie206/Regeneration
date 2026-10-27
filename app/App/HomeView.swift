@@ -65,7 +65,7 @@ final class HomeView: UIView {
         buildFilesCard()
 
         for (index, mode) in modes.enumerated() {
-            let card = ModeCard(title: mode.title, symbol: mode.symbol)
+            let card = ModeCard(title: index == 1 ? "Roleplay Online" : mode.title, symbol: mode.symbol)
             card.isHidden = index != 1
             card.addAction(UIAction { [weak self] _ in self?.onMode?(index) }, for: .touchUpInside)
             modeCards.append(card)
@@ -192,7 +192,7 @@ final class HomeView: UIView {
         settingsButton.accessibilityLabel = AppLanguage.choose("Settings")
         layoutButton.accessibilityLabel = AppLanguage.choose("Controls layout")
         for (index, card) in modeCards.enumerated() {
-            card.setTitle(GameMode.allCases[index].title)
+            card.setTitle(index == 1 ? "Roleplay Online" : GameMode.allCases[index].title)
         }
         for (i, chip) in mapChips.enumerated() {
             chip.configuration?.title = GameSettings.sandboxMapTitles[i]
@@ -266,8 +266,8 @@ final class HomeView: UIView {
     /// Marks the chosen mode (nil: none yet) and shows its description.
     /// Shows the map choice (Sandbox) instead of the mode description, with `index` selected.
     func setMap(_ index: Int, visible: Bool, enabled: Bool, testMapAvailable: Bool = true) {
-        mapRow.isHidden = !visible
-        modeDetail.isHidden = visible
+        mapRow.isHidden = true
+        modeDetail.isHidden = false
         for (i, chip) in mapChips.enumerated() {
             let selected = i == index
             // The GTA VI test map greys out when the game files don't include it.
@@ -283,7 +283,7 @@ final class HomeView: UIView {
 
     func setMode(_ index: Int?, detail: String, enabled: Bool) {
         for (i, card) in modeCards.enumerated() { card.isSelected = i == index; card.isEnabled = enabled }
-        modeDetail.text = detail
+        modeDetail.text = "Kết nối server PC/LAN · Không mod cá nhân hoặc cheat"
     }
 
     private func pin(_ view: UIView, to parent: UIView) {

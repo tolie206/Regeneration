@@ -73,7 +73,10 @@ targets:
       - path: Tools/wabt-1.0.42/share/wabt/wasm2c/wasm-rt-mem-impl.c
       - path: Tools/wabt-1.0.42/share/wabt/wasm2c/wasm-rt-exceptions-impl.c
       - path: Resources
-        excludes: [BundledMenyoo.zip]
+        excludes: [BundledMenyoo.zip, TrustedOnlineAssets]
+        buildPhase: resources
+      - path: Resources/TrustedOnlineAssets
+        type: folder
         buildPhase: resources
       - path: TurboSounds
         type: folder
