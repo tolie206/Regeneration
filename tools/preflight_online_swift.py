@@ -8,5 +8,5 @@ subprocess.run(args,check=True)
 print('PASS all production Swift sources typecheck for iPhoneOS with online-only flag')
 
 # Compile the generated production bridge against the actual iOS headers, not mock declarations.
-subprocess.run(['xcrun','clang','-fsyntax-only','-target','arm64-apple-ios16.0','-isysroot',sdk,'-std=c11','-DPG_ROLEPLAY_CLIENT=1','-DWASM_RT_USE_MMAP=0','-DWASM_RT_MEMCHECK_BOUNDS_CHECK=1','-include',str(r/'Source/NativeRuntime.h'),'-I',str(r/'Source'),'-I',str(r/'Generated'),'-I',str(r/'Tools/wabt-1.0.42/include'),'-I',str(r/'Tools/wabt-1.0.42/share/wabt/wasm2c'),str(r/'Generated/MugoatCommands.c')],check=True)
+subprocess.run(['xcrun','clang','-fsyntax-only','-target','arm64-apple-ios16.0','-isysroot',sdk,'-std=c11','-DPG_ROLEPLAY_CLIENT=1','-DWASM_RT_USE_MMAP=0','-DWASM_RT_MEMCHECK_BOUNDS_CHECK=1','-include',str(r/'Source/NativeRuntime.h'),'-I',str(r/'Source'),'-I',str(r/'Tools/simde'),'-I',str(r/'Generated'),'-I',str(r/'Tools/wabt-1.0.42/include'),'-I',str(r/'Tools/wabt-1.0.42/share/wabt/wasm2c'),str(r/'Generated/MugoatCommands.c')],check=True)
 print('PASS generated native C online bridge with original engine headers')

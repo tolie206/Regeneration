@@ -59,4 +59,15 @@ impl Core{
  #[test]fn inventory_failure_rolls_back_debit(){let mut c=core();c.db.execute("INSERT INTO inventory VALUES('alice','water',5)",[]).unwrap();assert!(c.transfer_item("alice","missing","water",3,"x").is_err());assert_eq!(c.db.query_row("SELECT quantity FROM inventory WHERE owner='alice'",[],|r|r.get::<_,i64>(0)).unwrap(),5);}
  #[test]fn job_owner_location_and_replay_checked(){let mut c=core();c.start_delivery("alice","job1").unwrap();assert!(!c.finish_delivery("bob","job1",[215.,-915.,30.6]).unwrap());assert!(!c.finish_delivery("alice","job1",[0.,0.,0.]).unwrap());assert!(c.finish_delivery("alice","job1",[215.,-915.,30.6]).unwrap());assert!(!c.finish_delivery("alice","job1",[215.,-915.,30.6]).unwrap());assert_eq!(c.balance("alice").unwrap(),Some((100,0)));}
  #[test]fn persistence_survives_reopen(){let p=std::env::temp_dir().join(format!("mugoat-rp-test-{}.sqlite",std::process::id()));{let c=Core::open(p.to_str().unwrap()).unwrap();c.create_character("alice","Alice").unwrap();c.admin_grant("alice",50).unwrap();}{let c=Core::open(p.to_str().unwrap()).unwrap();assert_eq!(c.balance("alice").unwrap(),Some((50,0)));}let _=std::fs::remove_file(p);}
+
+ #[test]fn concurrent_deposits_cannot_double_spend(){
+  use std::sync::{Arc,Barrier};
+  let path=std::env::temp_dir().join(format!("mugoat-concurrency-{}.sqlite",std::process::id()));
+  {let c=Core::open(path.to_str().unwrap()).unwrap();c.create_character("alice","Alice").unwrap();c.admin_grant("alice",100).unwrap();}
+  let barrier=Arc::new(Barrier::new(2));
+  let tasks:Vec<_>=(0..2).map(|n|{let p=path.clone();let b=barrier.clone();std::thread::spawn(move||{let mut c=Core::open(p.to_str().unwrap()).unwrap();b.wait();c.deposit("alice",70,&format!("concurrent-{n}")).unwrap()})}).collect();
+  let successes=tasks.into_iter().filter_map(|t|t.join().ok()).filter(|ok|*ok).count();assert_eq!(successes,1);
+  {let c=Core::open(path.to_str().unwrap()).unwrap();assert_eq!(c.balance("alice").unwrap(),Some((30,70)));}
+  let _=std::fs::remove_file(path);
+ }
 }

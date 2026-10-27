@@ -11,6 +11,7 @@ import urllib.request
 root = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
 parser.add_argument('--mirror', type=Path, required=True, help='folder containing data/ and b/8b0b5899ed/game.wasm')
+parser.add_argument('--codegen-only', action='store_true', help='Prepare the pinned native C ABI without building shaders or an Xcode project')
 parser.add_argument('--prebuilt-dawn', action='store_true', help=argparse.SUPPRESS)  # accepted for old scripts; Dawn is no longer used
 parser.add_argument('--sdk', action='append', choices=['iphoneos', 'iphonesimulator'], help='Metal library to build (default: iphoneos)')
 options = parser.parse_args()
@@ -113,6 +114,9 @@ run('python3', 'Scripts/prepare_memory_file_create.py')
 run('python3', 'Scripts/prepare_longjmp.py')
 run('python3', 'Scripts/prepare_online_c.py')
 run('python3', 'Scripts/prepare_online_lockdown.py')
+if options.codegen_only:
+    print('Prepared original-index native engine and online C ABI for preflight.')
+    raise SystemExit(0)
 # The BC texture decoder header (MIT): phones without BC texture support get decoded textures.
 bcdec = root / 'Tools/bcdec'
 if not bcdec.exists():

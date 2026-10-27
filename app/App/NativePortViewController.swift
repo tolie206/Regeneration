@@ -52,6 +52,9 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
     private var queue: MTLCommandQueue?
     private let output = UITextView()
     private let fpsLabel = UILabel()
+    private let onlineStatusLabel = UILabel()
+    private var lastOnlineStatusUpdate: CFTimeInterval = 0
+    private var lastOnlineStatus = ""
     // Top left, or bottom left while the minimap sits at the top (GTA-131).
     private lazy var fpsAtTop = fpsLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8)
     private lazy var fpsAtBottom = fpsLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
@@ -274,6 +277,18 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         fpsLabel.accessibilityLabel = AppLanguage.choose("Game frame rate")
         fpsLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(fpsLabel)
+        onlineStatusLabel.font = .systemFont(ofSize: 11, weight: .medium)
+        onlineStatusLabel.textColor = .systemYellow
+        onlineStatusLabel.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        onlineStatusLabel.isUserInteractionEnabled = false
+        onlineStatusLabel.isHidden = true
+        onlineStatusLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(onlineStatusLabel)
+        NSLayoutConstraint.activate([
+            onlineStatusLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 12),
+            onlineStatusLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 36),
+            onlineStatusLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -12)
+        ])
         inputTestLabel.font = .monospacedDigitSystemFont(ofSize: 11, weight: .semibold)
         inputTestLabel.textColor = .white
         inputTestLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
@@ -1520,6 +1535,17 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
             return
         }
         let now = CACurrentMediaTime()
+        if engineStarted && now - lastOnlineStatusUpdate >= 1 {
+            lastOnlineStatusUpdate = now
+            var bytes = [CChar](repeating: 0, count: 512)
+            _ = MugoatOnlineStatus(&bytes, 512)
+            let status = String(cString: bytes)
+            let connected = MugoatOnlineConnected()
+            onlineStatusLabel.isHidden = false
+            onlineStatusLabel.text = connected ? "Online · Đã kết nối server" : "Đang chờ server · \(OnlineSettings.server)"
+            onlineStatusLabel.textColor = connected ? .systemGreen : .systemYellow
+            if status != lastOnlineStatus { lastOnlineStatus = status; appendLog("Online status: " + status) }
+        }
         if now - lastFPSLabelUpdate >= 0.25 {
             if touchControlsAvailable { fpsLabel.isHidden = !GameSettings.shared.showFPS }
             let fps = PGRenderedFramesPerSecond()

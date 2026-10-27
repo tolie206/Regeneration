@@ -104,8 +104,6 @@ jobs:
         run: |
           rustup target add aarch64-apple-ios
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/online-files"
-          brew install xcodegen
-          xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
           python3 tools/prepare_online_resources.py
-          python3 app/Scripts/prepare.py --mirror "$RUNNER_TEMP/online-files"
+          python3 app/Scripts/prepare.py --codegen-only --mirror "$RUNNER_TEMP/online-files"
           python3 tools/preflight_online_swift.py

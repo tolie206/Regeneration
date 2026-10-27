@@ -114,7 +114,7 @@ pub unsafe extern "C" fn mugoat_script_tick(instance: *mut c_void, thread: u64, 
         // The original script hook also restores this on its normal path.
         // Preserve it if Rust rejects a sync update or catches a panic.
         write_u64(memory, active_thread, saved.unwrap());
-        if !matches!(result, Ok(Ok(()))) { ENABLED.store(false,Ordering::Release); eprintln!("[online] native sync stopped after a bridge error"); }
+        if !matches!(result, Ok(Ok(()))) { ENABLED.store(false,Ordering::Release); mp::ONLINE_READY.store(false,Ordering::Release); eprintln!("[online] native sync stopped after a bridge error"); }
         active.set(false);
     });
 }
