@@ -781,7 +781,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
 
     /// Presses one of the game's own controller cheat sequences, then gives the pad back.
     private func playStoryCheat(_ cheat: StoryCheat, resumed: Bool = false) {
-        return // Disabled in online-only build.
+        return () // Disabled in online-only build.
 
         // Settings paused the game; cheats are typed in play, so leave the pause menu first (Start).
         if PGPauseMenuActive() && !resumed {
@@ -1370,7 +1370,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
     }
     /// Cheats › Spawn vehicle: the game thread spawns it once play resumes (NativeVehicleSpawn.inc).
     private func spawnVehicle(_ vehicle: SpawnVehicle, enter: Bool) {
-        return // Disabled in online-only build.
+        return () // Disabled in online-only build.
 
         guard PGSpawnVehicle(vehicle.model, enter) else {
             showWhenFree(title: AppLanguage.choose("Spawn vehicle"), message: AppLanguage.choose("A vehicle is already loading. Wait for it to finish."))
