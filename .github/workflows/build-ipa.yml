@@ -51,7 +51,7 @@ jobs:
           python3 tools/test_online_udp.py network/native-port/online-bridge/target/debug/mugoat-server
           clang -std=c11 -pthread -fsanitize=address,undefined app/Tests/online_lockdown.c -lm -o "$RUNNER_TEMP/online-lockdown"
           "$RUNNER_TEMP/online-lockdown"
-          clang -std=c11 -pthread app/Tests/online_turbo_lockdown.c -lm -o "$RUNNER_TEMP/online-turbo-lockdown"
+          clang -std=c11 -pthread -I app/Source app/Tests/online_turbo_lockdown.c -lm -o "$RUNNER_TEMP/online-turbo-lockdown"
           "$RUNNER_TEMP/online-turbo-lockdown"
       - name: Check sound import and built-in translation
         run: python3 -m unittest discover -s tests -v
