@@ -10,6 +10,10 @@ static PGTurboConfig turboConfig;
 static struct {float rpm,throttle,boost;unsigned gear;double at;} turboTelemetry;
 PGTurboConfig PGTurboDefaultConfig(void){return pg_turbo_defaults();}
 bool PGSetTurboConfig(PGTurboConfig c){
+#if defined(PG_ROLEPLAY_CLIENT)
+ return false;
+#endif
+
     if(!pg_turbo_valid(&c))return false;
     atomic_store(&turboEnabled,false);
     pthread_mutex_lock(&turboLock);turboConfig=c;pthread_mutex_unlock(&turboLock);

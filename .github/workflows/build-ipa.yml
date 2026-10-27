@@ -1,4 +1,4 @@
-name: Build Mugoat Regeneration
+name: Build Mugoat Online
 on:
   workflow_dispatch:
   push:
@@ -43,6 +43,16 @@ jobs:
         run: brew install xcodegen
       - name: Metal compiler
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
+      - name: Online transport, server policy, RP persistence and native lockdown
+        run: |
+          cargo test --manifest-path network/native-port/online-bridge/Cargo.toml --locked --lib --bins
+          cargo test --manifest-path network/rp-core/Cargo.toml --locked
+          cargo build --manifest-path network/native-port/online-bridge/Cargo.toml --locked --bin mugoat-server
+          python3 tools/test_online_udp.py network/native-port/online-bridge/target/debug/mugoat-server
+          clang -std=c11 -pthread -fsanitize=address,undefined app/Tests/online_lockdown.c -lm -o "$RUNNER_TEMP/online-lockdown"
+          "$RUNNER_TEMP/online-lockdown"
+          clang -std=c11 -pthread app/Tests/online_turbo_lockdown.c -lm -o "$RUNNER_TEMP/online-turbo-lockdown"
+          "$RUNNER_TEMP/online-turbo-lockdown"
       - name: Check sound import and built-in translation
         run: python3 -m unittest discover -s tests -v
       - name: Typecheck actual memory settings UI with iOS SDK
@@ -135,16 +145,18 @@ jobs:
           "$RUNNER_TEMP/sound-runtime-full"
       - name: Verify transition lifecycle guard
         run: python3 tools/test_scene_lifecycle.py "$RUNNER_TEMP/scene-lifecycle.c"
-      - name: Build Mugoat-NewGen-Regeneration-R007
+      - name: Install iOS Rust target
+        run: rustup target add aarch64-apple-ios
+      - name: Build Mugoat-NewGen-Online-O001
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify IPA entitlements
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R007.ipa
+          mv GTA5Port.ipa Mugoat-NewGen-Online-O001.ipa
       - uses: actions/upload-artifact@v4
         with:
-          name: Mugoat-NewGen-Regeneration-R007
-          path: Mugoat-NewGen-Regeneration-R007.ipa
+          name: Mugoat-NewGen-Online-O001
+          path: Mugoat-NewGen-Online-O001.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()

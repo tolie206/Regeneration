@@ -652,7 +652,7 @@ final class TouchControlsView: UIView {
 
     private func computeVisible() -> [ControlButton] {
         var list = baseVisible()
-        if list.contains(settings) { list.append(mods) }
+        // Online build never exposes the ASI/Menyoo tray.
         if !editing { list += shownMissionButtons(besides: list) }
         let playing = !phoneDock && !promptActive && context != .menu
         // A prompt that waits for a character switch gets the switch button (a tap is the game's quick switch). In

@@ -691,6 +691,10 @@ static void hintKeys(const char *folder, int depth) {
   closedir(dir);
 }
 int pg_asi_load(const char *name, const char *root, const uint8_t *bytes, uint64_t length) {
+#if defined(PG_ROLEPLAY_CLIENT)
+ return 0; // Online build never executes user ASI/Menyoo.
+#endif
+
   #define BAD(why) do { logf_("ASI %s: %s; not loaded.", name, why); return 0; } while (0)
   if (moduleCount >= 16) BAD("too many mods");
   if (length < 0x200 || bytes[0] != 'M' || bytes[1] != 'Z') BAD("not a Windows DLL");

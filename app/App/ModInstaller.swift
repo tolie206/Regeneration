@@ -381,6 +381,10 @@ enum ModInstaller {
     /// Copies the plan's files into Mods/<name>/ (replacing an older install of the same mod).
     @discardableResult
     static func install(_ plan: Plan) throws -> URL {
+#if MUGOAT_ONLINE
+ throw ModError("Mugoat Online không cho cài mod cá nhân. Tài nguyên xe/skin phải do server quản lý.")
+#endif
+
         let fm = FileManager.default
         let target = modsFolder.appendingPathComponent(plan.name)
         let staging = modsFolder.appendingPathComponent(".install-" + UUID().uuidString)

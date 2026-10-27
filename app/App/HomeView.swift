@@ -7,6 +7,7 @@ final class HomeView: UIView {
     enum FilesState { case ready, attention, problem, busy }
 
     let playButton = Theme.primaryButton(AppLanguage.choose("Play"), symbol: "play.fill")
+    let onlineButton = Theme.glassButton("Máy chủ", symbol:"network")
     let settingsButton = Theme.glassButton(AppLanguage.choose("Settings"), symbol: "gearshape.fill")
     let layoutButton = Theme.glassButton(AppLanguage.choose("Controls layout"), symbol: "hand.tap.fill")
     let telegramButton = Theme.glassButton(AppLanguage.choose("Telegram"), symbol: "paperplane.fill")
@@ -44,7 +45,7 @@ final class HomeView: UIView {
         icon.widthAnchor.constraint(equalToConstant: 52).isActive = true
         icon.heightAnchor.constraint(equalToConstant: 52).isActive = true
         let title = brandTitle
-        title.text = "Mugoat NewGen"
+        title.text = "Mugoat Online"
         title.font = Theme.display(30)
         title.textColor = Theme.text
         title.adjustsFontSizeToFitWidth = true
@@ -65,6 +66,7 @@ final class HomeView: UIView {
 
         for (index, mode) in modes.enumerated() {
             let card = ModeCard(title: mode.title, symbol: mode.symbol)
+            card.isHidden = index != 1
             card.addAction(UIAction { [weak self] _ in self?.onMode?(index) }, for: .touchUpInside)
             modeCards.append(card)
         }
@@ -84,7 +86,7 @@ final class HomeView: UIView {
         settingsButton.accessibilityLabel = AppLanguage.choose("Settings")
         layoutButton.accessibilityLabel = AppLanguage.choose("Controls layout")
         for button in [telegramButton, layoutButton, settingsButton] { button.configuration?.title = nil }
-        secondary.addArrangedSubviews([telegramButton, layoutButton, settingsButton])
+        secondary.addArrangedSubviews([onlineButton, telegramButton, layoutButton, settingsButton])
         secondary.spacing = 10
         secondary.translatesAutoresizingMaskIntoConstraints = false
         for label in [preloadLabel, controllerLabel] {
@@ -178,7 +180,7 @@ final class HomeView: UIView {
     private let scroll = UIScrollView()
     private let secondary = UIStackView()
     func refreshLanguage() {
-        brandTitle.text = "Mugoat NewGen"
+        brandTitle.text = "Mugoat Online"
         brandSubtitle.text = AppLanguage.choose("Fan project · plays your own game files") + " · \(Theme.appVersion)"
         mapTitle.text = AppLanguage.choose("Map")
         playButton.configuration?.title = AppLanguage.choose("Play")

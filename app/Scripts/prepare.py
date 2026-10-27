@@ -57,6 +57,7 @@ run('xcrun', 'clang', '-Wno-deprecated-declarations', '-c', 'Scripts/sha256_shim
 run('xcrun', 'clang++', '-std=c++20', '-O1', '-I', str(wabt / 'include'),
     'Tools/wasm2c-main.cc', 'Tools/c-writer-patched.cc', 'Tools/sha256_shim.o',
     str(wabt / 'lib/libwabt.a'), '-o', 'Tools/wasm2c-native')
+run('python3', 'Scripts/prepare_online_metadata.py', str(engine), '--out', 'Generated/online-game.json')
 run('Tools/wasm2c-native', '--enable-threads', '--no-debug-names', '--module-name=game',
     '--num-outputs=64', str(engine), '-o', 'Generated/game.c')
 # Function names from the engine's name section: the patchers below find their functions by name.
@@ -110,6 +111,8 @@ run('python3', 'Scripts/prepare_streaming_health.py')
 run('python3', 'Scripts/prepare_heap_return.py')
 run('python3', 'Scripts/prepare_memory_file_create.py')
 run('python3', 'Scripts/prepare_longjmp.py')
+run('python3', 'Scripts/prepare_online_c.py')
+run('python3', 'Scripts/prepare_online_lockdown.py')
 # The BC texture decoder header (MIT): phones without BC texture support get decoded textures.
 bcdec = root / 'Tools/bcdec'
 if not bcdec.exists():

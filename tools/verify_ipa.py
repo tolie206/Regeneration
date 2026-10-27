@@ -4,15 +4,16 @@ expected=validate_sources()
 with zipfile.ZipFile(sys.argv[1]) as z, tempfile.TemporaryDirectory() as folder:
  z.extractall(folder);apps=list((pathlib.Path(folder)/"Payload").glob("*.app"));assert len(apps)==1
  app=apps[0];info=plistlib.loads((app/"Info.plist").read_bytes())
- assert info['CFBundleIdentifier']=='vn.gta.newgen'
+ assert info['CFBundleIdentifier']=='vn.gta.mugoat.online'
  for key,value in expected.items():
   assert info.get(key)==value, f'IPA {key}={info.get(key)!r}; expected {value!r}'
  assert info['DTXcode']=='2620' and info['DTXcodeBuild']=='17C52'
  assert info['DTSDKName']=='iphoneos26.2'
  assert (app/'VietnameseAccented.zip').is_file() and (app/'VietnamesePlain.zip').is_file()
- with zipfile.ZipFile(app/'BundledMenyoo.zip') as m:
-  assert m.testzip() is None and 'menyooStuff/Language/Vietnamese.json' in m.namelist()
-  assert 'LICENSE.txt' in m.namelist() and m.read('Menyoo-iOS.asi')[:2]==b'MZ'
+ assert not (app/'BundledMenyoo.zip').exists()
+ assert (app/'TrustedOnlineAssets').is_dir()
+ assert not list(app.rglob('*.asi'))
+ assert info['CFBundleDisplayName']=='Mugoat Online'
  result=subprocess.run(['codesign','-d','--entitlements',':-',str(app)],capture_output=True,check=True)
  data=result.stdout or result.stderr
  start=data.find(b'<?xml');end=data.find(b'</plist>',start)+len(b'</plist>')

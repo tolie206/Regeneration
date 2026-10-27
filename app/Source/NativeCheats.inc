@@ -56,6 +56,10 @@ static u32 cheatPreviousMaxWanted; // The wanted limit before Never wanted, give
 static const char *const menuWeather[] = {"CLEAR", "EXTRASUNNY", "CLOUDS", "OVERCAST", "RAIN", "THUNDER", "FOGGY"};
 
 bool PGQueueCheat(PGCheatCommand command, int32_t value) {
+#if defined(PG_ROLEPLAY_CLIENT)
+ return false;
+#endif
+
   if ((unsigned)command > PGCheatCameraMode) return false;
   if (command == PGCheatSetTime && (value < 0 || value > 23)) return false;
   if (command == PGCheatSetWeather && (value < 0 || value >= (int32_t)(sizeof menuWeather / sizeof *menuWeather))) return false;
@@ -79,6 +83,10 @@ bool PGCheatEnabled(PGCheatSwitch cheat) {
   return enabled;
 }
 bool PGSetPersistentCheatEnabled(PGCheatSwitch cheat, bool enabled) {
+#if defined(PG_ROLEPLAY_CLIENT)
+ return false;
+#endif
+
   if (cheat != PGCheatGodMode && cheat != PGCheatNeverWanted) return false;
   pthread_mutex_lock(&cheatMenuLock);
   if (cheat == PGCheatGodMode) { cheatGodRequested = enabled; cheatSwitchPending |= 1; }

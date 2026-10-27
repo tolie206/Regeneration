@@ -230,6 +230,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         output.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
         output.layer.cornerRadius = 12
         NotificationCenter.default.addObserver(self, selector: #selector(languageChanged), name: AppLanguage.changed, object: nil)
+        home.onlineButton.addAction(UIAction{[weak self] _ in self?.showOnlineSettings()},for:.touchUpInside)
         home.settingsButton.addAction(UIAction { [weak self] _ in self?.showSettings() }, for: .touchUpInside)
         home.layoutButton.addAction(UIAction { [weak self] _ in self?.showLayoutEditor() }, for: .touchUpInside)
         home.onFiles = { [weak self] in self?.showGameFiles() }
@@ -601,6 +602,9 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
     }
 
     @objc private func startEngine() {
+        GameSettings.shared.gameModeChoice = .sandbox
+        guard OnlineSettings.configure() else { showWhenFree(title:"Mugoat Online",message:"Nhập IP và cổng server trong mục Máy chủ trước khi vào game.");return }
+
         if GameSettings.shared.gameModeChoice == nil {
             // Automated launches without a choice keep the old sandbox start.
             guard ProcessInfo.processInfo.arguments.contains("--boot-engine") else { return }
@@ -643,17 +647,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         playIntro()
         launchButton.setTitle(AppLanguage.choose("Loading…"), for: .disabled); launchButton.setNeedsUpdateConfiguration()
         appendLog("Native touch controls support held buttons, sprint and weapon selection.")
-        installModsForTest()
-        do { try BundledMenyoo.prepare() } catch { appendLog("Built-in Menyoo: \(error.localizedDescription)") }
-        do { try SkinInstaller.updateMenyooList() } catch { appendLog("Menyoo addon skin list: \(error.localizedDescription)") }
-        do { try BundledVietnamese.prepare() } catch { appendLog("Built-in translation: \(error.localizedDescription)") }
-        appendLog(BundledVietnamese.status)
-        appendLog("Regeneration R007 (reserve/distance profiles): frame cap \(GameSettings.shared.frameRateCap), Menyoo \(BundledMenyoo.enabled ? "on":"off"), extended distance \(StreamingSettings.distanceScale ?? "automatic"), texture budget \(StreamingSettings.textureBudgetMB) MiB (0=automatic).")
-        ModVehicleSupport.prepare(manifestPath:path,log:appendLog)
-        ModVehicleSupport.prepareLargeResources(log:appendLog)
-        SoundAssignments.resolveDuplicatePacks(log:appendLog)
-        SoundAssignments.configure()
-        noticeMods()
+        appendLog("Mugoat Online O001 · R007 renderer/memory baseline · personal mods/cheats disabled")
         startAudio()
         let (root, rootNote) = EnginePaths.filesRoot()
         if let rootNote { appendLog(rootNote) }
@@ -772,6 +766,8 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
 
     /// Presses one of the game's own controller cheat sequences, then gives the pad back.
     private func playStoryCheat(_ cheat: StoryCheat, resumed: Bool = false) {
+        return // Disabled in online-only build.
+
         // Settings paused the game; cheats are typed in play, so leave the pause menu first (Start).
         if PGPauseMenuActive() && !resumed {
             appendLog("Story cheat \(cheat.title): leaving the pause menu first.")
@@ -1328,6 +1324,10 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         appendLog("Send log opened after the engine stopped.")
     }
 
+    private func showOnlineSettings(){
+        guard !engineStarted, presentedViewController == nil else{return}
+        present(UINavigationController(rootViewController:OnlineSettingsViewController()),animated:true)
+    }
     private func showSettings() {
         guard presentedViewController == nil else { return }
         touchControls.reset()
@@ -1355,6 +1355,8 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
     }
     /// Cheats › Spawn vehicle: the game thread spawns it once play resumes (NativeVehicleSpawn.inc).
     private func spawnVehicle(_ vehicle: SpawnVehicle, enter: Bool) {
+        return // Disabled in online-only build.
+
         guard PGSpawnVehicle(vehicle.model, enter) else {
             showWhenFree(title: AppLanguage.choose("Spawn vehicle"), message: AppLanguage.choose("A vehicle is already loading. Wait for it to finish."))
             return

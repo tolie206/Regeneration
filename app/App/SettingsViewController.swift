@@ -113,7 +113,7 @@ final class SettingsViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int { shown.count }
     /// Only this page's sections are in the table; these translate between table positions and sections.
-    private lazy var shown: [Section] = Section.allCases.filter { sections.contains($0) }
+    private lazy var shown: [Section] = Section.allCases.filter { sections.contains($0) && $0 != .cheats && $0 != .mode }
     private func sectionKind(_ index: Int) -> Section { shown[index] }
     private func indexOf(_ section: Section) -> Int { shown.firstIndex(of: section) ?? 0 }
     private func editMinimap() {

@@ -115,6 +115,10 @@ const char *pg_assets_manifest_override(void){
   return modsManifest.fileSystemRepresentation;
 }
 static NSString *modsFolder(void){
+#if defined(PG_ROLEPLAY_CLIENT)
+ return [NSBundle.mainBundle.resourcePath stringByAppendingPathComponent:@"TrustedOnlineAssets"];
+#endif
+
   const char *test=getenv("PG_MODS_FOLDER");
   if(test&&*test)return @(test);
   return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES).firstObject stringByAppendingPathComponent:@"Mods"];

@@ -33,31 +33,15 @@ final class SettingsHomeViewController: UITableViewController {
                 AppLanguage.choose("Camera, buttons, layout, gyro, controller and keyboard")
             }, sections: [.controls, .gyro]),
         ]
-        if engineRunning {
-            list.append(Category(icon: "car.fill", title: "Gọi xe mod", summary: { "Chỉ hiện những xe mod đang bật" }, sections: [], page: { [weak self] in
-                let page = VehicleSpawnViewController()
-                page.vehicleSelected = self?.vehicleSelected
-                return page
-            }))
-            list.append(Category(icon: "wand.and.stars", title: AppLanguage.choose("Cheats"), summary: {
-                AppLanguage.choose("Vehicles, repairs, weather, time, money and more")
-            }, sections: [.cheats]))
-        }
         list.append(Category(icon: "globe", title: engineRunning ? AppLanguage.choose("Language") : AppLanguage.choose("Game mode and language"), summary: {
             running ? AppLanguage.current.name : "\(settings.gameMode.title) · \(AppLanguage.current.name)"
-        }, sections: [.language, .mode]))
+        }, sections: [.language]))
         if !engineRunning {
             list.append(Category(icon: "viewfinder", title: "Tầm nhìn và texture (4 GB)", summary: { "Extended Distance Scaling · Extended Texture Budget" }, sections: [], page: { StreamingSettingsViewController() }))
             list.append(Category(icon: "folder", title: AppLanguage.choose("Game files"), summary: {
                 AppLanguage.choose("Where the game is, checking and downloading its files")
             }, sections: [.files]))
         }
-        list.append(Category(icon: "shippingbox", title: AppLanguage.choose("Mods"), summary: {
-            let count = ModInstaller.installed().filter(\.enabled).count
-            return count == 0 ? AppLanguage.choose("Install car, skin and script mods") : AppLanguage.interpolate(AppLanguage.choose("{arg0} mods on"), [String(count)])
-        }, sections: [], page: { ModsViewController() }))
-        list.append(Category(icon:"puzzlepiece.extension",title:"Plugin Menyoo",summary:{"Bật/tắt Menyoo tích hợp, hướng dẫn nút điều khiển"},sections:[],page:{BundledMenyooViewController()}))
-        list.append(Category(icon:"flame",title:"Turbo và lửa bô (thử nghiệm)",summary:{"Turbo, boost theo số, anti-lag, âm thanh và đồng hồ"},sections:[],page:{TurboSettingsViewController()}))
         list.append(Category(icon:"memorychip",title:"RAM và quyền bộ nhớ",summary:{"Kiểm tra quyền tăng RAM, bỏ cap riêng và xuất entitlement"},sections:[],page:{MemoryAccessViewController(engineRunning:running)}))
         list.append(Category(icon: "iphone", title: AppLanguage.choose("This device"), summary: {
             AppLanguage.choose("Memory, logs and the Telegram group")

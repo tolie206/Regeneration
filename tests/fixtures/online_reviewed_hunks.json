@@ -1,0 +1,26 @@
+{
+  "app/Source/EngineHost.c": [
+    [
+      "#include \"NativeLogPolicy.h\"\n#include \"NativeRuntimePolicy.h\"\n#include \"HostInternal.h\"\n",
+      "#include \"NativeLogPolicy.h\"\n#include \"MugoatOnline.h\"\n#include \"NativeRuntimePolicy.h\"\n#include \"HostInternal.h\"\n"
+    ],
+    [
+      "// Trevor player_two; any other model (Sandbox's) has no story cash.\nstatic _Atomic int64_t cashRequest = -1;\nvoid PGSetPlayerCash(int32_t amount) { atomic_store(&cashRequest, amount < 0 ? 0 : amount); }\nstatic uint32_t pg_joaat(const char *text);\nstatic void pg_apply_cash_request(w2c_game *instance) {\n",
+      "// Trevor player_two; any other model (Sandbox's) has no story cash.\nstatic _Atomic int64_t cashRequest = -1;\nvoid PGSetPlayerCash(int32_t amount) {\n#if defined(PG_ROLEPLAY_CLIENT)\n return;\n#endif\n atomic_store(&cashRequest, amount < 0 ? 0 : amount); }\nstatic uint32_t pg_joaat(const char *text);\nstatic void pg_apply_cash_request(w2c_game *instance) {\n"
+    ],
+    [
+      "#endif\n  if (pad != 12840656 || !atomic_load(&virtualPadActive)) return;\n  uint64_t packed = atomic_load(&virtualPad);\n  // Use the last actual engine-sample interval (not display-link callbacks).\n  static _Thread_local double lastSwipePollMS;\n",
+      "#endif\n  if (pad != 12840656 || !atomic_load(&virtualPadActive)) return;\n  uint64_t packed = MugoatOnlineConnected()?atomic_load(&virtualPad):0x0000808080800000ull;\n  // Use the last actual engine-sample interval (not display-link callbacks).\n  static _Thread_local double lastSwipePollMS;\n"
+    ],
+    [
+      "}\nvoid PGSetStartMode(int32_t mode){\n  if(atomic_load(&started))return;\n  // 1 Story, 2 Sandbox on the GTA V map, 3 Sandbox on the game's test level (env_test).\n",
+      "}\nvoid PGSetStartMode(int32_t mode){\n#if defined(PG_ROLEPLAY_CLIENT)\n mode=2;\n#endif\n\n  if(atomic_load(&started))return;\n  // 1 Story, 2 Sandbox on the GTA V map, 3 Sandbox on the game's test level (env_test).\n"
+    ]
+  ],
+  "app/Source/NativeTurbo.inc": [
+    [
+      "PGTurboConfig PGTurboDefaultConfig(void){return pg_turbo_defaults();}\nbool PGSetTurboConfig(PGTurboConfig c){\n    if(!pg_turbo_valid(&c))return false;\n    atomic_store(&turboEnabled,false);\n",
+      "PGTurboConfig PGTurboDefaultConfig(void){return pg_turbo_defaults();}\nbool PGSetTurboConfig(PGTurboConfig c){\n#if defined(PG_ROLEPLAY_CLIENT)\n return false;\n#endif\n\n    if(!pg_turbo_valid(&c))return false;\n    atomic_store(&turboEnabled,false);\n"
+    ]
+  ]
+}

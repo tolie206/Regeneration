@@ -13,3 +13,6 @@ app/*.xcodeproj
 
 __pycache__/
 *.pyc
+
+network/**/target/
+app/Resources/TrustedOnlineAssets/

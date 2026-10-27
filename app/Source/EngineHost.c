@@ -1,4 +1,5 @@
 #include "NativeLogPolicy.h"
+#include "MugoatOnline.h"
 #include "NativeRuntimePolicy.h"
 #include "HostInternal.h"
 #include <dirent.h>
@@ -1675,7 +1676,11 @@ static int64_t *pg_cash_balance(int character) {
 // stat the game's money display and shops read. Michael is player_zero, Franklin player_one,
 // Trevor player_two; any other model (Sandbox's) has no story cash.
 static _Atomic int64_t cashRequest = -1;
-void PGSetPlayerCash(int32_t amount) { atomic_store(&cashRequest, amount < 0 ? 0 : amount); }
+void PGSetPlayerCash(int32_t amount) {
+#if defined(PG_ROLEPLAY_CLIENT)
+ return;
+#endif
+ atomic_store(&cashRequest, amount < 0 ? 0 : amount); }
 static uint32_t pg_joaat(const char *text);
 static void pg_apply_cash_request(w2c_game *instance) {
   const int64_t amount = atomic_exchange(&cashRequest, -1);
@@ -2467,7 +2472,7 @@ void pg_virtual_pad_apply(w2c_game *instance, uint64_t pad) {
   if (pad == 12840656) { pg_test_teleport(instance); pg_test_stale_job(instance); pg_test_speed(instance); pg_test_weapon(instance); pg_test_outfit(instance); pg_test_prompts(instance); pg_test_cash(instance); pg_test_tv(instance); pg_test_tv_flood(instance); pg_test_gfx_dirty(instance); pg_test_position(); pg_test_video(instance); pg_test_lester1_tv(instance); pg_test_photo(instance); pg_test_car(instance); pg_test_trailer_monitor(instance); pg_test_request_models(instance); pg_test_loadscene(instance); pg_test_loadscene_monitor(instance); }
 #endif
   if (pad != 12840656 || !atomic_load(&virtualPadActive)) return;
-  uint64_t packed = atomic_load(&virtualPad);
+  uint64_t packed = MugoatOnlineConnected()?atomic_load(&virtualPad):0x0000808080800000ull;
   // Use the last actual engine-sample interval (not display-link callbacks).
   static _Thread_local double lastSwipePollMS;
   const double nowMS = timeMS(CLOCK_MONOTONIC);
@@ -2848,6 +2853,10 @@ void PGConfigureEngine(const char *const *quality,unsigned count,int width,int h
   if(frameLimit>=0&&frameLimit<=4)configuredFrameLimit=frameLimit;
 }
 void PGSetStartMode(int32_t mode){
+#if defined(PG_ROLEPLAY_CLIENT)
+ mode=2;
+#endif
+
   if(atomic_load(&started))return;
   // 1 Story, 2 Sandbox on the GTA V map, 3 Sandbox on the game's test level (env_test).
   if(mode>=1&&mode<=3)configuredStartMode=mode;

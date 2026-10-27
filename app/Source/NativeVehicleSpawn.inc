@@ -114,6 +114,10 @@ bool PGVehicleCatalogEntryAt(uint32_t index, PGVehicleEntry *entry) {
   return valid;
 }
 bool PGSpawnVehicle(uint32_t model, bool enterVehicle) {
+#if defined(PG_ROLEPLAY_CLIENT)
+ return false;
+#endif
+
   pthread_mutex_lock(&vehicleMenuLock);
   bool accepted = model && vehicleSpawnStatus != PGVehicleSpawnWaiting && vehicleSpawnStatus != PGVehicleSpawnLoading;
   if (accepted) {

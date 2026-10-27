@@ -3,3 +3,5 @@
 
 #include "NativeGraphics.h"
 #include "GameInstallerShim.h"
+
+#include "MugoatOnline.h"

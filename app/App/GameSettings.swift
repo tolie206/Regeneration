@@ -159,8 +159,8 @@ final class GameSettings {
     }
     /// Sandbox was the only mode before the choice existed.
     var gameMode: GameMode {
-        get { gameModeChoice ?? .sandbox }
-        set { gameModeChoice = newValue }
+        get { .sandbox }
+        set { gameModeChoice = .sandbox }
     }
 
     // Fresh installs start at the lowest preset; existing explicit preferences are preserved.
