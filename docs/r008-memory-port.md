@@ -12,7 +12,7 @@ Two E:/log gray r007 logs both report process limit 2348 MiB and reserve 128 MiB
 ## Implementation
 Defer ONLY zero-initialized CPU shadow storage until a CPU operation needs it. Preserve initial-data resources and all GPU resources. Register four verified vtable/field layouts, bounds-check memory, materialize once under a lock, refresh memory after guest calloc, maintain original guest allocation counters for its destructors. Both source and destination are covered. No hook on draw/frame loops. Statistics are emitted only alongside existing memory-pool reports and are explicitly cumulative, not a claim of current bytes saved. PG_LAZY_CPU_COPIES=0 restores eager allocation at launch for A/B debugging.
 
-Existing R007 reserve/distance settings, mesh renderer, Metal shaders, texture resolution, mod importer, skins and audio remain unchanged. No world object deletion is added.
+Existing R007 reserve/distance settings, mesh renderer, Metal shaders, texture resolution, skins and audio remain unchanged; the additional confirmed vehicle mount/spawn fixes are described below. No world object deletion is added.
 
 ## Scope
 1.5.1 also has a separate protected-page mesh source release/restore system, including GPU mirrors, I/O touch hooks and SIGBUS/SIGSEGV restoration. It is NOT reproduced incompletely: R007 has its own ASI fault handler and blindly discarding those live pages can corrupt game or mods. R007 already returns buddy-allocator blocks freed by the engine to iOS. This release ports deferred CPU shadows, not the whole 1.5.1 runtime.
@@ -22,3 +22,10 @@ Pinned-engine fixture patch checks, idempotence, fail-closed changed layouts, fo
 
 ## Rollback
 Reinstall E:/New Project/Builds/Mugoat-NewGen-Regeneration-R007.ipa or build unchanged regeneration-r007-reserve-profiles at b5b0d53. Do not replace the current MuZom checkout.
+
+## Vehicle regressions added after tester logs
+E:/log không gọi được xe/native-port (1).log records two successful launcher spawns (vario150, NEMESIS), then yadi_x5_1_cpgta REQUEST_MODEL followed by status 8 (LowMemory). The active distance reserve is 144 MiB, but launcher code still checked legacy guardReserve (256 MiB on this process). Fix: use distanceStreaming.reserveBytes when that policy is enabled, otherwise retain legacy guardReserve; report rejection threshold once. Regression reproduces 258 -> 200 MiB during loading, verifies success above 144 MiB, rejection below 144 MiB, and unchanged legacy mode. This fixes a confirmed cancellation path; it does not prove all other vehicle failures have the same cause.
+
+E:/mod xe contains SH150, Vision and 27rev. All nested resource payloads independently inflated successfully; YFT version162 and YTD13. SH150 content.xml references nonexistent VEHICLE_mods.rpf while the actual sibling is sh150_mods.rpf. Preboot metadata repair now resolves this specific generic placeholder only when exactly one *_mods.rpf exists in the same directory, with backup, idempotence and byte-identical nested archives. Ambiguous/unknown references remain unchanged.
+
+CI tests production unpack/plan/install/prepare, metadata XML, picker model names, actual complete YFT/YTD payloads, mount repair, idempotence, geometry byte identity and actual model hashes passed through the native spawn command simulation. These do not prove visible iPhone spawns. User explicitly authorized publishing the 29 MB 27rev sample and building the public repository on 2026-10-28.

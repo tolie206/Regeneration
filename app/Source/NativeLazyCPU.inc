@@ -1,6 +1,7 @@
 // Deferred zero-initialized D3D CPU shadows. Reconstructed from the 1.5.1 call contract.
 // Never discard initialized data, GPU memory, streaming assets, or world entities.
 // Guest destructors own allocations and counters; unmaterialized shadows remain null.
+uint64_t PG_FN_LAZY_CPU_CALLOC(w2c_game*,uint64_t,uint64_t);
 static pthread_mutex_t pg_lazy_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_once_t pg_lazy_once = PTHREAD_ONCE_INIT;
 static int pg_lazy_enabled;
