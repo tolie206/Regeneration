@@ -58,7 +58,8 @@ import FoundationXML
    precondition(geometry.contains(model+".yft") && geometry.contains(model+"_hi.yft") && textures.contains(model+".ytd"))
    let before=try Data(contentsOf:target.appendingPathComponent(plan.items[0].target))
    ModVehicleSupport.prepare(manifestPath:manifest.path,log:{_ in})
-   precondition(before==Data(contentsOf:target.appendingPathComponent(plan.items[0].target)),"Preparation must be idempotent")
+   let afterSecondPrepare=try Data(contentsOf:target.appendingPathComponent(plan.items[0].target))
+   precondition(before==afterSecondPrepare,"Preparation must be idempotent")
    // The exact names/hashes registered by the real packs feed the native bridge simulation.
    var hash:UInt32=0;for c in model.utf8{hash &+= UInt32(c);hash &+= hash<<10;hash ^= hash>>6};hash &+= hash<<3;hash ^= hash>>11;hash &+= hash<<15;hashes.append(hash)
    print("PASS actual vehicle pack: \(model), \(count) full resource payloads, picker registration, metadata, mount, unchanged model/texture bytes; hash \(hash)")
