@@ -13,8 +13,8 @@ CREATE={
 }
 ACCESS={
  'wasm_null_d3d::NullContext::Map(ID3D11Resource*, unsigned int, D3D11_MAP, unsigned int, D3D11_MAPPED_SUBRESOURCE*)':('var_p1',),
- 'wasm_null_d3d::NullContext::CopySubresourceRegion(ID3D11Resource*, unsigned int, unsigned int, unsigned int, unsigned int, ID3D11Resource*, unsigned int, D3D11_BOX const*)':('var_p1','var_p6'),
- 'wasm_null_d3d::GpuReadback(ID3D11Resource*, unsigned int, ID3D11Resource*, unsigned int, D3D11_BOX const*)':('var_p0','var_p2'),
+ 'wasm_null_d3d::NullContext::CopySubresourceRegion(ID3D11Resource*, unsigned int, unsigned int, unsigned int, unsigned int, ID3D11Resource*, unsigned int, D3D11_BOX const*)':('var_p1',),
+ 'wasm_null_d3d::GpuReadback(ID3D11Resource*, unsigned int, ID3D11Resource*, unsigned int, D3D11_BOX const*)':('var_p0',),
  'wasm_null_d3d::NullContext::CopyResource(ID3D11Resource*, ID3D11Resource*)':('var_p1','var_p2'),
  'wasm_null_d3d::NullContext::UpdateSubresource(ID3D11Resource*, unsigned int, D3D11_BOX const*, void const*, unsigned int, unsigned int)':('var_p1',),
 }
