@@ -19,7 +19,6 @@ TABLE = root / 'Generated/funcnames.tsv'
 HEADER = root / 'Generated/engine-functions.h'
 # Engine functions the host code calls directly (Source/*.c): each gets a macro in HEADER.
 HOST_FUNCTIONS = {
-    'PG_FN_LAZY_CPU_CALLOC': 'emscripten_builtin_calloc',
     'PG_FN_CAMERA_PED_MODE': 'camera_commands::CommandSetFollowPedCamViewMode(int)',
     'PG_FN_CAMERA_VEHICLE_MODE': 'camera_commands::CommandSetFollowVehicleCamViewMode(int)',
     'PG_FN_TURBO_ENTITY_ADDRESS': 'rage::fwScriptGuid::GetBaseFromGuid(int)',

@@ -54,6 +54,19 @@ enum ModVehicleSupport {
     do{let r=try RPFArchive(url:url);textures(r,0);archives.append((url,r,mod.url))}catch{log("Vehicle metadata scan: \(error.localizedDescription)")}
    }
   }
+  // Virtual TXD relationships are providers too, even without a same-named YTD.
+  let childRE=try! NSRegularExpression(pattern:"<child>\\s*([^<]+)\\s*</child>")
+  func registerChildren(_ text:String) {
+   let ns=text as NSString
+   for m in childRE.matches(in:text,range:NSRange(location:0,length:ns.length)) {known.insert(ns.substring(with:m.range(at:1)).trimmingCharacters(in:.whitespacesAndNewlines).lowercased())}
+  }
+  let base=URL(fileURLWithPath:manifestPath).deletingLastPathComponent().appendingPathComponent("common/data/levels/gta5/vehicles.meta")
+  if let text=try? String(contentsOf:base,encoding:.utf8){registerChildren(text)}
+  for (_,archive,_) in archives {
+   for e in archive.entries where e.path.hasSuffix("vehicles.meta") {
+    if let data=try? archive.metadata(e),let text=String(data:data,encoding:.utf8){registerChildren(text)}
+   }
+  }
   let parentRE=try! NSRegularExpression(pattern:"<parent>\\s*([^<]+)\\s*</parent>")
   let modelRE=try! NSRegularExpression(pattern:"<modelName>\\s*([^<]+)\\s*</modelName>")
   for (url,r,root) in archives {
@@ -73,10 +86,10 @@ enum ModVehicleSupport {
      }
      for m in parentRE.matches(in:text,range:NSRange(location:0,length:ns.length)).reversed() {
       let parent=ns.substring(with:m.range(at:1)).trimmingCharacters(in:.whitespacesAndNewlines).lowercased()
-      // This absent Bikers DLC dependency is confirmed in the supplied SH150 pack.
-      // Other unknown parents are reported, never silently remapped.
+      // These absent stock-DLC parents occur in the supplied SH150/27rev packs.
+      // Never replace an existing real or virtual provider; other unknown names are retained.
       if !known.contains(parent) {
-       if parent=="vehicles_biker_shared" {
+       if parent=="vehicles_biker_shared" || parent=="vehicles_race_generic" {
         text=(text as NSString).replacingCharacters(in:m.range,with:"<parent>vehshare</parent>")
         log("Vehicle compatibility: missing texture parent \(parent) -> vehshare in \(url.lastPathComponent)/\(e.path).")
        }else{log("Vehicle compatibility: unresolved texture parent \(parent); kept unchanged.")}

@@ -10,5 +10,8 @@ int main(void){
  assert(pg_verbose_log_class("[scrCommandHash debug] missing native hash")==0);
  assert(pg_verbose_log_class("[wasm] mem: malloc arena 3200")==0);
  assert(pg_verbose_log_class("Health: memory 3600 MB")==0);
+ assert(pg_verbose_log_class("Failed to say context : DUCK")==2);
+ assert(pg_verbose_log_class("[ai_task] Ped with model: A_M_M failed to say: DUCK")==2);
+ assert(pg_verbose_log_class("[streaming] Request failed for '27rev.yft'")==0);
  puts("PASS: informational trace classification preserves errors, other warnings and memory/health diagnostics.");
 }

@@ -48,6 +48,8 @@ jobs:
           clang -std=c11 -Wall -Wextra -Werror -pthread -fsanitize=address,undefined app/Tests/lazy_cpu.c -o "$RUNNER_TEMP/lazy-cpu"
           "$RUNNER_TEMP/lazy-cpu"
           "$RUNNER_TEMP/lazy-cpu" --disabled
+          clang -std=c11 -Wall -Wextra -Werror -I app/Source app/Tests/log_policy.c -o "$RUNNER_TEMP/log-policy"
+          "$RUNNER_TEMP/log-policy"
       - name: Typecheck actual memory settings UI with iOS SDK
         run: |
           xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/StreamingSettings.swift app/App/MemoryAccessViewController.swift app/Tests/MemorySettingsTypecheckStubs.swift

@@ -1,12 +1,1 @@
-{
-  "app/Source/EngineHost.c": [
-    [
-      "#include \"NativeDistanceStreaming.h\"\n",
-      "#include \"NativeDistanceStreaming.h\"\n#include \"NativeLazyCPU.inc\"\n"
-    ],
-    [
-      "void PGLogMemoryPools(void){\n",
-      "void PGLogMemoryPools(void){\n pg_lazy_cpu_report();\n"
-    ]
-  ]
-}
+{}
