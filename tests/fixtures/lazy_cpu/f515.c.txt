@@ -1,0 +1,279 @@
+void w2c_game_f515(w2c_game* instance, u64 var_p0, u64 var_p1, u32 var_p2, u32 var_p3, u32 var_p4, u32 var_p5, u64 var_p6, u32 var_p7, 
+    u64 var_p8) {
+  u32 var_l13 = 0, var_l14 = 0;
+  u64 var_l9 = 0, var_l10 = 0, var_l11 = 0, var_l12 = 0;
+  v128 var_l15 = simde_wasm_i64x2_make(0, 0);
+  FUNC_PROLOGUE;
+  uint8_t* const wasm_rt_local_memory_base = NULL;
+  uint64_t wasm_rt_local_memory_size = 0;
+  (void)wasm_rt_local_memory_base;
+  (void)wasm_rt_local_memory_size;
+  u32 var_i0, var_i1, var_i2, var_i3;
+  u64 var_j0, var_j1, var_j2, var_j3, var_j4;
+  v128 var_o1;
+  var_j0 = instance->w2c_g0;
+  var_j1 = 18446744073709551552ull;
+  var_j0 += var_j1;
+  var_l10 = var_j0;
+  instance->w2c_g0 = var_j0;
+  var_j0 = var_p0;
+  var_i0 = i32_load8_u_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 16u));
+  var_i1 = 1u;
+  var_i0 = var_i0 != var_i1;
+  if (var_i0) {goto var_B0;}
+  var_i0 = w2c_game_f548(instance);
+  var_i0 = !(var_i0);
+  if (var_i0) {goto var_B0;}
+  var_j0 = var_p1;
+  var_i0 = !(var_j0);
+  if (var_i0) {goto var_B1;}
+  var_j0 = var_p1;
+  var_j0 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j0));
+  var_p0 = var_j0;
+  var_j1 = var_p0;
+  var_j2 = 1ull;
+  var_j1 >>= (var_j2 & 63);
+  var_j2 = 4088ull;
+  var_j1 &= var_j2;
+  var_l12 = var_j1;
+  var_j1 = i64_atomic_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 8324272u));
+  var_l9 = var_j1;
+  var_j2 = 16ull;
+  var_j1 >>= (var_j2 & 63);
+  var_i0 = var_j0 == var_j1;
+  if (var_i0) {
+    var_j0 = var_l9;
+    var_j1 = 65535ull;
+    var_j0 &= var_j1;
+    var_p0 = var_j0;
+    var_j1 = 65535ull;
+    var_i0 = var_j0 == var_j1;
+    if (var_i0) {goto var_B1;}
+    var_j0 = var_p0;
+    var_j1 = var_p1;
+    var_j0 += var_j1;
+    var_l9 = var_j0;
+    goto var_B3;
+  }
+  var_j0 = var_p1;
+  var_j1 = 4088648ull;
+  var_j2 = 4092032ull;
+  var_j3 = 18446744073709551614ull;
+  var_j0 = w2c_game_f91082(instance, var_j0, var_j1, var_j2, var_j3);
+  var_l9 = var_j0;
+  var_j0 = var_p0;
+  var_j1 = 281474976710655ull;
+  var_i0 = var_j0 > var_j1;
+  if (var_i0) {goto var_B3;}
+  var_j0 = var_l9;
+  var_i0 = !(var_j0);
+  if (var_i0) {
+    var_j0 = 65535ull;
+    var_l11 = var_j0;
+    goto var_B5;
+  }
+  var_j0 = var_l9;
+  var_j1 = var_p1;
+  var_j0 -= var_j1;
+  var_l11 = var_j0;
+  var_j1 = 65533ull;
+  var_i0 = var_j0 > var_j1;
+  if (var_i0) {goto var_B2;}
+  var_B5:;
+  var_j0 = var_l12;
+  var_j1 = 8324272ull;
+  var_j0 += var_j1;
+  var_j1 = var_l11;
+  var_j2 = var_p0;
+  var_j3 = 16ull;
+  var_j2 <<= (var_j3 & 63);
+  var_j1 |= var_j2;
+  i64_atomic_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j0), var_j1);
+  var_B3:;
+  var_j0 = var_l9;
+  var_i0 = !(var_j0);
+  if (var_i0) {goto var_B1;}
+  var_B2:;
+  var_j0 = var_l9;
+  var_i0 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 8u));
+  var_l13 = var_i0;
+  var_B1:;
+  var_j0 = var_p6;
+  var_i0 = !(var_j0);
+  if (var_i0) {goto var_B9;}
+  var_j0 = var_p6;
+  var_j0 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j0));
+  var_p0 = var_j0;
+  var_j1 = var_p0;
+  var_j2 = 1ull;
+  var_j1 >>= (var_j2 & 63);
+  var_j2 = 4088ull;
+  var_j1 &= var_j2;
+  var_l12 = var_j1;
+  var_j1 = i64_atomic_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 8324272u));
+  var_l9 = var_j1;
+  var_j2 = 16ull;
+  var_j1 >>= (var_j2 & 63);
+  var_i0 = var_j0 == var_j1;
+  if (var_i0) {
+    var_j0 = var_l9;
+    var_j1 = 65535ull;
+    var_j0 &= var_j1;
+    var_p0 = var_j0;
+    var_j1 = 65535ull;
+    var_i0 = var_j0 == var_j1;
+    if (var_i0) {goto var_B9;}
+    var_j0 = var_p0;
+    var_j1 = var_p6;
+    var_j0 += var_j1;
+    var_l9 = var_j0;
+    goto var_B10;
+  }
+  var_j0 = var_p6;
+  var_j1 = 4088648ull;
+  var_j2 = 4092032ull;
+  var_j3 = 18446744073709551614ull;
+  var_j0 = w2c_game_f91082(instance, var_j0, var_j1, var_j2, var_j3);
+  var_l9 = var_j0;
+  var_j0 = var_p0;
+  var_j1 = 281474976710655ull;
+  var_i0 = var_j0 > var_j1;
+  if (var_i0) {goto var_B10;}
+  var_j0 = var_l9;
+  var_i0 = !(var_j0);
+  if (var_i0) {
+    var_j0 = 65535ull;
+    var_l11 = var_j0;
+    goto var_B12;
+  }
+  var_j0 = var_l9;
+  var_j1 = var_p6;
+  var_j0 -= var_j1;
+  var_l11 = var_j0;
+  var_j1 = 65533ull;
+  var_i0 = var_j0 > var_j1;
+  if (var_i0) {goto var_B8;}
+  var_B12:;
+  var_j0 = var_l12;
+  var_j1 = 8324272ull;
+  var_j0 += var_j1;
+  var_j1 = var_l11;
+  var_j2 = var_p0;
+  var_j3 = 16ull;
+  var_j2 <<= (var_j3 & 63);
+  var_j1 |= var_j2;
+  i64_atomic_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j0), var_j1);
+  var_B10:;
+  var_j0 = var_l9;
+  var_j1 = 0ull;
+  var_i0 = var_j0 != var_j1;
+  if (var_i0) {goto var_B8;}
+  var_B9:;
+  var_i0 = var_l13;
+  if (var_i0) {goto var_B7;}
+  goto var_B0;
+  var_B8:;
+  var_j0 = var_l9;
+  var_i0 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 8u));
+  var_l14 = var_i0;
+  var_i0 = var_l13;
+  var_i0 = !(var_i0);
+  if (var_i0) {goto var_B14;}
+  var_i0 = var_l14;
+  var_i0 = !(var_i0);
+  if (var_i0) {goto var_B14;}
+  var_j0 = var_l10;
+  var_i1 = var_p7;
+  i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 24u), var_i1);
+  var_j0 = var_l10;
+  var_i1 = var_l14;
+  i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 20u), var_i1);
+  var_j0 = var_l10;
+  var_i1 = var_p5;
+  i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 16u), var_i1);
+  var_j0 = var_l10;
+  var_i1 = var_p4;
+  i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 12u), var_i1);
+  var_j0 = var_l10;
+  var_i1 = var_p3;
+  i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 8u), var_i1);
+  var_j0 = var_l10;
+  var_i1 = var_p2;
+  i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 4u), var_i1);
+  var_j0 = var_l10;
+  var_i1 = var_l13;
+  i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j0), var_i1);
+  var_j0 = var_l10;
+  var_j1 = var_p8;
+  var_j2 = 0ull;
+  var_i1 = var_j1 != var_j2;
+  var_p7 = var_i1;
+  i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 28u), var_i1);
+  var_j0 = var_l10;
+  var_i1 = var_p7;
+  var_i1 = !(var_i1);
+  if (var_i1) {
+    var_i1 = 0u;
+    var_p7 = var_i1;
+    var_i1 = 0u;
+    goto var_B15;
+  }
+  var_j1 = var_p8;
+  var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 16u));
+  var_p7 = var_i1;
+  var_j1 = var_p8;
+  var_o1 = v128_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j1));
+  var_l15 = var_o1;
+  var_j1 = var_p8;
+  var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 20u));
+  var_B15:;
+  i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 52u), var_i1);
+  var_j0 = var_l10;
+  var_i1 = var_p7;
+  i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 48u), var_i1);
+  var_j0 = var_l10;
+  var_o1 = var_l15;
+  v128_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j0, 32u), var_o1);
+  var_i0 = 34u;
+  var_j1 = var_l10;
+  var_i2 = 14u;
+  w2c_game_f550(instance, var_i0, var_j1, var_i2);
+  var_j0 = var_p1;
+  w2c_game_f516(instance, var_j0);
+  goto var_B0;
+  var_B14:;
+  var_i0 = var_l13;
+  if (var_i0) {goto var_B17;}
+  var_i0 = var_l14;
+  var_i0 = !(var_i0);
+  if (var_i0) {goto var_B17;}
+  var_j0 = var_p1;
+  var_i1 = var_p2;
+  var_j2 = var_p6;
+  var_i3 = var_p7;
+  var_j4 = var_p8;
+  var_i0 = w2c_game_f517(instance, var_j0, var_i1, var_j2, var_i3, var_j4);
+  if (var_i0) {goto var_B0;}
+  var_i0 = w2c_game_f548(instance);
+  var_i0 = !(var_i0);
+  if (var_i0) {goto var_B0;}
+  var_j0 = 3591831ull;
+  w2c_game_f559(instance, var_j0);
+  goto var_B0;
+  var_B17:;
+  var_i0 = var_l13;
+  var_i0 = !(var_i0);
+  if (var_i0) {goto var_B0;}
+  var_B7:;
+  var_i0 = w2c_game_f548(instance);
+  var_i0 = !(var_i0);
+  if (var_i0) {goto var_B0;}
+  var_j0 = 3411625ull;
+  w2c_game_f559(instance, var_j0);
+  var_B0:;
+  var_j0 = var_l10;
+  var_j1 = 18446744073709551552ull;
+  var_j0 -= var_j1;
+  instance->w2c_g0 = var_j0;
+  FUNC_EPILOGUE;
+}

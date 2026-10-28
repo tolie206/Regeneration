@@ -108,6 +108,7 @@ run('python3', 'Scripts/prepare_control_trace.py')
 run('python3', 'Scripts/prepare_pause_ready.py')
 run('python3', 'Scripts/prepare_streaming_health.py')
 run('python3', 'Scripts/prepare_heap_return.py')
+run('python3', 'Scripts/prepare_lazy_cpu.py')
 run('python3', 'Scripts/prepare_memory_file_create.py')
 run('python3', 'Scripts/prepare_longjmp.py')
 # The BC texture decoder header (MIT): phones without BC texture support get decoded textures.

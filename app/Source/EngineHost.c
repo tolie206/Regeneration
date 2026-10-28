@@ -26,6 +26,7 @@ static void pg_mod_test_recheck(void);
 #include <mach/mach.h>
 #include "NativeMemoryBudget.h"
 #include "NativeDistanceStreaming.h"
+#include "NativeLazyCPU.inc"
 
 static struct w2c_env env;
 static struct w2c_wasi__snapshot__preview1 wasi = { .env = &env };
@@ -227,6 +228,7 @@ void pg_buddy_defragment(w2c_game *instance,u64 allocator){
 // Resident memory per engine pool region and in the rest of the engine heap, plus the D3D layer's
 // CPU copies of dynamic buffers (bytes, count, peak at 8324208/16/24).
 void PGLogMemoryPools(void){
+ pg_lazy_cpu_report();
  uint8_t *data=env.memory.data;uint64_t size=env.memory.size;
  if(!data||!size)return;
  const uint64_t page=16384;

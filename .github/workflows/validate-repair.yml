@@ -1,7 +1,7 @@
 name: Validate regeneration repair (no IPA)
 on:
   push:
-    branches: [regeneration-mod-repair, regeneration-r004-scene-skins, regeneration-r005-driveby-textures, regeneration-r006-distance-streaming, regeneration-r007-reserve-profiles]
+    branches: [regeneration-mod-repair, regeneration-r004-scene-skins, regeneration-r005-driveby-textures, regeneration-r006-distance-streaming, regeneration-r007-reserve-profiles, regeneration-r008-native-reclaim]
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,6 +20,11 @@ jobs:
         run: test '${{ github.event.repository.private }}' = true
       - name: Drive-by input regression
         run: python3 tools/test_driveby_look.py "$RUNNER_TEMP/driveby.c"
+      - name: Lazy CPU shadows (real implementation, sanitizers)
+        run: |
+          clang -std=c11 -Wall -Wextra -Werror -pthread -fsanitize=address,undefined app/Tests/lazy_cpu.c -o "$RUNNER_TEMP/lazy-cpu"
+          "$RUNNER_TEMP/lazy-cpu"
+          "$RUNNER_TEMP/lazy-cpu" --disabled
       - name: Typecheck actual memory settings UI with iOS SDK
         run: |
           xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/StreamingSettings.swift app/App/MemoryAccessViewController.swift app/Tests/MemorySettingsTypecheckStubs.swift

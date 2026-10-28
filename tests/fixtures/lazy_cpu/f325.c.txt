@@ -1,0 +1,358 @@
+u32 w2c_game_f325(w2c_game* instance, u64 var_p0, u64 var_p1, u64 var_p2, u64 var_p3) {
+  u32 var_l4 = 0, var_l5 = 0, var_l6 = 0, var_l7 = 0, var_l8 = 0, var_l9 = 0;
+  u64 var_l10 = 0, var_l11 = 0, var_l12 = 0, var_l13 = 0;
+  FUNC_PROLOGUE;
+  uint8_t* const wasm_rt_local_memory_base = NULL;
+  uint64_t wasm_rt_local_memory_size = 0;
+  (void)wasm_rt_local_memory_base;
+  (void)wasm_rt_local_memory_size;
+  u32 var_i0, var_i1, var_i2, var_i3, var_i4, var_i5, var_i6, var_i7, 
+      var_i8, var_i9, var_i10, var_i11;
+  u64 var_j0, var_j1, var_j2, var_j3, var_j4, var_j5, var_j6, var_j7, 
+      var_j8, var_j9, var_j10;
+  v128 var_o2;
+  var_j0 = var_p1;
+  var_i0 = !(var_j0);
+  if (var_i0) {
+    var_i0 = 2147942487u;
+    goto var_Bfunc;
+  }
+  var_j0 = var_p3;
+  var_j1 = 0ull;
+  var_i0 = var_j0 != var_j1;
+  if (var_i0) {
+    var_j0 = var_p3;
+    var_j1 = 152ull;
+    var_j1 = w2c_game_f100(instance, var_j1);
+    var_p0 = var_j1;
+    var_j1 = instance->w2c_g0;
+    var_j2 = 32ull;
+    var_j1 -= var_j2;
+    var_p3 = var_j1;
+    instance->w2c_g0 = var_j1;
+    var_j1 = var_p0;
+    var_j2 = 1ull;
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 8u), var_j2);
+    var_j1 = var_p0;
+    var_j2 = 0ull;
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 32u), var_j2);
+    var_j1 = var_p0;
+    var_i2 = 0u;
+    i32_store8_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 40u), var_i2);
+    var_j1 = var_p0;
+    var_j2 = 0ull;
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 48u), var_j2);
+    var_j1 = var_p0;
+    var_o2 = v128_const(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    v128_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 56u), var_o2);
+    var_j1 = var_p0;
+    var_o2 = v128_const(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    v128_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 72u), var_o2);
+    var_j1 = var_p0;
+    var_i2 = 0u;
+    i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 88u), var_i2);
+    var_j1 = var_p0;
+    var_j2 = 4093976ull;
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 24u), var_j2);
+    var_j1 = var_p0;
+    var_j2 = 4093920ull;
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 16u), var_j2);
+    var_j1 = var_p0;
+    var_j2 = 4093768ull;
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j1), var_j2);
+    var_j1 = var_p0;
+    var_i2 = 0u;
+    i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 92u), var_i2);
+    var_j1 = var_p0;
+    var_j2 = var_p1;
+    var_o2 = v128_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j2));
+    v128_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 96u), var_o2);
+    var_j1 = var_p0;
+    var_j2 = var_p1;
+    var_o2 = v128_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j2, 16u));
+    v128_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 112u), var_o2);
+    var_j1 = var_p0;
+    var_o2 = v128_const(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    v128_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 128u), var_o2);
+    var_j1 = var_p0;
+    var_i2 = 2013265920u;
+    i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 144u), var_i2);
+    var_i1 = w2c_game_f548(instance);
+    var_i1 = !(var_i1);
+    if (var_i1) {goto var_B2;}
+    var_j1 = var_p0;
+    var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 112u));
+    var_i2 = 3u;
+    var_i1 = var_i1 == var_i2;
+    if (var_i1) {goto var_B2;}
+    var_j1 = var_p0;
+    var_i2 = w2c_game_f554(instance);
+    var_l9 = var_i2;
+    i32_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 32u), var_i2);
+    var_i1 = 1u;
+    var_j2 = var_p0;
+    var_i2 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j2, 104u));
+    var_l4 = var_i2;
+    var_i3 = var_l4;
+    var_i4 = 1u;
+    var_i3 = var_i3 <= var_i4;
+    var_i1 = var_i3 ? var_i1 : var_i2;
+    var_l8 = var_i1;
+    var_j1 = var_p0;
+    var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 96u));
+    var_l6 = var_i1;
+    var_j1 = var_p0;
+    var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 100u));
+    var_l7 = var_i1;
+    if (var_i1) {goto var_B3;}
+    var_i1 = 1u;
+    var_l7 = var_i1;
+    var_i1 = var_l6;
+    var_i2 = 2u;
+    var_i1 = var_i1 < var_i2;
+    if (var_i1) {goto var_B3;}
+    var_i1 = var_l6;
+    var_l4 = var_i1;
+    var_L4: 
+      var_i1 = var_l7;
+      var_i2 = 1u;
+      var_i1 += var_i2;
+      var_l7 = var_i1;
+      var_i1 = var_l4;
+      var_i2 = 3u;
+      var_i1 = var_i1 > var_i2;
+      var_l5 = var_i1;
+      var_i1 = var_l4;
+      var_i2 = 1u;
+      var_i1 >>= (var_i2 & 31);
+      var_l4 = var_i1;
+      var_i1 = var_l5;
+      if (var_i1) {goto var_L4;}
+    var_B3:;
+    var_i1 = var_l9;
+    var_i2 = 1u;
+    var_i3 = var_l6;
+    var_i4 = 1u;
+    var_i5 = 1u;
+    var_i6 = var_l7;
+    var_i7 = var_l8;
+    var_j8 = var_p0;
+    var_i8 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j8, 108u));
+    var_j9 = var_p0;
+    var_i9 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j9, 116u));
+    var_i10 = 1u;
+    w2c_game_f555(instance, var_i1, var_i2, var_i3, var_i4, var_i5, var_i6, var_i7, var_i8, var_i9, var_i10);
+    var_j1 = var_p2;
+    var_i1 = !(var_j1);
+    if (var_i1) {goto var_B2;}
+    var_i1 = var_l7;
+    var_i2 = var_l8;
+    var_i1 *= var_i2;
+    var_l4 = var_i1;
+    var_i1 = !(var_i1);
+    if (var_i1) {goto var_B2;}
+    var_i1 = var_l4;
+    var_j1 = (u64)(var_i1);
+    var_l11 = var_j1;
+    var_L5: 
+      var_j1 = var_p2;
+      var_j2 = var_l10;
+      var_j3 = 4ull;
+      var_j2 <<= (var_j3 & 63);
+      var_j1 += var_j2;
+      var_l12 = var_j1;
+      var_j1 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j1));
+      var_l13 = var_j1;
+      var_j2 = 0ull;
+      var_i1 = var_j1 != var_j2;
+      if (var_i1) {
+        var_j1 = var_p0;
+        var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 32u));
+        var_j2 = var_p0;
+        var_i2 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j2, 108u));
+        var_j3 = var_p0;
+        var_i3 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j3, 96u));
+        var_i4 = 1u;
+        var_i5 = 1u;
+        var_j6 = var_p0;
+        var_i6 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j6, 100u));
+        var_j7 = var_l10;
+        var_i7 = (u32)(var_j7);
+        var_j8 = 0ull;
+        var_j9 = var_l13;
+        var_j10 = var_l12;
+        var_i10 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j10, 8u));
+        var_i11 = 0u;
+        w2c_game_f267(instance, var_i1, var_i2, var_i3, var_i4, var_i5, var_i6, var_i7, var_j8, var_j9, var_i10, var_i11);
+      }
+      var_j1 = var_l10;
+      var_j2 = 1ull;
+      var_j1 += var_j2;
+      var_l10 = var_j1;
+      var_j2 = var_l11;
+      var_i1 = var_j1 < var_j2;
+      if (var_i1) {goto var_L5;}
+    var_B2:;
+    var_j1 = var_p1;
+    var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 24u));
+    var_i1 = !(var_i1);
+    if (var_i1) {
+      var_j1 = var_p1;
+      var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 16u));
+      var_i2 = 3u;
+      var_i1 = var_i1 != var_i2;
+      if (var_i1) {goto var_B7;}
+    }
+    var_j1 = var_p0;
+    var_j2 = var_p0;
+    var_j2 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j2));
+    var_j2 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j2, 120u));
+    var_j1 = CALL_INDIRECT(instance->w2c_0x5F_indirect_function_table, u64 (*)(void*, u64), w2c_game_t0, var_j2, instance->w2c_0x5F_indirect_function_table.data[var_j2].module_instance, var_j1);
+    var_p1 = var_j1;
+    var_j1 = var_p0;
+    var_j1 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 128u));
+    var_j2 = 0ull;
+    var_i1 = var_j1 != var_j2;
+    if (var_i1) {goto var_B9;}
+    var_j1 = var_p0;
+    var_j2 = var_p1;
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 136u), var_j2);
+    var_j1 = var_p0;
+    var_j2 = 1ull;
+    var_j3 = 1ull;
+    var_j4 = var_p1;
+    var_j5 = var_p1;
+    var_j6 = 1ull;
+    var_i5 = var_j5 <= var_j6;
+    var_j3 = var_i5 ? var_j3 : var_j4;
+    var_j2 = w2c_game_f91003(instance, var_j2, var_j3);
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 128u), var_j2);
+    var_j1 = 8324208ull;
+    var_j2 = 8324208ull;
+    var_j2 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j2));
+    var_j3 = var_p1;
+    var_j2 += var_j3;
+    var_p1 = var_j2;
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j1), var_j2);
+    var_j1 = 8324216ull;
+    var_j2 = 8324216ull;
+    var_j2 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j2));
+    var_j3 = 1ull;
+    var_j2 += var_j3;
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j1), var_j2);
+    var_j1 = var_p1;
+    var_j2 = 8324224ull;
+    var_j2 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j2));
+    var_i1 = var_j1 <= var_j2;
+    if (var_i1) {goto var_B9;}
+    var_j1 = 8324224ull;
+    var_j2 = var_p1;
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j1), var_j2);
+    var_B9:;
+    var_j1 = var_p2;
+    var_i1 = !(var_j1);
+    if (var_i1) {goto var_B7;}
+    var_j1 = var_p0;
+    var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 100u));
+    var_l4 = var_i1;
+    if (var_i1) {goto var_B10;}
+    var_i1 = 1u;
+    var_l4 = var_i1;
+    var_j1 = var_p0;
+    var_i1 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 96u));
+    var_l5 = var_i1;
+    var_i2 = 2u;
+    var_i1 = var_i1 < var_i2;
+    if (var_i1) {goto var_B10;}
+    var_L11: 
+      var_i1 = var_l4;
+      var_i2 = 1u;
+      var_i1 += var_i2;
+      var_l4 = var_i1;
+      var_i1 = var_l5;
+      var_i2 = 3u;
+      var_i1 = var_i1 > var_i2;
+      var_l6 = var_i1;
+      var_i1 = var_l5;
+      var_i2 = 1u;
+      var_i1 >>= (var_i2 & 31);
+      var_l5 = var_i1;
+      var_i1 = var_l6;
+      if (var_i1) {goto var_L11;}
+    var_B10:;
+    var_i1 = 1u;
+    var_j2 = var_p0;
+    var_i2 = i32_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j2, 104u));
+    var_l5 = var_i2;
+    var_i3 = var_l5;
+    var_i4 = 1u;
+    var_i3 = var_i3 <= var_i4;
+    var_i1 = var_i3 ? var_i1 : var_i2;
+    var_i2 = var_l4;
+    var_i1 *= var_i2;
+    var_l5 = var_i1;
+    var_i1 = !(var_i1);
+    if (var_i1) {goto var_B7;}
+    var_j1 = var_p0;
+    var_j2 = 128ull;
+    var_j1 += var_j2;
+    var_l10 = var_j1;
+    var_i1 = var_l5;
+    var_j1 = (u64)(var_i1);
+    var_l11 = var_j1;
+    var_j1 = 0ull;
+    var_p1 = var_j1;
+    var_L12: 
+      var_j1 = var_p3;
+      var_j2 = 8ull;
+      var_j1 += var_j2;
+      var_j2 = var_p0;
+      var_j3 = var_p1;
+      var_i3 = (u32)(var_j3);
+      var_j4 = var_p0;
+      var_j4 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j4));
+      var_j4 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j4, 128u));
+      CALL_INDIRECT(instance->w2c_0x5F_indirect_function_table, void (*)(void*, u64, u64, u32), w2c_game_t14, var_j4, instance->w2c_0x5F_indirect_function_table.data[var_j4].module_instance, var_j1, var_j2, var_i3);
+      var_j1 = var_p2;
+      var_j2 = var_p1;
+      var_j3 = 4ull;
+      var_j2 <<= (var_j3 & 63);
+      var_j1 += var_j2;
+      var_j1 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j1));
+      var_l12 = var_j1;
+      var_i1 = !(var_j1);
+      if (var_i1) {goto var_B13;}
+      var_j1 = var_p3;
+      var_j1 = i64_load32_u_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j1, 24u));
+      var_l13 = var_j1;
+      var_i1 = !(var_j1);
+      if (var_i1) {goto var_B13;}
+      var_j1 = var_l10;
+      var_j1 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j1));
+      var_j2 = var_p3;
+      var_j2 = i64_load_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)checked_add_u64(var_j2, 8u));
+      var_j1 += var_j2;
+      var_j2 = var_l12;
+      var_j3 = var_l13;
+      memory_copy(instance->w2c_env_memory, instance->w2c_env_memory, var_j1, var_j2, var_j3);
+      var_B13:;
+      var_j1 = var_p1;
+      var_j2 = 1ull;
+      var_j1 += var_j2;
+      var_p1 = var_j1;
+      var_j2 = var_l11;
+      var_i1 = var_j1 != var_j2;
+      if (var_i1) {goto var_L12;}
+    var_B7:;
+    var_j1 = var_p3;
+    var_j2 = 32ull;
+    var_j1 += var_j2;
+    instance->w2c_g0 = var_j1;
+    var_j1 = var_p0;
+    i64_store_shared(wasm_rt_local_memory_base, wasm_rt_local_memory_size, instance->w2c_env_memory, (u64)(var_j0), var_j1);
+  }
+  var_i0 = 0u;
+  var_Bfunc:;
+  FUNC_EPILOGUE;
+  return var_i0;
+}
