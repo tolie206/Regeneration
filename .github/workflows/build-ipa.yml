@@ -39,6 +39,8 @@ jobs:
           python3 tools/release_metadata.py
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/game-files"
           python3 app/Scripts/check_game_files.py --mirror "$RUNNER_TEMP/game-files"
+      - name: Typecheck complete production iOS UI
+        run: python3 tools/preflight_online_swift.py --swift-only
       - name: Install tools
         run: brew install xcodegen
       - name: Metal compiler

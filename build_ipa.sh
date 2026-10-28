@@ -36,8 +36,10 @@ fi
 mkdir -p Build/Online
 IPHONEOS_DEPLOYMENT_TARGET=16.0 cargo build --manifest-path ../network/native-port/online-bridge/Cargo.toml --release --lib --target aarch64-apple-ios
 cp ../network/native-port/online-bridge/target/aarch64-apple-ios/release/libmugoat_online.a Build/Online/
+"$PY" ../tools/preflight_online_link.py
 "$PY" ../tools/prepare_online_resources.py
 "$PY" Scripts/prepare.py --mirror "$MIRROR"
+"$PY" ../tools/preflight_online_swift.py --c-only
 # The app opens with your server already filled in (without one, it asks where your files are).
 /usr/libexec/PlistBuddy -c "Set :PGDefaultAssetServer $SERVER" App/Info.plist
 /usr/libexec/PlistBuddy -c "Set :PGLiteMode $LITE" App/Info.plist
@@ -52,7 +54,7 @@ xcodebuild -project PlayGTA5Native.xcodeproj -scheme PlayGTA5Native \
   -derivedDataPath Build/Release -jobs "$JOBS" \
   GCC_OPTIMIZATION_LEVEL=2 SWIFT_OPTIMIZATION_LEVEL=-O DEBUG_INFORMATION_FORMAT=dwarf \
   CODE_SIGNING_ALLOWED=NO CODE_SIGN_ENTITLEMENTS="$ENTITLEMENTS" build > Build/xcodebuild.log 2>&1 || {
-  grep -E 'error:' Build/xcodebuild.log | head -20
+  grep -E -A20 -B2 'error:|ld:|Undefined symbols|referenced from:' Build/xcodebuild.log | head -160 || true
   echo "Build failed; the full log is app/Build/xcodebuild.log"; exit 1; }
 grep -E 'BUILD SUCCEEDED' Build/xcodebuild.log
 

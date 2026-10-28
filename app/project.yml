@@ -36,6 +36,7 @@ settings:
     # Native libopus for the game's audio (Scripts/build_opus.py builds one per SDK).
     LIBRARY_SEARCH_PATHS:
       - $(inherited)
+      - $(SRCROOT)/Build/Online
       - $(SRCROOT)/Tools/opus-lib/$(PLATFORM_NAME)
       - $(SRCROOT)/Tools/blink-lib/$(PLATFORM_NAME)
     OTHER_LDFLAGS:
