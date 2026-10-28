@@ -93,3 +93,17 @@ jobs:
           cd app
           swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/ModVehicleSupport.swift App/SkinInstaller.swift App/BundledMenyoo.swift App/StreamingSettings.swift Tests/SoundTestStubs.swift Tests/owner_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/owner-mod-test"
           "$RUNNER_TEMP/owner-mod-test" "$RUNNER_TEMP/owner-mods"
+      - name: Verify SH150 Vision and 27rev actual packs and mount repair
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path('r008-inputs')
+          for name,sha in json.loads((root/'sha256.json').read_text()).items(): assert hashlib.sha256((root/name).read_bytes()).hexdigest()==sha
+          PY
+          cp "$RUNNER_TEMP/owner-mods/cars/sh150.zip" r008-inputs/sh150.zip
+          cp "$RUNNER_TEMP/owner-mods/cars/vision.zip" r008-inputs/vision.zip
+          cd app
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/ModVehicleSupport.swift Tests/SoundTestStubs.swift Tests/r008_vehicle_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/r008-vehicles"
+          "$RUNNER_TEMP/r008-vehicles" "${{ github.workspace }}/r008-inputs"
+          clang -std=c11 -pthread -fsanitize=address,undefined Tests/vehicle_spawn.c -lm -o "$RUNNER_TEMP/r008-spawn"
+          "$RUNNER_TEMP/r008-spawn" "${{ github.workspace }}/r008-inputs/model-hashes.txt"

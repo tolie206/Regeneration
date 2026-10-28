@@ -66,7 +66,15 @@ static bool pg_vehicle_make_room(w2c_game *instance, u64 scratch, u64 owner) {
 }
 static bool pg_vehicle_memory_available(void) {
   uint64_t headroom;
-  return !nativeProcessHeadroom(&headroom) || headroom >= guardReserve();
+  if (!nativeProcessHeadroom(&headroom)) return true;
+  // The spawner must use the active streaming policy, not the legacy 256/384 MiB
+  // reserve. Otherwise valid requests are cancelled while that policy allows loading.
+  bool distance = pg_distance_streaming_enabled();
+  uint64_t reserve = distance ? distanceStreaming.reserveBytes : guardReserve();
+  if (headroom >= reserve) return true;
+  char line[192];
+  snprintf(line,sizeof line,"Vehicle menu memory gate: headroom %llu MiB, active reserve %llu MiB, distance policy %d; request cancelled.",(unsigned long long)(headroom>>20),(unsigned long long)(reserve>>20),distance);
+  pg_log(line);return false;
 }
 // The name the game shows for a vehicle, in the game's language: its display-name label
 // (GET_DISPLAY_NAME_FROM_VEHICLE_MODEL, "ADDER") looked up in the game's text with _GET_LABEL_TEXT,

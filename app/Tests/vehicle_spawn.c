@@ -17,6 +17,7 @@ typedef struct { u64 w2c_g1, w2c_g0; } w2c_game;
 static struct {struct {uint64_t size;void *data;} memory;} env;
 static _Atomic double loadSceneSince;
 static u32 modelFor[2048], pedCameraMode, vehicleCameraMode;
+static u32 addonTestModel;
 static unsigned char memory[16000000];
 static double now = 1;
 static u32 gameStatus, category, seats = 2;
@@ -29,6 +30,9 @@ static int occupiedSeat[2048];
 static u64 handler = 42, headroom = 1024ull << 20;
 static bool nativeProcessHeadroom(uint64_t *room) { *room = headroom; return true; }
 static uint64_t guardReserve(void) { return 384ull << 20; }
+static bool distancePolicy;
+static struct { uint64_t reserveBytes; } distanceStreaming;
+static bool pg_distance_streaming_enabled(void) { return distancePolicy; }
 static int loadSeconds;
 static float spawned[3];
 static void *pg_pointer(void *host, u64 address, u64 size) {
@@ -91,7 +95,7 @@ u64 PG_FN_MODEL_INFO_AT_INDEX(w2c_game *instance, u32 index) {
   if (index == 599) return 10000;
   return 0;
 }
-u32 PG_FN_IS_VEHICLE_MODEL(w2c_game *instance, u32 model) { return model == 100 || model == 200 || model == 300; }
+u32 PG_FN_IS_VEHICLE_MODEL(w2c_game *instance, u32 model) { return model == 100 || model == 200 || model == 300 || (addonTestModel && model == addonTestModel); }
 u64 PG_FN_HASH_STRING_TRY_GET(w2c_game *instance, u32 space, u32 model) { return model == 100 ? 11000 : 0; }
 u32 PG_FN_VEHICLE_CLASS(w2c_game *instance, u32 model) { return model == 300 ? 21 : category; }
 // Model 100's label has text in the game, 200's ("CARNOTFOUND") doesn't, 400's is long.
@@ -151,7 +155,7 @@ static void tick(w2c_game *instance) {
   assert(instance->w2c_g0 == 4096);
   now += 16;
 }
-int main(void) {
+int main(int argc,char **argv) {
   w2c_game instance = {.w2c_g0 = 4096};
   *(u32 *)pg_pointer(&env, 10872120, 4) = 600;
   memory[8192 + 157] = memory[9500 + 157] = memory[10000 + 157] = 5;
@@ -256,6 +260,21 @@ int main(void) {
   headroom = 100ull << 20; tick(&instance);
   assert(PGGetVehicleSpawnStatus() == PGVehicleSpawnLowMemory && requests == releases);
   headroom = 1024ull << 20;
+
+  // Reproduce tester log: active reserve 144 MiB, legacy reserve higher. The
+  // request must survive a fall from 258 to 200 MiB while the model is loading.
+  distancePolicy=true;distanceStreaming.reserveBytes=144ull<<20;loaded=false;
+  headroom=258ull<<20;assert(PGSpawnVehicle(100,false));tick(&instance);
+  assert(PGGetVehicleSpawnStatus()==PGVehicleSpawnLoading);
+  headroom=200ull<<20;tick(&instance);assert(PGGetVehicleSpawnStatus()==PGVehicleSpawnLoading);
+  loaded=true;tick(&instance);assert(PGGetVehicleSpawnStatus()==PGVehicleSpawnSucceeded);
+  // The same valid model is still rejected below the selected reserve.
+  headroom=143ull<<20;before=requests;assert(PGSpawnVehicle(100,false));tick(&instance);
+  assert(PGGetVehicleSpawnStatus()==PGVehicleSpawnLowMemory && requests==before);
+  // Old policy keeps its original threshold; no global guard is disabled.
+  distancePolicy=false;headroom=200ull<<20;assert(PGSpawnVehicle(100,false));tick(&instance);
+  assert(PGGetVehicleSpawnStatus()==PGVehicleSpawnLowMemory);
+  headroom=1024ull<<20;loaded=false;
 
   // A live main thread without a handler is not safe for REQUEST_MODEL.
   handler = 0; before = requests;
@@ -384,6 +403,19 @@ int main(void) {
   assert(PGQueueCheat(PGCheatCameraMode,4));tick(&instance);assert(pedCameraMode==4&&vehicleCameraMode==4);
   assert(PGQueueCheat(PGCheatCameraMode,1));tick(&instance);assert(pedCameraMode==1&&vehicleCameraMode==1);
   assert(!PGQueueCheat(PGCheatCameraMode,99));
+  if(argc==2){
+    FILE *models=fopen(argv[1],"r");assert(models);unsigned model;int count=0;
+    while(fscanf(models,"%u",&model)==1){
+      addonTestModel=model;gameStatus=0;paused=false;loadSeconds=0;headroom=1024ull<<20;
+      hasScript=true;handler=42;playerPed=7;playerID=0;loaded=false;failCreate=false;failDelete=false;
+      memset(occupied,0,sizeof occupied);memset(occupiedSeat,0,sizeof occupiedSeat);
+      category=0;seats=2;now+=1;
+      assert(PGSpawnVehicle(model,false));tick(&instance);assert(PGGetVehicleSpawnStatus()==PGVehicleSpawnLoading);
+      loaded=true;now+=1;tick(&instance);assert(PGGetVehicleSpawnStatus()==PGVehicleSpawnSucceeded);
+      printf("PASS SIMULATED native spawn with actual pack model hash %u (not iPhone rendering)\n",model);count++;
+    }
+    fclose(models);assert(count==3);
+  }
   free(vehicleCatalog);
   puts("VEHICLE SPAWN AND NATIVE CHEAT CHECKS PASSED");
 }

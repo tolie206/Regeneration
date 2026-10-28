@@ -7,6 +7,27 @@ enum ModVehicleSupport {
    return v.filter{ModPack.validName($0)}
   }.sorted()
  }
+ /// Fix an author-template placeholder only when its directory has one real archive.
+ /// Ambiguous references are retained; no geometry, texture or handling is changed.
+ static func repairContentMounts(_ text:String,paths:[String],log:(String)->Void)->String {
+  let re=try! NSRegularExpression(pattern:"[A-Za-z0-9_]+:/[^<\\s\"']+\\.rpf",options:.caseInsensitive)
+  var result=text
+  let source=text as NSString,known=Set(paths.map{$0.lowercased()})
+  for m in re.matches(in:text,range:NSRange(location:0,length:source.length)).reversed() {
+   let uri=source.substring(with:m.range)
+   guard let colon=uri.range(of:":/") else{continue}
+   let relative=String(uri[colon.upperBound...]).replacingOccurrences(of:"%PLATFORM%",with:"x64",options:.caseInsensitive).lowercased()
+   guard !known.contains(relative),(relative as NSString).lastPathComponent=="vehicle_mods.rpf" else{continue}
+   let parent=(relative as NSString).deletingLastPathComponent
+   let candidates=paths.filter{($0.lowercased() as NSString).deletingLastPathComponent==parent && $0.lowercased().hasSuffix("_mods.rpf")}
+   guard candidates.count==1 else{log("Vehicle compatibility: ambiguous/missing mount \(uri); unchanged.");continue}
+   let oldName=(uri as NSString).lastPathComponent,newName=(candidates[0] as NSString).lastPathComponent
+   let fixed=String(uri.dropLast(oldName.count))+newName
+   result=(result as NSString).replacingCharacters(in:m.range,with:fixed)
+   log("Vehicle compatibility: archive mount \(uri) -> \(fixed).")
+  }
+  return result
+ }
  static func prepare(manifestPath:String,log:(String)->Void) {
   let fm=FileManager.default
   guard let b=try? Data(contentsOf:URL(fileURLWithPath:manifestPath)),let manifest=try? JSONSerialization.jsonObject(with:b) as? [String:Any],let rows=manifest["files"] as? [[Any]] else{return}
@@ -38,12 +59,13 @@ enum ModVehicleSupport {
   for (url,r,root) in archives {
    do {
     var out=r.bytes,changed=false
-    for e in r.entries where e.path.hasSuffix("vehicles.meta") {
+    for e in r.entries where e.path.hasSuffix("vehicles.meta") || e.path.lowercased()=="content.xml" {
      let data=try r.metadata(e)
      guard var text=String(data:data,encoding:.utf8) else{continue}
      // Some PC packs use a long run of dashes as an XML comment. XML forbids
      // internal "--"; retain a valid separator without touching any game fields.
      text=text.replacingOccurrences(of:"<!-{3,}>",with:"<!-- separator -->",options:.regularExpression)
+     if e.path.lowercased()=="content.xml" {text=repairContentMounts(text,paths:r.entries.map(\.path),log:log)}
      let ns=text as NSString
      for m in modelRE.matches(in:text,range:NSRange(location:0,length:ns.length)) {
       let name=ns.substring(with:m.range(at:1)).trimmingCharacters(in:.whitespacesAndNewlines).lowercased()
