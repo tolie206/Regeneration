@@ -34,8 +34,8 @@ if [ -n "$SERVER" ]; then
 fi
 "$PY" Scripts/check_game_files.py --mirror "$MIRROR"
 mkdir -p Build/Online
-IPHONEOS_DEPLOYMENT_TARGET=16.0 cargo build --manifest-path ../../network/native-port/online-bridge/Cargo.toml --release --lib --target aarch64-apple-ios
-cp ../../network/native-port/online-bridge/target/aarch64-apple-ios/release/libmugoat_online.a Build/Online/
+IPHONEOS_DEPLOYMENT_TARGET=16.0 cargo build --manifest-path ../network/native-port/online-bridge/Cargo.toml --release --lib --target aarch64-apple-ios
+cp ../network/native-port/online-bridge/target/aarch64-apple-ios/release/libmugoat_online.a Build/Online/
 "$PY" ../tools/prepare_online_resources.py
 "$PY" Scripts/prepare.py --mirror "$MIRROR"
 # The app opens with your server already filled in (without one, it asks where your files are).
