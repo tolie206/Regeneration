@@ -16,8 +16,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Require private repository
-        run: test '${{ github.event.repository.private }}' = true
+      - name: Require owner-authorized repository
+        run: test "$GITHUB_REPOSITORY" = 'tolie206/Regeneration'
       - name: Drive-by input regression
         run: python3 tools/test_driveby_look.py "$RUNNER_TEMP/driveby.c"
       - name: Lazy CPU shadows (real implementation, sanitizers)

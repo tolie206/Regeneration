@@ -17,11 +17,9 @@ jobs:
       JOBS: '2'
       DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
     steps:
-      - name: Require private repo and Apple Silicon
-        env:
-          PRIVATE: ${{ github.event.repository.private }}
+      - name: Require owner-authorized repository and Apple Silicon
         run: |
-          test "$PRIVATE" = true
+          test "$GITHUB_REPOSITORY" = 'tolie206/Regeneration'
           test "$(uname -m)" = arm64
       - uses: actions/checkout@v4
         with:
@@ -34,7 +32,7 @@ jobs:
           xcodebuild -version | grep -Fx 'Build version 17C52'
           test "$(xcrun --sdk iphoneos --show-sdk-version)" = '26.2'
           xcrun clang --version
-      - name: Validate private build inputs
+      - name: Validate owner-provided build inputs
         run: |
           python3 tools/release_metadata.py
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/game-files"
