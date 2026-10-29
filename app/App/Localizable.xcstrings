@@ -57773,6 +57773,57 @@
           }
         }
       }
+    },
+    "Lower render resolution, light effects": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lower render resolution, light effects"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Độ phân giải render thấp, hiệu ứng nhẹ"
+          }
+        }
+      }
+    },
+    "1080p with lighter shadows and reflections": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1080p with lighter shadows and reflections"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1080p với bóng đổ và phản chiếu nhẹ hơn"
+          }
+        }
+      }
+    },
+    "High resolution and textures, shorter draw distance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "High resolution and textures, shorter draw distance"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Độ phân giải và texture cao, tầm nhìn ngắn hơn"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

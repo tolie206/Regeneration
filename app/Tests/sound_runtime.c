@@ -10,6 +10,7 @@ typedef uint64_t u64;typedef uint32_t u32;
 typedef struct { u64 w2c_g0; } w2c_game;
 static char env[2048];static double now;
 static unsigned lookupCalls,forced,logs;static bool ready;
+static bool mission;
 static u32 currentVehicle=10,currentModel=99,population=2,driver=1;
 static double timeMS(int clock){(void)clock;return now;}
 static int PGPauseMenuActive(void){return 0;}
@@ -29,6 +30,7 @@ u64 PG_FN_AUDIO_PROFILE(w2c_game *i,u64 manager,u32 hash,u32 type){
 }
 void PG_FN_FORCE_AUDIO(w2c_game *i,u32 v,u64 address){(void)i;assert(v==currentVehicle);assert(!strcmp(env+address,"brabus850")||!strcmp(env+address,"asea"));forced++;}
 u32 PG_FN_GET_ENTITY_MODEL(w2c_game *i,u32 v){(void)i;(void)v;return currentModel;}
+u32 PG_FN_ENTITY_MISSION(w2c_game *i,u32 v){(void)i;(void)v;return mission;}
 u32 PG_FN_ENTITY_POPULATION(w2c_game *i,u32 v){(void)i;(void)v;return population;}
 u32 PG_FN_VEHICLE_OCCUPANT(w2c_game *i,u32 v,u32 seat,u32 p){(void)i;(void)v;(void)p;assert(seat==(u32)-1);return driver;}
 int main(void){
@@ -46,6 +48,7 @@ int main(void){
  PGEnableSoundMods(false);now+=500;pg_sound_mod_tick(&instance);assert(lookupCalls==13);
  assert(PGRegisterStockVehicleSound(101,"asea"));currentModel=101;currentVehicle=12;ready=true;
  population=7;now+=500;pg_sound_mod_tick(&instance);assert(forced==1); // mission untouched
+ population=2;mission=true;now+=500;pg_sound_mod_tick(&instance);assert(forced==1);mission=false;
  population=2;driver=2;now+=500;pg_sound_mod_tick(&instance);assert(forced==1); // passenger untouched
  driver=1;now+=500;pg_sound_mod_tick(&instance);assert(forced==2); // original traffic profile
  for(unsigned j=0;j<100;j++){now+=500;pg_sound_mod_tick(&instance);}assert(forced==2); // once only

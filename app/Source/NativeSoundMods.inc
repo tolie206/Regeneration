@@ -3,6 +3,7 @@
 u64 PG_FN_AUDIO_PROFILE(w2c_game*,u64,u32,u32);
 void PG_FN_FORCE_AUDIO(w2c_game*,u32,u64);
 u32 PG_FN_GET_ENTITY_MODEL(w2c_game*,u32);
+u32 PG_FN_ENTITY_MISSION(w2c_game*,u32);
 u32 PG_FN_ENTITY_POPULATION(w2c_game*,u32);
 u32 PG_FN_VEHICLE_OCCUPANT(w2c_game*,u32,u32,u32);
 typedef struct {uint32_t model;char profile[64];} PGSoundChoice;
@@ -47,7 +48,7 @@ static void pg_sound_mod_tick(w2c_game *instance){
  // passengers keep the engine's audio decisions. Custom assignments win.
  if(stock && vehicle){
   u32 population=PG_FN_ENTITY_POPULATION(instance,vehicle);
-  if(population<1||population>5||PG_FN_VEHICLE_OCCUPANT(instance,vehicle,(u32)-1,0)!=ped)profile[0]=0;
+  if(population<1||population>5||PG_FN_ENTITY_MISSION(instance,vehicle)||PG_FN_VEHICLE_OCCUPANT(instance,vehicle,(u32)-1,0)!=ped)profile[0]=0;
  }
  if(vehicle!=lastVehicle||model!=lastModel||revision!=lastRevision){
   lastVehicle=vehicle;lastModel=model;lastRevision=revision;attempts=0;applied=false;retryAt=0;
