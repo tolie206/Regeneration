@@ -50,12 +50,7 @@ jobs:
       - name: Check sound import and built-in translation
         run: python3 -m unittest discover -s tests -v
       - name: Lazy CPU shadows (real implementation, sanitizers)
-        run: |
-          clang -std=c11 -Wall -Wextra -Werror -pthread -fsanitize=address,undefined app/Tests/lazy_cpu.c -o "$RUNNER_TEMP/lazy-cpu"
-          "$RUNNER_TEMP/lazy-cpu"
-          "$RUNNER_TEMP/lazy-cpu" --disabled
-          clang -std=c11 -Wall -Wextra -Werror -I app/Source app/Tests/log_policy.c -o "$RUNNER_TEMP/log-policy"
-          "$RUNNER_TEMP/log-policy"
+        run: bash tools/test_lazy_cpu_host.sh "$RUNNER_TEMP"
       - name: Script scaled-camera input regression
         run: python3 tools/test_mission_camera.py "$RUNNER_TEMP/mission-camera.c"
       - name: Mission controller layout and hardware utility regression
