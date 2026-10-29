@@ -2,7 +2,12 @@
 # Host-only compiler/runtime compatibility check. Never used to compile the iPhone app.
 set -euo pipefail
 scratch="${1:?temporary folder required}"
-cc="${PG_HOST_SAN_CC:?host sanitizer compiler required}"
+compiler="${PG_HOST_SAN_CC:?host sanitizer compiler required}"
+hostDeveloper="/Applications/Xcode_26.6.app/Contents/Developer"
+sdk="$(DEVELOPER_DIR="$hostDeveloper" xcrun --sdk macosx --show-sdk-path)"
+cc="$scratch/host-sanitizer-cc"
+printf '#!/bin/bash\nexec %q -isysroot %q "$@"\n' "$compiler" "$sdk" > "$cc"
+chmod +x "$cc"
 "$cc" --version
 cat > "$scratch/host-sanitizer-probe.c" <<'C'
 #include <pthread.h>
@@ -31,3 +36,5 @@ if "$scratch/host-sanitizer-probe" undefined > "$scratch/ubsan-negative.log" 2>&
 fi
 grep -q 'runtime error: signed integer overflow' "$scratch/ubsan-negative.log"
 echo 'PASS: host sanitizer startup, pthread/setjmp and both intentional-error detection controls'
+
+printf "PG_HOST_SAN_CC=%s\n" "$cc" >> "$GITHUB_ENV"
