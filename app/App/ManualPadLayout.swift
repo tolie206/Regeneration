@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 /// Fixed, independent layout for the optional complete controller. Ignores custom
 /// gameplay positions/scales so the temporary controls cannot overlap them.
 enum ManualPadLayout {
@@ -14,6 +15,15 @@ enum ManualPadLayout {
   put("left",safe.width/2-54,safe.height-80);put("right",safe.width/2+54,safe.height-80)
   put("leftStick",safe.width*0.14,safe.height-72,108);put("lookStick",safe.width*0.86,safe.height-72,108)
   return result
+ }
+ static func valid(_ frames:[String:CGRect],in safe:CGRect)->Bool {
+  for (name,a) in frames {
+   guard a.minX.isFinite,a.minY.isFinite,a.width.isFinite,a.height.isFinite,safe.contains(a) else{return false}
+   for (other,b) in frames where name<other {
+    if a.insetBy(dx:-4,dy:-4).intersects(b.insetBy(dx:-4,dy:-4)){return false}
+   }
+  }
+  return true
  }
  static func overlayVisible(available:Bool,stopped:Bool)->Bool {available && !stopped}
  static func utilityOnly(external:Bool,hide:Bool,preview:Bool)->Bool {external && hide && !preview}

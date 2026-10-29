@@ -288,6 +288,12 @@ final class TouchControlsView: UIView {
     private let manualPad = ControlButton("manualPad", icon: "text:PAD", label: "Bật/tắt tay cầm đầy đủ")
     private let manualL3 = ControlButton("manualL3", icon: "text:L3", label: "Nhấn analog trái L3")
     private let manualR3 = ControlButton("manualR3", icon: "text:R3", label: "Nhấn analog phải R3")
+    private let manualMoveHandle=ControlButton("leftStick",icon:"text:LS",label:"Analog trái")
+    private let manualLookHandle=ControlButton("lookStick",icon:"text:RS",label:"Analog phải")
+    func setManualPadPreview(_ enabled:Bool) {
+        guard editing else{return}
+        reset(publish:false);manualPadEnabled=enabled;manualPad.active=enabled;updateVisibility();setNeedsLayout()
+    }
     private let lookStick = FloatingStick()
     /// Where a finger pressed Aim/Fire; dragging from there works as a stick.
     private var dragOrigins: [ObjectIdentifier: (start: CGPoint, current: CGPoint)] = [:]
@@ -552,7 +558,7 @@ final class TouchControlsView: UIView {
     private let tabRight = ControlButton("tabRight", icon: "tab_right", label: AppLanguage.choose("Next tab"))
 
     private var allButtons: [ControlButton] {
-        [manualPad, manualL3, manualR3] + missionButtons.map(\.button) + [fire, aim, leftFire, jump, sprint, enter, weapons, reload, cover, crouch, switcher, special, interact, detonate, zoomIn, zoomOut,
+        [manualPad, manualL3, manualR3, manualMoveHandle, manualLookHandle] + missionButtons.map(\.button) + [fire, aim, leftFire, jump, sprint, enter, weapons, reload, cover, crouch, switcher, special, interact, detonate, zoomIn, zoomOut,
          weaponPrev, weaponNext, gas, brake, handbrake, steerLeft, steerRight, driveBy, driveAim, duck, horn, lookBack,
          vehicleWeapon, towHook, towArmUp, towArmDown, roof, detachTrailer, dive, surface, airFire, gear, throttleUp, throttleDown, yawLeft, yawRight, camera, phone, pause, settings, mods, lights, radio,
          up, down, left, right, accept, back, phoneOption, taxiHurry, taxiStop, tabLeft, tabRight, promptOption, bothTriggers]
@@ -658,7 +664,7 @@ final class TouchControlsView: UIView {
     private func computeVisible() -> [ControlButton] {
         if utilityOnly { return [settings, mods] }
         if manualPadEnabled {
-            return [camera, phone, pause, settings, mods, manualPad] + missionButtons.map(\.button) + [manualL3, manualR3, up, down, left, right]
+            return [camera, phone, pause, settings, mods, manualPad] + missionButtons.map(\.button) + [manualL3, manualR3, up, down, left, right] + (editing ? [manualMoveHandle,manualLookHandle] : [])
         }
         var list = baseVisible()
         if list.contains(settings) { list += [mods, manualPad] }
@@ -814,7 +820,7 @@ final class TouchControlsView: UIView {
     var showingPrompt: Bool { promptActive }
 
     /// The saved-layout group for the current controls: on foot, or any vehicle.
-    var layoutGroup: String { context == .onFoot ? "foot" : "vehicle" }
+    var layoutGroup: String { manualPadEnabled ? "manual" : context == .onFoot ? "foot" : "vehicle" }
     private func hiddenByPlayer(_ button: ControlButton) -> Bool {
         context != .menu && !phoneDock && (ControlsLayout.entry(group: layoutGroup, name: button.name)?.hidden ?? false)
     }
@@ -825,7 +831,7 @@ final class TouchControlsView: UIView {
             planeThrottle = 0
             roles = roles.filter { if case .planeStick = $0.value { return false }; return true }
         }
-        visible = computeVisible().filter { utilityOnly || manualPadEnabled || $0 === manualPad || editing || !hiddenByPlayer($0) }
+        visible = computeVisible().filter { utilityOnly || $0 === manualPad || editing || !hiddenByPlayer($0) }
         // With the phone out, the game's own hints name pad buttons ("Take Photo A", "Exit B", "Send X"): the dock's
         // buttons show those letters then, so players find the camera's shutter and send (TG reports 1061, 1128).
         let letters = phoneDock && gamePhoneOut
@@ -861,11 +867,12 @@ final class TouchControlsView: UIView {
         let safe = bounds.inset(by: safeAreaInsets)
         guard safe.width > 0, safe.height > 0 else { return }
         if manualPadEnabled || utilityOnly {
-            let frames=ManualPadLayout.frames(in:safe,utilityOnly:utilityOnly)
+            let defaults=ManualPadLayout.frames(in:safe,utilityOnly:utilityOnly)
+            let frames=utilityOnly ? defaults : (ControlsLayout.manualFrames(in:safe) ?? defaults)
             for button in visible { if let frame=frames[button.name] {button.frame=frame} }
             moveStick.frame=bounds; lookStick.frame=bounds; rightStick.frame=bounds
-            moveStick.baseDiameter=108; lookStick.baseDiameter=108
-            moveStick.travel=48; lookStick.travel=48; rightStick.idleOrigin=nil
+            moveStick.baseDiameter=frames["leftStick"]?.width ?? 108; lookStick.baseDiameter=frames["lookStick"]?.width ?? 108
+            moveStick.travel=moveStick.baseDiameter*0.4; lookStick.travel=lookStick.baseDiameter*0.4; rightStick.idleOrigin=nil
             moveStick.idleOrigin=utilityOnly ? nil : frames["leftStick"].map {CGPoint(x:$0.midX,y:$0.midY)}
             lookStick.idleOrigin=utilityOnly ? nil : frames["lookStick"].map {CGPoint(x:$0.midX,y:$0.midY)}
             return
@@ -1047,7 +1054,7 @@ final class TouchControlsView: UIView {
     private func beginTouch(_ id: ObjectIdentifier, at point: CGPoint) {
         // A quick tap on the game's minimap (wherever Settings put it) opens the full-screen map; a drag
         // that starts there still moves the stick.
-        if context != .menu, !phoneDock, button(at: point) == nil,
+        if !manualPadEnabled, !utilityOnly, context != .menu, !phoneDock, button(at: point) == nil,
            MinimapGeometry.rect(Self.minimapLayout, in: bounds).insetBy(dx: -8, dy: -8).contains(point) {
             mapTaps[id] = (CACurrentMediaTime(), point)
         }

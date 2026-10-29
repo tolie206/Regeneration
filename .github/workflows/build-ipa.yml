@@ -52,9 +52,8 @@ jobs:
           "$RUNNER_TEMP/log-policy"
       - name: Mission controller layout and hardware utility regression
         run: |
-          swiftc app/App/ManualPadLayout.swift app/Tests/mission_controls.swift -o "$RUNNER_TEMP/mission-controls"
-          "$RUNNER_TEMP/mission-controls"
-          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/TouchControlsView.swift app/App/ManualPadLayout.swift app/App/NativePortViewController.swift
+          python3 tools/test_manual_layout.py "$RUNNER_TEMP"
+          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/TouchControlsView.swift app/App/ManualPadLayout.swift app/App/NativePortViewController.swift app/App/ControlsLayout.swift
       - name: Typecheck actual memory settings UI with iOS SDK
         run: |
           xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/StreamingSettings.swift app/App/MemoryAccessViewController.swift app/Tests/MemorySettingsTypecheckStubs.swift
