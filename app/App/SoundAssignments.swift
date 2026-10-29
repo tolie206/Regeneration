@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationXML)
+import FoundationXML
+#endif
 enum SoundAssignments {
  static var choices:[String:String] {
   get{UserDefaults.standard.dictionary(forKey:"NewGenSoundChoices") as? [String:String] ?? [:]}
@@ -34,6 +37,21 @@ enum SoundAssignments {
    catch{log("Sound conflict: \(error.localizedDescription)")}
   }
  }
+ /// Rebind only the original road-vehicle profile, read from this installed
+ /// game, on ambient NPC -> player takeover. No generic substitute profile.
+ static func registerStockAudio(data:URL,log:(String)->Void){
+  let url=data.appendingPathComponent("common/data/levels/gta5/vehicles.meta")
+  guard let bytes=try? Data(contentsOf:url),bytes.count<=8*1024*1024 else{return}
+  let parser=XMLParser(data:bytes),reader=StockVehicleAudioReader(excluded:Set(ModVehicleSupport.vehicles()))
+  parser.delegate=reader
+  guard parser.parse() else{log("Original vehicle audio: metadata invalid; no recovery profiles registered.");return}
+  var count=0
+  for (model,profile) in reader.profiles {
+   var h:UInt32=0;for c in model.utf8 {h &+= UInt32(c);h &+= h << 10;h ^= h >> 6};h &+= h << 3;h ^= h >> 11;h &+= h << 15
+   if PGRegisterStockVehicleSound(h,profile){count+=1}
+  }
+  log("Original vehicle audio: \(count) exact road-vehicle profiles available for ambient driver takeover; custom mods excluded.")
+ }
  static func configure(){
   let available=Set(SoundInstaller.available());PGEnableSoundMods(!available.isEmpty)
   for (key,value) in choices where available.contains(value) {
@@ -45,4 +63,29 @@ enum SoundAssignments {
   if profile.isEmpty {saved.removeValue(forKey:String(model))}else{saved[String(model)]=profile}
   choices=saved;_ = PGSelectVehicleSound(model,profile)
  }
+}
+
+private final class StockVehicleAudioReader:NSObject,XMLParserDelegate {
+ let excluded:Set<String>
+ var profiles:[String:String]=[:]
+ private var model="",audio="",kind="",field="",buffer=""
+ init(excluded:Set<String>){self.excluded=excluded}
+ private func finish(){
+  guard !model.isEmpty,["VEHICLE_TYPE_CAR","VEHICLE_TYPE_BIKE","VEHICLE_TYPE_QUADBIKE"].contains(kind),!excluded.contains(model) else{return}
+  let profile=audio.isEmpty ? model:audio
+  let valid: (String)->Bool = { !$0.isEmpty && $0.utf8.count<=63 && $0.utf8.allSatisfy{($0>=97&&$0<=122)||($0>=48&&$0<=57)||$0==95} }
+  if valid(model)&&valid(profile){profiles[model]=profile}
+ }
+ func parser(_ parser:XMLParser,didStartElement name:String,namespaceURI:String?,qualifiedName:String?,attributes:[String:String]){
+  if name=="modelName"{finish();model="";audio="";kind=""}
+  if ["modelName","audioNameHash","type"].contains(name){field=name;buffer=""}
+ }
+ func parser(_ parser:XMLParser,foundCharacters text:String){if !field.isEmpty{buffer+=text}}
+ func parser(_ parser:XMLParser,didEndElement name:String,namespaceURI:String?,qualifiedName:String?){
+  guard name==field else{return}
+  let value=buffer.trimmingCharacters(in:.whitespacesAndNewlines)
+  if name=="modelName"{model=value.lowercased()};if name=="audioNameHash"{audio=value.lowercased()};if name=="type"{kind=value}
+  field="";buffer=""
+ }
+ func parserDidEndDocument(_ parser:XMLParser){finish()}
 }

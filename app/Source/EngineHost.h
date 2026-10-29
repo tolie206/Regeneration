@@ -193,6 +193,7 @@ void PGStreamingHealth(uint64_t out[6]);		// NativeStreamingHealth.c (GTA-116)
 double PGGPUFrameMilliseconds(void);		// MRRenderer.mm
 
 void PGEnableSoundMods(bool enabled);
+bool PGRegisterStockVehicleSound(uint32_t model,const char *profile);
 uint32_t PGCurrentSoundVehicle(void);
 bool PGSelectVehicleSound(uint32_t model,const char *profile);
 

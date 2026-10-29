@@ -22,6 +22,10 @@ jobs:
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
       - name: V5 real scale, presets, device renderer and frame metrics
         run: |
+          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/Theme.swift app/App/HomeView.swift app/Tests/V5HomeTypecheckStubs.swift
+          clang -fobjc-arc -framework Foundation app/Source/VisualEffects.m app/Tests/visual_effects.m -o "$RUNNER_TEMP/v5-visual"
+          (cd app && "$RUNNER_TEMP/v5-visual")
+          python3 tools/test_v5_stock_audio.py
           python3 tools/test_v5_presets.py
           python3 tools/test_v5_msr.py
           clang++ -std=c++17 -Wall -Wextra -I app/Source app/Tests/v5_frame_metrics.cpp -o "$RUNNER_TEMP/v5-metrics"

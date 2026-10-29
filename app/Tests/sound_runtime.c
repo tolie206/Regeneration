@@ -10,7 +10,7 @@ typedef uint64_t u64;typedef uint32_t u32;
 typedef struct { u64 w2c_g0; } w2c_game;
 static char env[2048];static double now;
 static unsigned lookupCalls,forced,logs;static bool ready;
-static u32 currentVehicle=10;
+static u32 currentVehicle=10,currentModel=99,population=2,driver=1;
 static double timeMS(int clock){(void)clock;return now;}
 static int PGPauseMenuActive(void){return 0;}
 static int PGGameStatus(void){return 0;}
@@ -27,8 +27,10 @@ static void pg_log(const char *line){(void)line;logs++;}
 u64 PG_FN_AUDIO_PROFILE(w2c_game *i,u64 manager,u32 hash,u32 type){
  (void)i;(void)manager;(void)hash;assert(type==3);lookupCalls++;return ready?1:0;
 }
-void PG_FN_FORCE_AUDIO(w2c_game *i,u32 v,u64 address){(void)i;assert(v==currentVehicle);assert(!strcmp(env+address,"brabus850"));forced++;}
-u32 PG_FN_GET_ENTITY_MODEL(w2c_game *i,u32 v){(void)i;(void)v;return 99;}
+void PG_FN_FORCE_AUDIO(w2c_game *i,u32 v,u64 address){(void)i;assert(v==currentVehicle);assert(!strcmp(env+address,"brabus850")||!strcmp(env+address,"asea"));forced++;}
+u32 PG_FN_GET_ENTITY_MODEL(w2c_game *i,u32 v){(void)i;(void)v;return currentModel;}
+u32 PG_FN_ENTITY_POPULATION(w2c_game *i,u32 v){(void)i;(void)v;return population;}
+u32 PG_FN_VEHICLE_OCCUPANT(w2c_game *i,u32 v,u32 seat,u32 p){(void)i;(void)v;(void)p;assert(seat==(u32)-1);return driver;}
 int main(void){
  w2c_game instance={1024};PGEnableSoundMods(true);assert(PGSelectVehicleSound(99,"brabus850"));
  sceneActive=true;pg_sound_mod_tick(&instance);assert(lookupCalls==0&&forced==0);sceneActive=false;
@@ -42,5 +44,11 @@ int main(void){
  for(unsigned j=0;j<100;j++){now+=500;pg_sound_mod_tick(&instance);}
  assert(lookupCalls==13&&forced==1&&logs==2);
  PGEnableSoundMods(false);now+=500;pg_sound_mod_tick(&instance);assert(lookupCalls==13);
+ assert(PGRegisterStockVehicleSound(101,"asea"));currentModel=101;currentVehicle=12;ready=true;
+ population=7;now+=500;pg_sound_mod_tick(&instance);assert(forced==1); // mission untouched
+ population=2;driver=2;now+=500;pg_sound_mod_tick(&instance);assert(forced==1); // passenger untouched
+ driver=1;now+=500;pg_sound_mod_tick(&instance);assert(forced==2); // original traffic profile
+ for(unsigned j=0;j<100;j++){now+=500;pg_sound_mod_tick(&instance);}assert(forced==2); // once only
+ assert(PGSelectVehicleSound(101,"brabus850"));now+=500;pg_sound_mod_tick(&instance);assert(forced==3); // custom wins
  puts("PASS: delayed audio mount retried, applied once, retry and logging bounded");return 0;
 }

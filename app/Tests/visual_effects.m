@@ -2,7 +2,13 @@
 #include <assert.h>
 extern NSData *PGRewriteVisualEffects(NSData*,BOOL,BOOL);
 extern NSData *PGRewriteExplosionEffects(NSData*);
+extern NSData *PGRewriteGrassShadows(NSData*);
 int main(){@autoreleasepool{
+ NSData *grass=[@"<r><fadeNear value=\"40.0000\"/><fadeFar value=\"80.0000\"/><collision value=\"8\"/></r>" dataUsingEncoding:NSUTF8StringEncoding];
+ NSData *light=PGRewriteGrassShadows(grass);assert(light&&light.length==grass.length);
+ NSString *g=[[NSString alloc]initWithData:light encoding:NSUTF8StringEncoding];
+ NSXMLParser *parser=[[NSXMLParser alloc]initWithData:light];assert([parser parse]);
+ assert([g containsString:@"<collision value=\"8\"/>"]);assert(![g containsString:@"40.0000"]);assert(![g containsString:@"80.0000"]);
  NSString *xml=@"<r><light_ray_mult> 1.0000 2.0 </light_ray_mult><Lensflare_visibility> 1 </Lensflare_visibility><particle_light_intensity_mult> 4.0 </particle_light_intensity_mult><damage>100</damage></r>";
  NSData *input=[xml dataUsingEncoding:NSUTF8StringEncoding];
  NSData *data=PGRewriteVisualEffects(input,YES,NO);assert(data.length==input.length);

@@ -672,6 +672,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
                 return
             }
             PGSetLocalGameFolder(data.path)
+            SoundAssignments.registerStockAudio(data:data,log:appendLog)
         } else {
             PGSetAssetServer(GameSettings.shared.assetServer)
         }

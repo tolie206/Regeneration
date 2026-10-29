@@ -3,12 +3,24 @@
 u64 PG_FN_AUDIO_PROFILE(w2c_game*,u64,u32,u32);
 void PG_FN_FORCE_AUDIO(w2c_game*,u32,u64);
 u32 PG_FN_GET_ENTITY_MODEL(w2c_game*,u32);
+u32 PG_FN_ENTITY_POPULATION(w2c_game*,u32);
+u32 PG_FN_VEHICLE_OCCUPANT(w2c_game*,u32,u32,u32);
 typedef struct {uint32_t model;char profile[64];} PGSoundChoice;
 static PGSoundChoice soundChoices[128];static unsigned soundCount,soundRevision;
+static PGSoundChoice stockSoundChoices[512];static unsigned stockSoundCount;
 static pthread_mutex_t soundLock=PTHREAD_MUTEX_INITIALIZER;
 static _Atomic uint32_t soundCurrentModel;
 static _Atomic bool soundMonitor;
 void PGEnableSoundMods(bool enabled){atomic_store(&soundMonitor,enabled);}
+bool PGRegisterStockVehicleSound(uint32_t model,const char *profile){
+ if(!model||!profile||!*profile||strlen(profile)>63)return false;
+ for(const char *p=profile;*p;p++)if(!((*p>='a'&&*p<='z')||(*p>='0'&&*p<='9')||*p=='_'))return false;
+ pthread_mutex_lock(&soundLock);unsigned i=0;while(i<stockSoundCount&&stockSoundChoices[i].model!=model)i++;
+ if(i==stockSoundCount&&i==512){pthread_mutex_unlock(&soundLock);return false;}
+ if(i==stockSoundCount)stockSoundCount++;
+ stockSoundChoices[i].model=model;snprintf(stockSoundChoices[i].profile,64,"%s",profile);
+ pthread_mutex_unlock(&soundLock);atomic_store(&soundMonitor,true);return true;
+}
 uint32_t PGCurrentSoundVehicle(void){return atomic_load(&soundCurrentModel);}
 bool PGSelectVehicleSound(uint32_t model,const char *profile){
  if(!model||!profile||strlen(profile)>63)return false;
@@ -26,10 +38,17 @@ static void pg_sound_mod_tick(w2c_game *instance){
  u32 ped=PG_FN_PLAYER_PED_ID(instance),vehicle=ped?PG_FN_PED_VEHICLE(instance,ped,0):0;
  u32 model=vehicle?PG_FN_GET_ENTITY_MODEL(instance,vehicle):0;atomic_store(&soundCurrentModel,model);
  static u32 lastVehicle,lastModel;static unsigned lastRevision,attempts;static bool applied;static double retryAt;
- unsigned revision;char profile[64]={0};
+ unsigned revision;char profile[64]={0};bool stock=false;
  pthread_mutex_lock(&soundLock);revision=soundRevision;
  for(unsigned i=0;i<soundCount;i++)if(soundChoices[i].model==model){snprintf(profile,sizeof profile,"%s",soundChoices[i].profile);break;}
+ if(!profile[0])for(unsigned i=0;i<stockSoundCount;i++)if(stockSoundChoices[i].model==model){snprintf(profile,sizeof profile,"%s",stockSoundChoices[i].profile);stock=true;break;}
  pthread_mutex_unlock(&soundLock);
+ // Only ambient traffic taken over by the player; mission/script vehicles and
+ // passengers keep the engine's audio decisions. Custom assignments win.
+ if(stock && vehicle){
+  u32 population=PG_FN_ENTITY_POPULATION(instance,vehicle);
+  if(population<1||population>5||PG_FN_VEHICLE_OCCUPANT(instance,vehicle,(u32)-1,0)!=ped)profile[0]=0;
+ }
  if(vehicle!=lastVehicle||model!=lastModel||revision!=lastRevision){
   lastVehicle=vehicle;lastModel=model;lastRevision=revision;attempts=0;applied=false;retryAt=0;
  }
@@ -41,8 +60,8 @@ static void pg_sound_mod_tick(w2c_game *instance){
    u64 stack=instance->w2c_g0;instance->w2c_g0-=64;
    snprintf(pg_pointer(&env,instance->w2c_g0,64),64,"%s",profile);
    PG_FN_FORCE_AUDIO(instance,vehicle,instance->w2c_g0);instance->w2c_g0=stack;applied=true;
-   char line[128];snprintf(line,sizeof line,"Sound mod: model %08x uses %s.",model,profile);pg_log(line);
-  }else if(attempts==10)pg_log("Sound mod: profile not mounted after 10 startup attempts; restart after importing/enabling the sound pack. Original sound kept.");
+   char line[128];snprintf(line,sizeof line,"Vehicle audio: %s model %08x uses %s.",stock?"original profile rebind":"custom",model,profile);pg_log(line);
+  }else if(attempts==10&&!stock)pg_log("Sound mod: profile not mounted after 10 startup attempts; restart after importing/enabling the sound pack. Original sound kept.");
  }
  pg_asi_leave_script(instance,previous);
 }
