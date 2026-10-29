@@ -3,6 +3,7 @@ import argparse
 import hashlib
 from pathlib import Path
 import platform
+import os
 import shutil
 import subprocess
 import tarfile
@@ -17,7 +18,8 @@ options = parser.parse_args()
 def apple_silicon():
     try: return subprocess.run(['sysctl', '-n', 'hw.optional.arm64'], capture_output=True, text=True).stdout.strip() == '1'
     except OSError: return False
-if platform.system() != 'Darwin' or not apple_silicon():
+intel_cross=platform.system()=='Darwin' and platform.machine()=='x86_64' and os.environ.get('PG_INTEL_IOS_BUILD')=='1'
+if platform.system() != 'Darwin' or (not apple_silicon() and not intel_cross):
     raise SystemExit('This preparation script targets an Apple Silicon Mac with Xcode.')
 engine = options.mirror / 'b/8b0b5899ed/game.wasm'
 if hashlib.sha256(engine.read_bytes()).hexdigest() != '11ca8d2c04c5e843d18ff4aea4899d72c86973c6b031df334e67c446b2ae83e0':
@@ -33,6 +35,9 @@ def download(url, destination):
         destination.write_bytes(response.read())
 
 wabt = root / 'Tools/wabt-1.0.42'
+if not wabt.exists() and intel_cross:
+    from build_host_wabt import prepare as prepare_host_wabt
+    prepare_host_wabt(root/'Tools')
 if not wabt.exists():
     release = 'https://github.com/WebAssembly/wabt/releases/download/1.0.42/'
     filename = 'wabt-1.0.42-macos-arm64.tar.gz'
@@ -121,13 +126,20 @@ if not bcdec.exists():
         extract(package, root / 'Tools')
     (root / 'Tools' / f'bcdec-{commit}').rename(bcdec)
 # The game's shaders, precompiled into the app's Metal library.
-run('python3', 'Scripts/fetch_shader_tool.py')
-shaders = root / 'Build/Inputs/shaders'
-run('python3', 'Scripts/unpack_shaders.py', '--shaders', str((options.mirror / 'b/8b0b5899ed/shaders').resolve()), '--out', str(shaders))
-sdk_args = []
-for sdk in options.sdk or ['iphoneos']:
-    sdk_args += ['--sdk', sdk]
-run('python3', 'Scripts/build_metal_shaders.py', str(shaders), *sdk_args)
+sdks=options.sdk or ['iphoneos']
+sdk_args=[]
+for sdk in sdks:sdk_args+=['--sdk',sdk]
+if intel_cross:
+    from pinned_device_metal import install as install_pinned_metal
+    install_pinned_metal(options.mirror,sdks)
+else:
+    run('python3', 'Scripts/fetch_shader_tool.py')
+    shaders = root / 'Build/Inputs/shaders'
+    run('python3', 'Scripts/unpack_shaders.py', '--shaders', str((options.mirror / 'b/8b0b5899ed/shaders').resolve()), '--out', str(shaders))
+    sdk_args = []
+    for sdk in options.sdk or ['iphoneos']:
+        sdk_args += ['--sdk', sdk]
+    run('python3', 'Scripts/build_metal_shaders.py', str(shaders), *sdk_args)
 run('python3', 'Scripts/build_opus.py', *sdk_args)
 run('python3', 'Scripts/build_blink.py', *sdk_args)
 run('xcodegen', 'generate', '--spec', 'project.yml')

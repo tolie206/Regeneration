@@ -12,16 +12,18 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    runs-on: macos-26
+    runs-on: macos-26-intel
     timeout-minutes: 180
     env:
       JOBS: '2'
+      PG_INTEL_IOS_BUILD: '1'
       DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
     steps:
-      - name: Require owner-authorized repository and Apple Silicon
+      - name: Require owner-authorized repository and macOS build host
         run: |
           test "$GITHUB_REPOSITORY" = 'tolie206/Regeneration'
-          test "$(uname -m)" = arm64
+          test "$(uname -s)" = Darwin
+          test "$(uname -m)" = x86_64
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
@@ -40,9 +42,11 @@ jobs:
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/game-files"
           python3 app/Scripts/check_game_files.py --mirror "$RUNNER_TEMP/game-files"
       - name: Install tools
-        run: brew install xcodegen
+        run: brew install xcodegen cmake openssl@3
       - name: Metal compiler
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
+      - name: Prepare matching macOS test library for runner CPU
+        run: python3 tools/prepare_ci_archive.py "$RUNNER_TEMP/host-archive"
       - name: V5 real scale, presets, device renderer and frame metrics
         run: |
           xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/Theme.swift app/App/HomeView.swift app/Tests/V5HomeTypecheckStubs.swift
@@ -88,12 +92,12 @@ jobs:
       - name: Test real audio importer on macOS
         run: |
           cd app
-          clang -c App/GameInstaller/GameInstallerShim.c -I Vendor/libarchive.xcframework/macos-arm64/Headers -o "$RUNNER_TEMP/archive.o"
+          clang -c App/GameInstaller/GameInstallerShim.c -I "$PG_HOST_ARCHIVE/Headers" -o "$RUNNER_TEMP/archive.o"
           clang -c Source/SoundInflate.c -o "$RUNNER_TEMP/inflate.o"
           python3 ../tools/extract_compatibility_test.py "$RUNNER_TEMP/compat.c"
           clang -c "$RUNNER_TEMP/compat.c" -o "$RUNNER_TEMP/compat.o"
           clang -c Tests/SoundTestStubs.c -o "$RUNNER_TEMP/stubs.o"
-          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/ModVehicleSupport.swift App/SoundAssignments.swift Tests/SoundTestStubs.swift Tests/sound_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/sound-test"
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/ModVehicleSupport.swift App/SoundAssignments.swift Tests/SoundTestStubs.swift Tests/sound_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" "$PG_HOST_ARCHIVE/libarchive.a" -lz -lbz2 -o "$RUNNER_TEMP/sound-test"
           "$RUNNER_TEMP/sound-test" "$GITHUB_WORKSPACE/tests/fixtures/h2r"
       - name: Test native turbo physics and script bridge
         run: |
@@ -110,7 +114,7 @@ jobs:
           "$RUNNER_TEMP/policy-test"
           clang -I Source Tests/memory_budget.c -o "$RUNNER_TEMP/memory-test"
           "$RUNNER_TEMP/memory-test"
-          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/ModVehicleSupport.swift App/SoundAssignments.swift App/SaveImport.swift Tests/SoundTestStubs.swift Tests/SaveTestStubs.swift Tests/real_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/real-mod-test"
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/ModVehicleSupport.swift App/SoundAssignments.swift App/SaveImport.swift Tests/SoundTestStubs.swift Tests/SaveTestStubs.swift Tests/real_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" "$PG_HOST_ARCHIVE/libarchive.a" -lz -lbz2 -o "$RUNNER_TEMP/real-mod-test"
           "$RUNNER_TEMP/real-mod-test" "$RUNNER_TEMP/real-mods"
       - name: Test complete language archive overlay and diagnostic filtering
         run: |
@@ -127,7 +131,7 @@ jobs:
           clang -std=c11 -pthread app/Tests/sound_runtime.c -o "$RUNNER_TEMP/sound-runtime-test"
           "$RUNNER_TEMP/sound-runtime-test"
           cd app
-          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/ModVehicleSupport.swift App/SkinInstaller.swift App/BundledMenyoo.swift App/StreamingSettings.swift Tests/SoundTestStubs.swift Tests/owner_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/owner-mod-test"
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/SoundInstaller.swift App/ModVehicleSupport.swift App/SkinInstaller.swift App/BundledMenyoo.swift App/StreamingSettings.swift Tests/SoundTestStubs.swift Tests/owner_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" "$PG_HOST_ARCHIVE/libarchive.a" -lz -lbz2 -o "$RUNNER_TEMP/owner-mod-test"
           "$RUNNER_TEMP/owner-mod-test" "$RUNNER_TEMP/owner-mods"
       - name: Test visual intensity rewrite
         run: |
@@ -138,12 +142,12 @@ jobs:
         run: |
           python3 tools/assemble_repair_inputs.py "$RUNNER_TEMP/repair-mods"
           cd app
-          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift Tests/SoundTestStubs.swift Tests/repair_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/repair-test"
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift Tests/SoundTestStubs.swift Tests/repair_mod_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" "$PG_HOST_ARCHIVE/libarchive.a" -lz -lbz2 -o "$RUNNER_TEMP/repair-test"
           "$RUNNER_TEMP/repair-test" "$RUNNER_TEMP/repair-mods"
       - name: Validate R004 skin resource repair and names
         run: |
           cd app
-          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/ModVehicleSupport.swift App/SkinInstaller.swift App/BundledMenyoo.swift Tests/SoundTestStubs.swift Tests/r004_skin_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/r004-skins"
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/ModVehicleSupport.swift App/SkinInstaller.swift App/BundledMenyoo.swift Tests/SoundTestStubs.swift Tests/r004_skin_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" "$PG_HOST_ARCHIVE/libarchive.a" -lz -lbz2 -o "$RUNNER_TEMP/r004-skins"
           "$RUNNER_TEMP/r004-skins" "${{ github.workspace }}/r004-inputs" "$RUNNER_TEMP/repair-mods"
       - name: Verify native lookup using the real VF8 index
         run: python3 tools/test_native_resource_index.py "$RUNNER_TEMP/resource-index.m" "${{ github.workspace }}/r004-inputs"
@@ -169,7 +173,7 @@ jobs:
           cp "$RUNNER_TEMP/owner-mods/cars/sh150.zip" r008-inputs/sh150.zip
           cp "$RUNNER_TEMP/owner-mods/cars/vision.zip" r008-inputs/vision.zip
           cd app
-          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/ModVehicleSupport.swift Tests/SoundTestStubs.swift Tests/r008_vehicle_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" Vendor/libarchive.xcframework/macos-arm64/libarchive.a -lz -lbz2 -o "$RUNNER_TEMP/r008-vehicles"
+          swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/ModVehicleSupport.swift Tests/SoundTestStubs.swift Tests/r008_vehicle_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" "$PG_HOST_ARCHIVE/libarchive.a" -lz -lbz2 -o "$RUNNER_TEMP/r008-vehicles"
           "$RUNNER_TEMP/r008-vehicles" "${{ github.workspace }}/r008-inputs"
           clang -std=c11 -pthread -fsanitize=address,undefined Tests/vehicle_spawn.c -lm -o "$RUNNER_TEMP/r008-spawn"
           "$RUNNER_TEMP/r008-spawn" "${{ github.workspace }}/r008-inputs/model-hashes.txt"

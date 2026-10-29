@@ -1,0 +1,19 @@
+{
+  "source": "Mugoat-NewGen-Regeneration-R007.ipa",
+  "source_build": "1016",
+  "source_ipa_sha256": "ef0682fbbc3508dd375dd0d5fe3e3201ae4a9ed1a45ff33a4d7e17d7dc2a21b2",
+  "xcode_build": "17C52",
+  "sdk": "iphoneos26.2",
+  "shader_index_sha256": "11c331895051b30126980ef666bd8935314ab400348b17c56ef8fe8983f50ee0",
+  "files": {
+    "shaders-iphoneos.metallib": "ae8b4aa2e48e115b623fcf1cb1fc4c9a28606d3a1ffd3bc2f837ed6bf9fb8b05",
+    "shader-reflection.jsonl": "b1119c7e9d6c7f00f407492b21d28847ce9ba9da29a041e25ff54a2e76a2b4db"
+  },
+  "archive_sha256": "d9b8c9fc1ce511728e842e6e38544d38daf6e03dfb8f9738a28ebf85d11ea92e",
+  "source_sha256": {
+    "app/ShaderTool/pgmsl.cc": "76e68792034995f595f835da6d456d13f51d45a9c88bdc0e08474d18349c4690",
+    "app/Scripts/build_metal_shaders.py": "b28a405bc164a44dae68a8db0035f4d84107b6d0dca52bf9506785392e378840",
+    "app/Source/MetalRenderer/MRShaders.mm": "f6d2c8fccb03e380f069664089d461fdb4c9232ac1e1ef96ca02f6598dcadfd0",
+    "app/Source/MetalRenderer/MRInternal.h": "69d32ec3d0d9cae78e22b92ef17257d4d61d40fe51b5645c92a80de27a423b70"
+  }
+}

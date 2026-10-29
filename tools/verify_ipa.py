@@ -1,4 +1,4 @@
-import zipfile,plistlib,sys,subprocess,tempfile,pathlib
+import zipfile,plistlib,sys,subprocess,tempfile,pathlib,struct
 from release_metadata import validate_sources
 expected=validate_sources()
 with zipfile.ZipFile(sys.argv[1]) as z, tempfile.TemporaryDirectory() as folder:
@@ -9,6 +9,9 @@ with zipfile.ZipFile(sys.argv[1]) as z, tempfile.TemporaryDirectory() as folder:
   assert info.get(key)==value, f'IPA {key}={info.get(key)!r}; expected {value!r}'
  assert info['DTXcode']=='2620' and info['DTXcodeBuild']=='17C52'
  assert info['DTSDKName']=='iphoneos26.2'
+ executable=(app/info['CFBundleExecutable']).read_bytes()
+ magic,cpu=struct.unpack_from('<II',executable)
+ assert magic==0xfeedfacf and cpu==0x0100000c, 'IPA executable must be thin iPhone ARM64, regardless of build host'
  assert (app/'VietnameseAccented.zip').is_file() and (app/'VietnamesePlain.zip').is_file()
  with zipfile.ZipFile(app/'BundledMenyoo.zip') as m:
   assert m.testzip() is None and 'menyooStuff/Language/Vietnamese.json' in m.namelist()

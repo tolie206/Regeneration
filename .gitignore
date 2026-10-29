@@ -3,6 +3,7 @@
 *.rpf
 mirror/
 app/Generated/
+app/GeneratedResources/
 app/Tools/
 app/Build/
 app/Resources/manifest.json

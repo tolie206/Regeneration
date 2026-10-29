@@ -7,6 +7,9 @@
 #import <UIKit/UIKit.h>
 #include <TargetConditionals.h>
 #include <atomic>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <mach/mach.h>
 #include <os/proc.h>
 
