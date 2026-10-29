@@ -10,16 +10,19 @@ concurrency:
   cancel-in-progress: true
 jobs:
   validate:
-    runs-on: macos-15-intel
+    runs-on: macos-26-intel
     timeout-minutes: 20
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+      PG_HOST_SAN_CC: /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Require owner-authorized repository
         run: test "$GITHUB_REPOSITORY" = 'tolie206/Regeneration'
+      - name: Verify host sanitizer startup and negative controls
+        run: bash tools/check_host_sanitizer.sh "$RUNNER_TEMP"
       - name: Metal compiler for V5 preflight
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
       - name: V5 real scale, presets, device renderer and frame metrics
@@ -42,9 +45,9 @@ jobs:
           swiftc app/App/StreamingSettings.swift app/Tests/streaming_preferences.swift -o "$RUNNER_TEMP/streaming-preferences"
           "$RUNNER_TEMP/streaming-preferences"
           python3 tools/test_distance_bridge.py "$RUNNER_TEMP/distance-bridge.c"
-          clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/distance_streaming.c -o "$RUNNER_TEMP/distance-streaming"
+          "$PG_HOST_SAN_CC" -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/distance_streaming.c -o "$RUNNER_TEMP/distance-streaming"
           "$RUNNER_TEMP/distance-streaming"
-          clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/streaming_health.c -o "$RUNNER_TEMP/streaming-health"
+          "$PG_HOST_SAN_CC" -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined app/Tests/streaming_health.c -o "$RUNNER_TEMP/streaming-health"
           "$RUNNER_TEMP/streaming-health"
       - name: Guard classification regression
         run: python3 tools/test_guard_margin.py "$RUNNER_TEMP/guard-margin.c"
@@ -88,7 +91,7 @@ jobs:
         run: python3 tools/test_large_resource_runtime.py "$RUNNER_TEMP/large-resource.c"
       - name: Verify spawn, camera, turbo and sound transition bridges
         run: |
-          clang -std=c11 -pthread -fsanitize=address,undefined app/Tests/vehicle_spawn.c -lm -o "$RUNNER_TEMP/vehicle-spawn"
+          "$PG_HOST_SAN_CC" -std=c11 -pthread -fsanitize=address,undefined app/Tests/vehicle_spawn.c -lm -o "$RUNNER_TEMP/vehicle-spawn"
           "$RUNNER_TEMP/vehicle-spawn"
           clang -std=c11 -Wall -Wextra -Werror -pthread -I app/Source app/Tests/turbo_runtime.c -lm -o "$RUNNER_TEMP/turbo-runtime-full"
           "$RUNNER_TEMP/turbo-runtime-full"
@@ -116,7 +119,7 @@ jobs:
           cd app
           swiftc -import-objc-header Tests/SoundTestBridge.h -I App/GameInstaller App/ModInstaller.swift App/SoundArchive.swift App/ModVehicleSupport.swift Tests/SoundTestStubs.swift Tests/r008_vehicle_import.swift "$RUNNER_TEMP/archive.o" "$RUNNER_TEMP/inflate.o" "$RUNNER_TEMP/stubs.o" "$RUNNER_TEMP/compat.o" "$PG_HOST_ARCHIVE/libarchive.a" -lz -lbz2 -o "$RUNNER_TEMP/r008-vehicles"
           "$RUNNER_TEMP/r008-vehicles" "${{ github.workspace }}/r008-inputs"
-          clang -std=c11 -pthread -fsanitize=address,undefined Tests/vehicle_spawn.c -lm -o "$RUNNER_TEMP/r008-spawn"
+          "$PG_HOST_SAN_CC" -std=c11 -pthread -fsanitize=address,undefined Tests/vehicle_spawn.c -lm -o "$RUNNER_TEMP/r008-spawn"
           "$RUNNER_TEMP/r008-spawn" "${{ github.workspace }}/r008-inputs/model-hashes.txt"
 
   build-v5:

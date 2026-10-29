@@ -1,7 +1,7 @@
 #!/bin/bash
 set -uo pipefail
 scratch="${1:?temporary folder required}"
-clang -std=c11 -g -Wall -Wextra -Werror -pthread -fsanitize=address,undefined app/Tests/lazy_cpu.c -o "$scratch/lazy-cpu" || exit 1
+"${PG_HOST_SAN_CC:-clang}" -std=c11 -g -Wall -Wextra -Werror -pthread -fsanitize=address,undefined app/Tests/lazy_cpu.c -o "$scratch/lazy-cpu" || exit 1
 "$scratch/lazy-cpu"
 result=$?
 if test "$result" != 0; then
@@ -12,7 +12,7 @@ if test "$result" != 0; then
 static jmp_buf context;
 int main(void){if(!setjmp(context))longjmp(context,1);return 0;}
 C
-  clang -g -fsanitize=address,undefined "$scratch/sanitizer-control.c" -o "$scratch/sanitizer-control" && "$scratch/sanitizer-control"
+  "${PG_HOST_SAN_CC:-clang}" -g -fsanitize=address,undefined "$scratch/sanitizer-control.c" -o "$scratch/sanitizer-control" && "$scratch/sanitizer-control"
   printf 'Minimal sanitized setjmp/longjmp control exit: %s\n' "$?"
   clang -std=c11 -g -Wall -Wextra -Werror -pthread app/Tests/lazy_cpu.c -o "$scratch/lazy-plain" && "$scratch/lazy-plain"
   printf 'Unsanitized full test control exit: %s\n' "$?"

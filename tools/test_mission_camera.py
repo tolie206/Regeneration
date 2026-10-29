@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import sys,subprocess
 ROOT=Path(__file__).resolve().parents[1]
@@ -8,5 +9,5 @@ for n in (7,8):s+=f'f32 w2c_game_f{n}(w2c_game *instance,u32 var_p0,u32 var_p1){
 for n in (7,8):s+=f'static f32 script{n}(w2c_game *instance,u32 control,u32 action,f32 original){{u64 args=32,answer=8;memcpy(memory+args,&control,4);memcpy(memory+args+8,&action,4);f32_store_shared(answer,original);\n'+script_fallback(n,'')+'return f32_load_shared(answer); }\n'
 s+='int main(void){w2c_game g={0};values[1]=.75f;values[2]=-.5f;disabled[1]=-.25f;disabled[2]=.9f;\n for(unsigned control=0;control<3;control++)for(unsigned action=0;action<400;action++){\n  calls=0;float a=w2c_game_f7(&g,control,action),b=script7(&g,control,action,values[action]);\n  float expected=action==290?values[1]:action==291?values[2]:values[action];assert(a==expected&&b==expected);assert(lastControl==control);\n  a=w2c_game_f8(&g,control,action);b=script8(&g,control,action,disabled[action]);expected=action==290?disabled[1]:action==291?disabled[2]:disabled[action];assert(a==expected&&b==expected);\n }\n values[290]=-.8f;disabled[291]=.6f;\n calls=0;assert(w2c_game_f7(&g,2,290)==-.8f&&calls==1);assert(script7(&g,2,290,-.8f)==-.8f);\n calls=0;assert(w2c_game_f8(&g,1,291)==.6f&&calls==1);assert(script8(&g,1,291,.6f)==.6f);\n values[290]=0;values[1]=0;assert(w2c_game_f7(&g,0,290)==0);\n puts("PASS production scaled-camera wrappers: 400 actions x 3 control groups, native/script reads, enabled/disabled separation, signed axes and nonzero originals preserved");return 0;\n}\n'
 p=Path(sys.argv[1]);p.write_text(s)
-subprocess.run(['clang','-std=c11','-Wall','-Wextra','-Werror','-fsanitize=address,undefined',str(p),'-o',str(p.with_suffix(''))],check=True)
+subprocess.run([os.environ.get('PG_HOST_SAN_CC','clang'),'-std=c11','-Wall','-Wextra','-Werror','-fsanitize=address,undefined',str(p),'-o',str(p.with_suffix(''))],check=True)
 subprocess.run([str(p.with_suffix(''))],check=True)
