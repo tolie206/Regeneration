@@ -1,0 +1,6 @@
+# V5R1 offline renderer audit
+Base: R008 fa3e0f65858d36faa42539966c32f141349896da. Active renderer is Native Metal, D3D11 command-ring translation in MRRenderer.mm. It already had MetalFX Spatial as a sharper-upscaling boolean; V5 extends this existing path, not a renderer replacement. No temporal upscaler or frame generation.
+
+Scene, postprocessing and HUD arrive as one final texture. Spatial upscale is encoded after endEncoders on the same retained-reference command buffer before presentation. HUD is scaled with scene. No new GPU readback, fence bypass, per-frame pipeline construction or extra command-buffer wait. Cached scaler/output are rebuilt only for changed dimensions/format; failed configuration is not retried every frame. Off takes the original present path. The shared-memory engine, shader metallib, queries and texture streaming policy are retained.
+
+Official API references: https://developer.apple.com/documentation/metalfx/mtlfxspatialscalerdescriptor and https://developer.apple.com/videos/play/wwdc2022/10103/ . Runtime supportsDevice and actual texture usages are checked. Unsupported/allocation failure uses normalized bilinear presentation; logs distinguish it from MetalFX.

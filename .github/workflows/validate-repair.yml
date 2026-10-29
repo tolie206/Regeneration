@@ -1,7 +1,7 @@
 name: Validate regeneration repair (no IPA)
 on:
   push:
-    branches: [regeneration-mod-repair, regeneration-r004-scene-skins, regeneration-r005-driveby-textures, regeneration-r006-distance-streaming, regeneration-r007-reserve-profiles, regeneration-r008-native-reclaim]
+    branches: [regeneration-mod-repair, regeneration-r004-scene-skins, regeneration-r005-driveby-textures, regeneration-r006-distance-streaming, regeneration-r007-reserve-profiles, regeneration-r008-native-reclaim, mugoat-v5r1]
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,6 +18,15 @@ jobs:
           fetch-depth: 0
       - name: Require owner-authorized repository
         run: test "$GITHUB_REPOSITORY" = 'tolie206/Regeneration'
+      - name: Metal compiler for V5 preflight
+        run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
+      - name: V5 real scale, presets, device renderer and frame metrics
+        run: |
+          python3 tools/test_v5_presets.py
+          python3 tools/test_v5_msr.py
+          clang++ -std=c++17 -Wall -Wextra -I app/Source app/Tests/v5_frame_metrics.cpp -o "$RUNNER_TEMP/v5-metrics"
+          "$RUNNER_TEMP/v5-metrics"
+          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/HomeView.swift app/App/Theme.swift app/App/SettingsViewController.swift app/App/MSRSettings.swift app/App/GraphicsOptions.swift
       - name: Drive-by input regression
         run: python3 tools/test_driveby_look.py "$RUNNER_TEMP/driveby.c"
       - name: Lazy CPU shadows (real implementation, sanitizers)

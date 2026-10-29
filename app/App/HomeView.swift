@@ -38,14 +38,14 @@ final class HomeView: UIView {
         pin(backdrop, to: self)
 
         let icon = UIImageView(image: UIImage(named: "HomeIcon"))
-        icon.layer.cornerRadius = 14
+        icon.layer.cornerRadius = 18
         icon.layer.cornerCurve = .continuous
         icon.clipsToBounds = true
-        icon.widthAnchor.constraint(equalToConstant: 52).isActive = true
-        icon.heightAnchor.constraint(equalToConstant: 52).isActive = true
+        icon.widthAnchor.constraint(equalToConstant: 66).isActive = true
+        icon.heightAnchor.constraint(equalToConstant: 66).isActive = true
         let title = brandTitle
-        title.text = "Mugoat NewGen"
-        title.font = Theme.display(30)
+        title.text = "MUGOAT"
+        title.font = Theme.display(38)
         title.textColor = Theme.text
         title.adjustsFontSizeToFitWidth = true
         title.minimumScaleFactor = 0.7
@@ -85,7 +85,8 @@ final class HomeView: UIView {
         layoutButton.accessibilityLabel = AppLanguage.choose("Controls layout")
         for button in [telegramButton, layoutButton, settingsButton] { button.configuration?.title = nil }
         secondary.addArrangedSubviews([telegramButton, layoutButton, settingsButton])
-        secondary.spacing = 10
+        secondary.axis = .vertical
+        secondary.spacing = 12
         secondary.translatesAutoresizingMaskIntoConstraints = false
         for label in [preloadLabel, controllerLabel] {
             label.font = .monospacedDigitSystemFont(ofSize: 12, weight: .medium)
@@ -114,7 +115,10 @@ final class HomeView: UIView {
         mapRow.spacing = 8
         mapRow.alignment = .center
         mapRow.isHidden = true
-        let column = UIStackView(arrangedSubviews: [header, filesCard, modes, modeDetail, mapRow, playButton, preloadLabel, controllerLabel])
+        let headerDivider = UIView()
+        headerDivider.backgroundColor = Theme.accent.withAlphaComponent(0.7)
+        headerDivider.heightAnchor.constraint(equalToConstant: 2).isActive = true
+        let column = UIStackView(arrangedSubviews: [header, headerDivider, modes, modeDetail, mapRow, filesCard, playButton, preloadLabel, controllerLabel])
         column.axis = .vertical
         column.spacing = 12
         column.setCustomSpacing(18, after: header)
@@ -136,7 +140,7 @@ final class HomeView: UIView {
         addSubview(log)
         addSubview(secondary)
         let guide = safeAreaLayoutGuide
-        let width = column.widthAnchor.constraint(equalTo: guide.widthAnchor, multiplier: 0.44)
+        let width = column.widthAnchor.constraint(equalTo: guide.widthAnchor, multiplier: 0.52)
         width.priority = .defaultHigh
         NSLayoutConstraint.activate([
             scroll.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 28),
@@ -150,7 +154,7 @@ final class HomeView: UIView {
             // Centred vertically when there's room, scrolling when there isn't.
             column.heightAnchor.constraint(greaterThanOrEqualTo: scroll.frameLayoutGuide.heightAnchor, constant: -24),
             width,
-            column.widthAnchor.constraint(lessThanOrEqualToConstant: 440),
+            column.widthAnchor.constraint(lessThanOrEqualToConstant: 520),
             column.widthAnchor.constraint(greaterThanOrEqualToConstant: 320),
             secondary.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -20),
             // Long translations (Russian, German) must not run over the title column.
@@ -158,7 +162,7 @@ final class HomeView: UIView {
             secondary.topAnchor.constraint(equalTo: guide.topAnchor, constant: 14),
             log.leadingAnchor.constraint(equalTo: scroll.trailingAnchor, constant: 20),
             log.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -16),
-            log.topAnchor.constraint(equalTo: secondary.bottomAnchor, constant: 12),
+            log.topAnchor.constraint(equalTo: guide.topAnchor, constant: 210),
             log.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -16)
         ])
         column.distribution = .fill
@@ -172,13 +176,25 @@ final class HomeView: UIView {
             view.setContentCompressionResistancePriority(.required, for: .vertical)
         }
     }
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        guard window != nil, !UIAccessibility.isReduceMotionEnabled, !introduced else { return }
+        introduced = true
+        scroll.alpha = 0
+        scroll.transform = CGAffineTransform(translationX: -16, y: 0)
+        UIView.animate(withDuration: 0.35, delay: 0, options: [.beginFromCurrentState, .allowUserInteraction]) {
+            self.scroll.alpha = 1
+            self.scroll.transform = .identity
+        }
+    }
+    private var introduced = false
     required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
 
     /// Update language-specific titles in place without touching downloaded game files or layout.
     private let scroll = UIScrollView()
     private let secondary = UIStackView()
     func refreshLanguage() {
-        brandTitle.text = "Mugoat NewGen"
+        brandTitle.text = "MUGOAT"
         brandSubtitle.text = AppLanguage.choose("Fan project · plays your own game files") + " · \(Theme.appVersion)"
         mapTitle.text = AppLanguage.choose("Map")
         playButton.configuration?.title = AppLanguage.choose("Play")
@@ -325,6 +341,18 @@ private final class ModeCard: UIControl {
         accessibilityLabel = title
         update()
     }
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        guard window != nil, !UIAccessibility.isReduceMotionEnabled, !introduced else { return }
+        introduced = true
+        scroll.alpha = 0
+        scroll.transform = CGAffineTransform(translationX: -16, y: 0)
+        UIView.animate(withDuration: 0.35, delay: 0, options: [.beginFromCurrentState, .allowUserInteraction]) {
+            self.scroll.alpha = 1
+            self.scroll.transform = .identity
+        }
+    }
+    private var introduced = false
     required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
 
     func setTitle(_ title: String) {

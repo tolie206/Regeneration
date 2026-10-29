@@ -5,6 +5,10 @@ class Baseline(unittest.TestCase):
  def test_renderer_streaming_and_turbo_unchanged(self):
   for path,sha in json.loads((ROOT/'tests/regeneration_perf_baseline.json').read_text()).items():
    data=(ROOT/path).read_bytes().replace(b'\r\n',b'\n')
+   v5=json.loads((ROOT/'tests/fixtures/v5_reviewed_changes.json').read_text())
+   if path in v5:
+    self.assertEqual(hashlib.sha256(data).hexdigest(),v5[path]['v5_sha256'],path)
+    continue # intentional V5 changes explicitly reviewed; other core hashes still enforced
    r008=json.loads((ROOT/'tests/fixtures/r008_reviewed_hunks.json').read_text())
    for old,new in r008.get(path,[]):
     self.assertEqual(data.count(new.encode()),1,path)

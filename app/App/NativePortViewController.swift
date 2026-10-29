@@ -1449,7 +1449,9 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         // On a TV the picture takes the TV's shape.
         let surface = tvWindow?.bounds.size ?? view.bounds.size
         let (width, height) = GraphicsConfiguration.size(for: bootedPreset, renderHeight: settings.renderHeight, screen: surface, matchScreenShape: tvWindow != nil || settings.matchScreenShape)
-        PGSetBackBufferSize(Int32(width), Int32(height))
+        let (renderWidth,renderHeight)=settings.msrMode.renderSize(outputWidth:width,outputHeight:height)
+        PGConfigureMSR(Int32(settings.msrMode.rawValue),UInt32(width),UInt32(height))
+        PGSetBackBufferSize(Int32(renderWidth), Int32(renderHeight))
         appendLog("Graphics: live resize to \(width)×\(height)")
     }
     @objc private func releaseTouchControls() {

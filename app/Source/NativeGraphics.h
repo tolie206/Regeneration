@@ -15,6 +15,7 @@ int PGTextureRatioPercent(void);
 void PGNoteTextureRatio(int64_t gpuBytes, int64_t gameBytes);
 // Settings › Sharper upscaling: MetalFX scales the picture to the screen's resolution (changes live).
 void PGSetSharperUpscaling(int on);
+void PGConfigureMSR(int mode,uint32_t outputWidth,uint32_t outputHeight);
 #ifdef __cplusplus
 }
 #endif

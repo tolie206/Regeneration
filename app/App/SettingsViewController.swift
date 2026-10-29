@@ -312,11 +312,21 @@ final class SettingsViewController: UITableViewController {
                     button.sizeToFit()
                     cell.accessoryView = button
                 } else if row == 6 {
-                    content.text = AppLanguage.choose("Sharper upscaling")
-                    content.secondaryText = AppLanguage.choose("MetalFX brings the picture to the screen's resolution with sharpening instead of stretching it. Uses a little more battery.")
-                    cell.accessoryView = toggle(settings.sharperUpscaling, label: AppLanguage.choose("Sharper upscaling")) { [weak self] in
-                        self?.settings.sharperUpscaling = $0
+                    content.text="MUGOAT Super Resolution (MSR)"
+                    content.secondaryText="Render thấp hơn, nâng ảnh bằng MetalFX Spatial nếu hỗ trợ; dự phòng nội suy tuyến tính. HUD đi cùng ảnh game. Áp dụng khi mở lại app."
+                    let button=UIButton(type:.system)
+                    button.setTitle(settings.msrMode.title+" ▾",for:.normal)
+                    button.showsMenuAsPrimaryAction=true
+                    let modes=MSRMode.allCases.map { mode in
+                        UIAction(title:mode.title,state:mode == settings.msrMode ? .on : .off) { [weak self] _ in
+                            self?.settings.msrMode=mode;self?.tableView.reloadData()
+                        }
                     }
+                    let report=UIAction(title:"Báo cáo FPS cục bộ mỗi 15 giây",state:settings.offlinePerfReports ? .on : .off) { [weak self] _ in
+                        guard let self else{return};self.settings.offlinePerfReports.toggle();self.tableView.reloadData()
+                    }
+                    button.menu=UIMenu(children:modes.map { $0 as UIMenuElement }+[UIMenu(options:.displayInline,children:[report])])
+                    button.sizeToFit();cell.accessoryView=button
                 } else if row == 3 {
                     content.text = AppLanguage.choose("Show FPS counter")
                     cell.accessoryView = toggle(settings.showFPS, label: AppLanguage.choose("Show FPS counter")) { [weak self] in
@@ -910,7 +920,8 @@ final class SettingsViewController: UITableViewController {
         let screen = view.window?.windowScene?.screen.bounds.size ?? UIScreen.main.bounds.size
         let (w, h) = GraphicsConfiguration.size(for: engineRunning ? bootPreset : settings.graphicsPreset, renderHeight: settings.renderHeight,
                                                 screen: screen, matchScreenShape: settings.matchScreenShape)
-        return AppLanguage.interpolate(AppLanguage.choose("Renders at {arg0}×{arg1}"), [String(describing: w), String(describing: h)])
+        let (rw,rh)=settings.msrMode.renderSize(outputWidth:w,outputHeight:h)
+        return "Render \(rw)×\(rh) → \(w)×\(h)"
     }
     /// Uploads the logs after the player confirms, with an optional note (its own screen, so the
     /// keyboard never covers Send in landscape).

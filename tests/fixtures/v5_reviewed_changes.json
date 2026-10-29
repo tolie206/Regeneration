@@ -1,0 +1,12 @@
+{
+  "app/Source/MetalRenderer/MRRenderer.mm": {
+    "r008_sha256": "ab20028de6d6168c6c93562731a99635b32634c23c5ad89e742d7ac452c80ed7",
+    "v5_sha256": "64a439cde427e0a4231bb0b91fe0dadef84ced1b9f46b0a08e118924fcd3af34",
+    "reason": "Reviewed V5 MSR configuration, cached spatial scaler and normalized bilinear present only; scene pipeline, fences and queries retained."
+  },
+  "app/App/GraphicsOptions.swift": {
+    "r008_sha256": "a15fc57817044c54a57f1697b1b1e626ede272b636d5332f00522a7bf149e3f7",
+    "v5_sha256": "59a643ce73319cbbe1052cd53b0656448c5afe46ad1ea4ec8110ca8e367bbe62",
+    "reason": "Reviewed V5 render scale, preset quality reductions and boot diagnostics; Lite original engine options retained."
+  }
+}

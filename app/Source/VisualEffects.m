@@ -40,3 +40,16 @@ NSData *PGRewriteExplosionEffects(NSData *data){
  }
  NSData *result=[out dataUsingEncoding:NSUTF8StringEncoding];return changed&&result.length==data.length?result:nil;
 }
+
+// Disable grass-only shadow cascades; leave world geometry, collision and other XML untouched.
+NSData *PGRewriteGrassShadows(NSData *data){
+ NSString *text=[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];if(!text)return nil;
+ NSMutableString *out=[text mutableCopy];BOOL changed=NO;
+ NSRegularExpression *re=[NSRegularExpression regularExpressionWithPattern:@"(<fade(?:Near|Far)\\s+value=\")([0-9.eE+\\-]+)(\")" options:NSRegularExpressionCaseInsensitive error:nil];
+ for(NSTextCheckingResult *m in [re matchesInString:out options:0 range:NSMakeRange(0,out.length)].reverseObjectEnumerator){
+  NSRange r=[m rangeAtIndex:2];NSMutableString *v=[NSMutableString stringWithString:@"0"];
+  while(v.length<r.length)[v appendString:@" "];
+  [out replaceCharactersInRange:r withString:v];changed=YES;
+ }
+ NSData *result=[out dataUsingEncoding:NSUTF8StringEncoding];return changed&&result.length==data.length?result:nil;
+}

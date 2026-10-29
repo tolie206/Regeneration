@@ -7,23 +7,22 @@ enum Theme {
     /// The community: official releases, help and announcements.
     static let telegramURL = URL(string: "https://github.com/Living-NG/GTA-NEW-GEN-2")!
     static let appVersion: String = {
-        let info = Bundle.main.infoDictionary
         // Each release has one build number, so the marketing version alone identifies it.
-        return "v\(info?["CFBundleShortVersionString"] as? String ?? "?")" + (isLite ? " Lite" : "")
+        return "V5R1" + (isLite ? " Lite" : "")
     }()
     /// The Lite build for iPhones with little memory: Info.plist PGLiteMode (build_ipa.sh --lite), or PG_LITE=1.
     static let isLite: Bool = (Bundle.main.object(forInfoDictionaryKey: "PGLiteMode") as? Bool ?? false)
         || (ProcessInfo.processInfo.environment["PG_LITE"].map { $0 != "0" } ?? false)
-    static let accent = UIColor(red: 1.0, green: 0.62, blue: 0.18, alpha: 1)        // sunset orange
-    static let accentDeep = UIColor(red: 0.95, green: 0.36, blue: 0.16, alpha: 1)
+    static let accent = UIColor(red: 0.94, green: 0.74, blue: 0.30, alpha: 1)        // sunset orange
+    static let accentDeep = UIColor(red: 0.66, green: 0.42, blue: 0.12, alpha: 1)
     static let ok = UIColor(red: 0.30, green: 0.85, blue: 0.47, alpha: 1)
     static let warning = UIColor(red: 1.0, green: 0.78, blue: 0.26, alpha: 1)
     static let problem = UIColor(red: 1.0, green: 0.42, blue: 0.38, alpha: 1)
     static let text = UIColor.white
     static let secondaryText = UIColor(white: 1, alpha: 0.68)
     static let tertiaryText = UIColor(white: 1, alpha: 0.45)
-    static let night = UIColor(red: 0.03, green: 0.05, blue: 0.11, alpha: 1)       // behind everything
-    static let panelStroke = UIColor(white: 1, alpha: 0.12)
+    static let night = UIColor(red: 0.035, green: 0.032, blue: 0.025, alpha: 1)       // behind everything
+    static let panelStroke = UIColor(red: 0.94, green: 0.74, blue: 0.30, alpha: 0.22)
 
     static func display(_ size: CGFloat, _ weight: UIFont.Weight = .heavy) -> UIFont {
         let base = UIFont.systemFont(ofSize: size, weight: weight)

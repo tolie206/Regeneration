@@ -41,6 +41,13 @@ jobs:
         run: brew install xcodegen
       - name: Metal compiler
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
+      - name: V5 real scale, presets, device renderer and frame metrics
+        run: |
+          python3 tools/test_v5_presets.py
+          python3 tools/test_v5_msr.py
+          clang++ -std=c++17 -Wall -Wextra -I app/Source app/Tests/v5_frame_metrics.cpp -o "$RUNNER_TEMP/v5-metrics"
+          "$RUNNER_TEMP/v5-metrics"
+          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/HomeView.swift app/App/Theme.swift app/App/SettingsViewController.swift app/App/MSRSettings.swift app/App/GraphicsOptions.swift
       - name: Check sound import and built-in translation
         run: python3 -m unittest discover -s tests -v
       - name: Lazy CPU shadows (real implementation, sanitizers)
@@ -160,16 +167,16 @@ jobs:
           "$RUNNER_TEMP/r008-vehicles" "${{ github.workspace }}/r008-inputs"
           clang -std=c11 -pthread -fsanitize=address,undefined Tests/vehicle_spawn.c -lm -o "$RUNNER_TEMP/r008-spawn"
           "$RUNNER_TEMP/r008-spawn" "${{ github.workspace }}/r008-inputs/model-hashes.txt"
-      - name: Build Mugoat-NewGen-Regeneration-R008
+      - name: Build MUGOAT-V5R1
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify IPA entitlements
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa Mugoat-NewGen-Regeneration-R008.ipa
+          mv GTA5Port.ipa MUGOAT-V5R1.ipa
       - uses: actions/upload-artifact@v4
         with:
-          name: Mugoat-NewGen-Regeneration-R008
-          path: Mugoat-NewGen-Regeneration-R008.ipa
+          name: MUGOAT-V5R1
+          path: MUGOAT-V5R1.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()

@@ -13,6 +13,7 @@
 #include "BCTextureDecoder.h"
 #include "BC1ToASTC.h"
 #include "NativeGraphics.h"
+#include "NativeMSR.h"
 #include "NativeFrameRate.h"
 #include "NativeGPUMetrics.h"
 #import <UIKit/UIKit.h>
@@ -241,7 +242,7 @@ struct Renderer {
 	id<MTLBuffer> zeroBuffer;
 	std::unordered_map<uint32_t, id<MTLTexture>> dummyTextures;
 	id<MTLSamplerState> dummySampler, dummyCompare;
-	id<MTLRenderPipelineState> blitPipe, capturePipe;
+	id<MTLRenderPipelineState> blitPipe, capturePipe, scaledBlitPipe;
 	id<MTLDepthStencilState> noDepth;
 
 	// game shader objects by program (the first object created for each), for program substitutions
@@ -2027,40 +2028,54 @@ static void capture(Texture *t, const std::string &name, id<MTLRenderPipelineSta
 // Sharper upscaling (GTA-10): instead of the screen stretching the picture, MetalFX's spatial scaler
 // brings it to the screen's own resolution (up to 3 times the render size) with edge-aware sharpening.
 static std::atomic<bool> gUpscale{false};
+static std::atomic<uint64_t> gMSR{0};
 extern "C" void PGMetalRendererSetUpscaling(int on) { gUpscale.store(on != 0); }
+extern "C" void PGMetalRendererConfigureMSR(int mode,uint32_t w,uint32_t h) {
+    uint64_t config=pg_msr_configuration(mode,w,h);
+    gMSR.store(config);gUpscale.store(config != 0);
+}
 #if PG_METALFX
-static struct { id<MTLFXSpatialScaler> scaler; id<MTLTexture> out; uint32_t inW, inH, outW, outH; MTLPixelFormat format; bool unsupported; } FX;
-static id<MTLTexture> upscaled(Texture *t) {
-	if (!gUpscale.load() || FX.unsupported || !R->layer) return nil;
-	if (![MTLFXSpatialScalerDescriptor supportsDevice:R->device]) { FX.unsupported = true; pg_log("Sharper upscaling: MetalFX isn't available on this device."); return nil; }
-	CGSize screen = R->layer.bounds.size; CGFloat scale = R->layer.contentsScale;
-	uint32_t outW = (uint32_t)std::min<double>(screen.width * scale, t->width * 3.0), outH = (uint32_t)std::min<double>(screen.height * scale, t->height * 3.0);
-	if (outW < t->width * 1.05 || outH < t->height * 1.05) return nil;		// the picture is already about screen size
-	if (!FX.scaler || FX.inW != t->width || FX.inH != t->height || FX.outW != outW || FX.outH != outH || FX.format != t->tex.pixelFormat) {
-		MTLFXSpatialScalerDescriptor *d = [MTLFXSpatialScalerDescriptor new];
-		d.inputWidth = t->width; d.inputHeight = t->height; d.outputWidth = outW; d.outputHeight = outH;
-		d.colorTextureFormat = t->tex.pixelFormat; d.outputTextureFormat = t->tex.pixelFormat;
-		d.colorProcessingMode = MTLFXSpatialScalerColorProcessingModePerceptual;
-		FX.scaler = [d newSpatialScalerWithDevice:R->device];
-		MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:t->tex.pixelFormat width:outW height:outH mipmapped:NO];
-		td.storageMode = MTLStorageModePrivate;
-		td.usage = (FX.scaler ? FX.scaler.outputTextureUsage : 0) | MTLTextureUsageShaderRead;
-		FX.out = FX.scaler ? [R->device newTextureWithDescriptor:td] : nil;
-		FX.inW = t->width; FX.inH = t->height; FX.outW = outW; FX.outH = outH; FX.format = t->tex.pixelFormat;
-		if (!FX.scaler || !FX.out) { FX.unsupported = true; FX.scaler = nil; FX.out = nil; logf("Sharper upscaling: MetalFX couldn't scale format %lu; off.", (unsigned long)t->tex.pixelFormat); return nil; }
-		logf("Sharper upscaling: MetalFX %ux%u to %ux%u.", t->width, t->height, outW, outH);
-	}
-	FX.scaler.colorTexture = t->tex; FX.scaler.outputTexture = FX.out;
-	FX.scaler.inputContentWidth = t->width; FX.scaler.inputContentHeight = t->height;
-	[FX.scaler encodeToCommandBuffer:commandBuffer()];
-	return FX.out;
+static struct {
+ id<MTLFXSpatialScaler> scaler;
+ id<MTLTexture> out;
+ uint32_t inW=0,inH=0,outW=0,outH=0;
+ MTLPixelFormat format=MTLPixelFormatInvalid;
+ bool configured=false;
+} FX;
+static id<MTLTexture> upscaled(Texture *t,uint32_t outW,uint32_t outH) {
+ if(!gUpscale.load()){if(FX.configured)FX={};return nil;}
+ if(!t || !t->tex || t->samples!=1 || t->tex.textureType!=MTLTextureType2D)return nil;
+ if(outW<=t->width || outH<=t->height)return nil;
+ static bool checked=false,supported=false;
+ if(!checked){checked=true;supported=[MTLFXSpatialScalerDescriptor supportsDevice:R->device];}
+ if(!supported)return nil;
+ if(!FX.configured || FX.inW!=t->width || FX.inH!=t->height || FX.outW!=outW || FX.outH!=outH || FX.format!=t->tex.pixelFormat){
+  FX={};FX.configured=true;FX.inW=t->width;FX.inH=t->height;FX.outW=outW;FX.outH=outH;FX.format=t->tex.pixelFormat;
+  MTLFXSpatialScalerDescriptor *d=[MTLFXSpatialScalerDescriptor new];
+  d.inputWidth=t->width;d.inputHeight=t->height;d.outputWidth=outW;d.outputHeight=outH;
+  d.colorTextureFormat=t->tex.pixelFormat;d.outputTextureFormat=t->tex.pixelFormat;
+  switch(t->tex.pixelFormat){
+   case MTLPixelFormatRGBA16Float:case MTLPixelFormatRGBA32Float:d.colorProcessingMode=MTLFXSpatialScalerColorProcessingModeHDR;break;
+   case MTLPixelFormatRGBA8Unorm_sRGB:case MTLPixelFormatBGRA8Unorm_sRGB:d.colorProcessingMode=MTLFXSpatialScalerColorProcessingModeLinear;break;
+   default:d.colorProcessingMode=MTLFXSpatialScalerColorProcessingModePerceptual;break;
+  }
+  FX.scaler=[d newSpatialScalerWithDevice:R->device];
+  if(FX.scaler){
+   MTLTextureDescriptor *td=[MTLTextureDescriptor texture2DDescriptorWithPixelFormat:d.outputTextureFormat width:outW height:outH mipmapped:NO];
+   td.storageMode=MTLStorageModePrivate;td.usage=FX.scaler.outputTextureUsage|MTLTextureUsageShaderRead;
+   FX.out=[R->device newTextureWithDescriptor:td];
+  }
+  if(!FX.scaler || !FX.out){FX.scaler=nil;FX.out=nil;logf("MSR: MetalFX allocation/format unavailable (%lu); bilinear fallback.",(unsigned long)t->tex.pixelFormat);}
+ }
+ if(!FX.scaler || !FX.out)return nil;
+ if(t->tex.usage && (t->tex.usage&FX.scaler.colorTextureUsage)!=FX.scaler.colorTextureUsage)return nil;
+ FX.scaler.colorTexture=t->tex;FX.scaler.outputTexture=FX.out;
+ FX.scaler.inputContentWidth=t->width;FX.scaler.inputContentHeight=t->height;
+ [FX.scaler encodeToCommandBuffer:commandBuffer()];
+ return FX.out;
 }
 #else
-static id<MTLTexture> upscaled(Texture *) {
-	static bool told;
-	if (gUpscale.load() && !told) { told = true; pg_log("Sharper upscaling: MetalFX isn't available on this device."); }
-	return nil;
-}
+static id<MTLTexture> upscaled(Texture *,uint32_t,uint32_t){return nil;}
 #endif
 
 static void present(uint32_t texId) {
@@ -2073,15 +2088,32 @@ static void present(uint32_t texId) {
 		std::string name;
 		{ std::lock_guard<std::mutex> g(R->captureLock); name.swap(R->captureName); }
 		if (!name.empty()) capture(t, name);
-		id<MTLTexture> picture = upscaled(t) ?: t->tex;
-		CGSize size = CGSizeMake(picture.width, picture.height);
+        const uint64_t msr=gMSR.load();
+        uint32_t outW=t->width,outH=t->height;
+        if(gUpscale.load()){
+            if(msr){outW=pg_msr_width(msr);outH=pg_msr_height(msr);}
+            else {outW=(uint32_t)std::min<double>(R->layer.bounds.size.width*R->layer.contentsScale,t->width*3.0);outH=(uint32_t)std::min<double>(R->layer.bounds.size.height*R->layer.contentsScale,t->height*3.0);}
+            if(outW<t->width || outH<t->height){outW=t->width;outH=t->height;}
+        }
+        id<MTLTexture> scaled=upscaled(t,outW,outH);
+        bool bilinear=!scaled && (outW!=t->width || outH!=t->height) && R->scaledBlitPipe;
+        id<MTLTexture> picture=scaled ?: t->tex;
+        if(!scaled && !bilinear){outW=t->width;outH=t->height;}
+        const int backend=scaled?2:bilinear?1:0;
+        static uint64_t lastConfig=UINT64_MAX;static int lastBackend=-1;static uint32_t lastInputW=0,lastInputH=0;
+        if(lastConfig!=msr || lastBackend!=backend || lastInputW!=t->width || lastInputH!=t->height){
+            logf("MSR requestedMode=%u effectiveMode=%u backend=%s render=%ux%u output=%ux%u format=%lu HUD=scaled-with-scene",pg_msr_mode(msr),backend?pg_msr_mode(msr):0,backend==2?"MetalFX-Spatial":backend==1?"bilinear":"off",t->width,t->height,outW,outH,(unsigned long)t->tex.pixelFormat);
+            lastConfig=msr;lastBackend=backend;lastInputW=t->width;lastInputH=t->height;
+        }
+        CGSize size=CGSizeMake(outW,outH);
 		if (!CGSizeEqualToSize(R->layer.drawableSize, size)) R->layer.drawableSize = size;
 		drawable = [R->layer nextDrawable];
 		if (drawable) {
 			MTLRenderPassDescriptor *rp = [MTLRenderPassDescriptor renderPassDescriptor];
 			rp.colorAttachments[0].texture = drawable.texture; rp.colorAttachments[0].loadAction = MTLLoadActionDontCare; rp.colorAttachments[0].storeAction = MTLStoreActionStore;
 			id<MTLRenderCommandEncoder> e = [commandBuffer() renderCommandEncoderWithDescriptor:rp];
-			[e setRenderPipelineState:R->blitPipe]; [e setFragmentTexture:picture atIndex:0];
+            [e setRenderPipelineState:bilinear?R->scaledBlitPipe:R->blitPipe];[e setFragmentTexture:picture atIndex:0];
+            if(bilinear){float dimensions[2]={(float)outW,(float)outH};[e setFragmentBytes:dimensions length:sizeof dimensions atIndex:0];}
 			[e drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
 			[e endEncoding];
 			t->lastUse = R->serial;
@@ -2471,6 +2503,10 @@ using namespace metal;
 struct V { float4 p [[position]]; };
 vertex V pg_fullscreen(uint i [[vertex_id]]) { float2 q[3] = {float2(-1, -1), float2(3, -1), float2(-1, 3)}; V v; v.p = float4(q[i], 0, 1); return v; }
 fragment float4 pg_blit(V in [[stage_in]], texture2d<float> t [[texture(0)]]) { return t.read(uint2(in.p.xy)); }
+fragment float4 pg_blit_scaled(V in [[stage_in]], texture2d<float> t [[texture(0)]], constant float2 &size [[buffer(0)]]) {
+ constexpr sampler linearSampler(coord::normalized,address::clamp_to_edge,filter::linear);
+ return t.sample(linearSampler,in.p.xy/size);
+}
 fragment float4 pg_alpha(V in [[stage_in]], texture2d<float> t [[texture(0)]]) { float a = t.read(uint2(in.p.xy)).a; return float4(a, a, a, 1); }
 fragment float4 pg_ds(V in [[stage_in]], depth2d<float> d [[texture(0)]], texture2d<uint> s [[texture(1)]]) { float z = d.read(uint2(in.p.xy)); uint st = s.read(uint2(in.p.xy)).r; return float4(z != 0 ? 1.0 : 0.0, saturate(z * 20.0), st != 0 ? 1.0 : 0.0, 1); }
 struct D { float depth [[depth(any)]]; };
@@ -2523,6 +2559,9 @@ static bool setup() {
 	pd.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
 	R->blitPipe = [R->device newRenderPipelineStateWithDescriptor:pd error:&error];
 	R->capturePipe = R->blitPipe;
+    pd.fragmentFunction=[helpers newFunctionWithName:@"pg_blit_scaled"];
+    R->scaledBlitPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];
+    if(!R->scaledBlitPipe)logf("MSR bilinear pipeline unavailable; original present path retained.");
 #if MR_TRACE
 	pd.fragmentFunction = [helpers newFunctionWithName:@"pg_alpha"];
 	T.alphaPipe = [R->device newRenderPipelineStateWithDescriptor:pd error:&error];

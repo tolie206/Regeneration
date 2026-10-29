@@ -21,15 +21,28 @@ enum GraphicsPreset: Int, CaseIterable {
     var height: Int { [432, 432, 540, 720, 900, 1080, 1290][rawValue + 1] }
     var detail: String {
         [AppLanguage.choose("For iPhones with little memory: lower detail and draw distance, so the world keeps loading"),
-         AppLanguage.choose("Lowest load, longest play time"), AppLanguage.choose("Today's tested setup for 6 GB iPhones"), AppLanguage.choose("Sharper image and shadows"),
-         AppLanguage.choose("Higher detail textures, effects and draw distance"), AppLanguage.choose("1080p with high shaders, shadows and reflections"),
-         AppLanguage.choose("Near-native resolution, high textures and full draw distance (newest Pro phones)")][rawValue + 1]
+         AppLanguage.choose("Lowest load, longest play time"), AppLanguage.choose("Lower render resolution, light effects"), AppLanguage.choose("Sharper image and shadows"),
+         AppLanguage.choose("Higher detail textures, effects and draw distance"), AppLanguage.choose("1080p with lighter shadows and reflections"),
+         AppLanguage.choose("High resolution and textures, shorter draw distance")][rawValue + 1]
     }
 
     /// Engine command-line options. Shader quality never goes below 1 (the
     /// low shader set is mostly missing), and tessellation, MSAA and depth of
     /// field stay off because their shaders do not run on Metal here.
     var engineOptions: [String] {
+        let original=baseEngineOptions
+        guard self != .lite else{return original} // keep Ultra Performance exactly as shipped
+        return original.map { option in
+            let parts=option.split(separator:"=",maxSplits:1).map(String.init)
+            guard parts.count==2,let value=Double(parts[1]) else{return option}
+            let key=parts[0]
+            if key=="-lodScale" {return "\(key)=\(value*0.75)"}
+            if key=="-shadowQuality" {return "\(key)=\(Int(min(value,0)))"}
+            if ["-reflectionQuality","-grassQuality","-particleQuality"].contains(key) {return "\(key)=\(Int(min(value,1)))"}
+            return option
+        }
+    }
+    private var baseEngineOptions: [String] {
         switch self {
         case .lite, .battery, .performance:
             return ["-shaderQuality=1", "-textureQuality=0", "-shadowQuality=-1", "-reflectionQuality=0", "-particleQuality=0",
@@ -184,7 +197,10 @@ enum GraphicsConfiguration {
     /// Pass the chosen settings to the engine. Call before PGStartEngine.
     static func apply(_ settings: GameSettings, screen: CGSize, tv: Bool = false) -> String {
         let preset = settings.graphicsPreset
-        let (width, height) = size(for: preset, renderHeight: settings.renderHeight, screen: screen, matchScreenShape: tv || settings.matchScreenShape)
+        let (outputWidth,outputHeight) = size(for:preset,renderHeight:settings.renderHeight,screen:screen,matchScreenShape:tv || settings.matchScreenShape)
+        let (width,height)=settings.msrMode.renderSize(outputWidth:outputWidth,outputHeight:outputHeight)
+        setenv("PG_V5_LIGHT_SHADOWS", preset == .lite ? "0" : "1", 1)
+        setenv("PG_PERF_LOCAL",settings.offlinePerfReports ? "1" : "0",1)
         // The player's own details replace the preset's (GTA-84).
         let overrides = settings.graphicsOverrides
         var options = preset.engineOptions.map { option -> String in
@@ -201,7 +217,8 @@ enum GraphicsConfiguration {
         // The engine and renderer read PG_LITE when they start, after this. The Lite build always sets it.
         if preset == .lite { setenv("PG_LITE", "1", 1) } else if !Theme.isLite { unsetenv("PG_LITE") }
         PGSetMemoryCap(Int32(settings.memoryCapMB))
-        PGSetSharperUpscaling(settings.sharperUpscaling ? 1 : 0)
+        PGSetSharperUpscaling(0)
+        PGConfigureMSR(Int32(settings.msrMode.rawValue),UInt32(outputWidth),UInt32(outputHeight))
         var pointers = options.map { strdup($0) }
         defer { pointers.forEach { free($0) } }
         pointers.withUnsafeMutableBufferPointer { buffer in
@@ -209,6 +226,6 @@ enum GraphicsConfiguration {
                 PGConfigureEngine($0, UInt32(buffer.count), Int32(width), Int32(height), settings.frameRateCap == 0 ? 0 : settings.frameRateCap == 60 ? 1 : 2)
             }
         }
-        return "\(preset.title) \(width)×\(height) at \(GameSettings.frameRateTitle(settings.frameRateCap))" + (own.isEmpty ? "" : ", own settings: " + own.joined(separator: ", "))
+        return "MSR requested=\(settings.msrMode.rawValue), render=\(width)x\(height), output=\(outputWidth)x\(outputHeight), HUD=scaled-with-scene; \(preset.title) \(width)×\(height) at \(GameSettings.frameRateTitle(settings.frameRateCap))" + (own.isEmpty ? "" : ", own settings: " + own.joined(separator: ", "))
     }
 }

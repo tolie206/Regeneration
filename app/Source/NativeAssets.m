@@ -961,18 +961,20 @@ static void frontendOverlay(uint32_t id, uint64_t offset, uint8_t *destination, 
 }
 extern NSData *PGRewriteVisualEffects(NSData *,BOOL,BOOL);
 extern NSData *PGRewriteExplosionEffects(NSData *);
+extern NSData *PGRewriteGrassShadows(NSData *);
 static void visualEffectsOverlay(uint32_t id,uint64_t offset,uint8_t *destination,int64_t count){
  BOOL explosion=[assetFiles[id][0] isEqualToString:@"common/data/effects/explosionfx.dat"];
- if(count<=0||(!explosion&&![assetFiles[id][0] hasPrefix:@"common/data/timecycle/"]))return;
+ BOOL grass=[[(NSString *)assetFiles[id][0] lowercaseString] isEqualToString:@"common/data/grassshadowlodsettings.xml"] && getenv("PG_V5_LIGHT_SHADOWS") && strcmp(getenv("PG_V5_LIGHT_SHADOWS"),"1")==0;
+ if(count<=0||(!grass&&!explosion&&![assetFiles[id][0] hasPrefix:@"common/data/timecycle/"]))return;
  static dispatch_once_t once;static BOOL sun,particles;static NSMutableDictionary *cache;
  dispatch_once(&once,^{NSUserDefaults *d=[NSUserDefaults standardUserDefaults];sun=[d boolForKey:@"NewGenDisableSunRays"];particles=[d boolForKey:@"NewGenLightExplosions"];cache=[NSMutableDictionary dictionary];});
- if(!sun&&!particles)return;
+ if(!sun&&!particles&&!grass)return;
  @synchronized(cache){
   NSNumber *key=@(id);NSData *data=cache[key];
   if(!data){uint64_t size=[assetFiles[id][1] unsignedLongLongValue];
    if(size>4*1024*1024)return;
    NSMutableData *source=[NSMutableData dataWithLength:(NSUInteger)size];
-   NSData *rewritten=readAssetImpl(id,0,source.mutableBytes,(uint32_t)size)==(int64_t)size?(explosion?(particles?PGRewriteExplosionEffects(source):nil):PGRewriteVisualEffects(source,sun,NO)):nil;
+   NSData *rewritten=readAssetImpl(id,0,source.mutableBytes,(uint32_t)size)==(int64_t)size?(grass?PGRewriteGrassShadows(source):(explosion?(particles?PGRewriteExplosionEffects(source):nil):PGRewriteVisualEffects(source,sun,NO))):nil;
    data=rewritten?:[NSData data];cache[key]=data;
    if(rewritten)pg_log("Visual effects: cached visual-only overlay (gameplay unchanged).");
   }

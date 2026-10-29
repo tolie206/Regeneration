@@ -11,6 +11,7 @@ void PGStartMetalRenderer(void *memory, uint64_t memorySize, uint64_t ring, uint
 double PGMetalRendererFPS(void);
 void PGMetalRendererCapture(const char *name);
 void PGMetalRendererSetUpscaling(int on);
+void PGMetalRendererConfigureMSR(int mode,uint32_t outputWidth,uint32_t outputHeight);
 #ifdef __cplusplus
 }
 #endif
