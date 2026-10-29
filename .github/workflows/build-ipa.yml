@@ -1,5 +1,6 @@
 name: Build Mugoat Regeneration
 on:
+  workflow_call:
   workflow_dispatch:
   push:
     tags:
@@ -24,6 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          ref: ${{ github.sha }}
       - name: Verify original-release toolchain
         run: |
           test -d "$DEVELOPER_DIR"

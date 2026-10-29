@@ -128,3 +128,9 @@ jobs:
           "$RUNNER_TEMP/r008-vehicles" "${{ github.workspace }}/r008-inputs"
           clang -std=c11 -pthread -fsanitize=address,undefined Tests/vehicle_spawn.c -lm -o "$RUNNER_TEMP/r008-spawn"
           "$RUNNER_TEMP/r008-spawn" "${{ github.workspace }}/r008-inputs/model-hashes.txt"
+
+  build-v5:
+    name: Build V5R1 only after all validation passes
+    needs: validate
+    if: github.ref == 'refs/heads/mugoat-v5r1'
+    uses: ./.github/workflows/build-ipa.yml
