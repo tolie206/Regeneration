@@ -13,6 +13,7 @@ the call's arguments. That feeds the test trace and the prompt diagnostics only,
 """
 from pathlib import Path
 from engine_names import fn
+from mission_camera import axis_fallback, script_fallback
 import re
 root = Path(__file__).resolve().parents[1]
 COMMANDS = [('pad_commands::CommandIsControlPressed(int, int)', 'u32', 0), ('pad_commands::CommandGetControlValue(int, int)', 'u32', 1),
@@ -34,12 +35,20 @@ for name, kind, tag in COMMANDS:
     head = f'{kind} w2c_game_f{function}(w2c_game* instance, u32 var_p0, u32 var_p1) {{'
     path = next(p for p in sorted((root / 'Generated').glob('game_*.c')) if head in p.read_text())
     s = path.read_text()
-    if f'pg_control_original_f{function}(' in s: print(f'control trace: f{function} already patched'); continue
+    if f'pg_control_original_f{function}(' in s:
+        if kind == 'f32':
+            a,b=body_range(s,head);body=s[a:b]
+            if 'scaled-look fallback' not in body:
+                anchor=f'  {kind} value = pg_control_original_f{function}(instance, var_p0, var_p1);\n'
+                if body.count(anchor)!=1:raise RuntimeError('Existing control wrapper changed')
+                s=s[:a]+body.replace(anchor,anchor+axis_fallback(function),1)+s[b:];path.write_text(s)
+        continue
     if s.count(head) != 1: raise RuntimeError(f'Pinned f{function} ({name}) changed')
     start, end = body_range(s, head)
     original = s[start:end].replace(head, f'static {kind} pg_control_original_f{function}(w2c_game* instance, u32 var_p0, u32 var_p1) {{', 1)
     wrapper = (f'{head}\n  {kind} value = pg_control_original_f{function}(instance, var_p0, var_p1);\n'
-               f'  pg_control_read({tag}, var_p0, var_p1, (f32)value);\n  return value;\n}}\n')
+               + (axis_fallback(function) if kind == 'f32' else '')
+               + f'  pg_control_read({tag}, var_p0, var_p1, (f32)value);\n  return value;\n}}\n')
     s = s[:start] + original + wrapper + s[end:]
     if DECLARATION not in s:
         first = re.search(r'^#include "game-[a-z-]*impl\.h"$', s, re.M)
@@ -58,7 +67,15 @@ for command, answer, tag in SCRIPT_COMMANDS:
     head = f'void w2c_game_f{function}(w2c_game* instance, u64 var_p0) {{'
     path = next(p for p in sorted((root / 'Generated').glob('game_*.c')) if head in p.read_text())
     s = path.read_text()
-    if f'pg_control_script_original_f{function}(' in s: print(f'control trace: f{function} ({command}) already patched'); continue
+    fallbackFunction = fn('pad_commands::CommandGetDisabledControlUnboundNormal(int, int)' if tag == 4 else 'pad_commands::CommandGetControlUnboundNormal(int, int)') if answer == 'f' else None
+    if f'pg_control_script_original_f{function}(' in s:
+        if answer == 'f':
+            a,b=body_range(s,head);body=s[a:b]
+            if 'scaled-look fallback' not in body:
+                anchor=f'  u64 answer = i64_load_shared({MEMORY}(u64)(var_p0));\n'
+                if body.count(anchor)!=1:raise RuntimeError('Existing script wrapper changed')
+                s=s[:a]+body.replace(anchor,anchor+script_fallback(fallbackFunction,MEMORY),1)+s[b:];path.write_text(s)
+        continue
     if s.count(head) != 1: raise RuntimeError(f'Pinned f{function} ({command}) changed')
     start, end = body_range(s, head)
     original = s[start:end].replace(head, f'static void pg_control_script_original_f{function}(w2c_game* instance, u64 var_p0) {{', 1)
@@ -69,7 +86,8 @@ for command, answer, tag in SCRIPT_COMMANDS:
                f'  pg_control_script_original_f{function}(instance, var_p0);\n'
                f'  u64 args = i64_load_shared({MEMORY}(u64)checked_add_u64(var_p0, 16u));\n'
                f'  u64 answer = i64_load_shared({MEMORY}(u64)(var_p0));\n'
-               f'  pg_control_script_read({tag}, i32_load_shared({MEMORY}(u64)(args)), i32_load_shared({MEMORY}(u64)checked_add_u64(args, 8u)),\n'
+               + (script_fallback(fallbackFunction,MEMORY) if answer == 'f' else '')
+               + f'  pg_control_script_read({tag}, i32_load_shared({MEMORY}(u64)(args)), i32_load_shared({MEMORY}(u64)checked_add_u64(args, 8u)),\n'
                f'                         {load}({MEMORY}(u64)(answer)));\n}}\n')
     s = s[:start] + original + wrapper + s[end:]
     if SCRIPT_DECLARATION not in s:

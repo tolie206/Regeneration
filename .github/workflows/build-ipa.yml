@@ -50,6 +50,8 @@ jobs:
           "$RUNNER_TEMP/lazy-cpu" --disabled
           clang -std=c11 -Wall -Wextra -Werror -I app/Source app/Tests/log_policy.c -o "$RUNNER_TEMP/log-policy"
           "$RUNNER_TEMP/log-policy"
+      - name: Script scaled-camera input regression
+        run: python3 tools/test_mission_camera.py "$RUNNER_TEMP/mission-camera.c"
       - name: Mission controller layout and hardware utility regression
         run: |
           python3 tools/test_manual_layout.py "$RUNNER_TEMP"

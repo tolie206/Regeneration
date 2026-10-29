@@ -664,7 +664,7 @@ final class TouchControlsView: UIView {
     private func computeVisible() -> [ControlButton] {
         if utilityOnly { return [settings, mods] }
         if manualPadEnabled {
-            return [camera, phone, pause, settings, mods, manualPad] + missionButtons.map(\.button) + [manualL3, manualR3, up, down, left, right] + (editing ? [manualMoveHandle,manualLookHandle] : [])
+            return [camera, phone, pause, settings, mods, manualPad] + missionButtons.filter { $0.input != 230 && $0.input != 231 }.map(\.button) + [manualL3, manualR3, up, down, left, right] + (editing ? [manualMoveHandle,manualLookHandle] : [])
         }
         var list = baseVisible()
         if list.contains(settings) { list += [mods, manualPad] }
