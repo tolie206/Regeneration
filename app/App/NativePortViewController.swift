@@ -1624,7 +1624,9 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         let pcControls = keyboardMouse && KeyboardMouse.shared.hasKeyboard && KeyboardMouse.shared.hasMouse
         let previewing = ProcessInfo.processInfo.arguments.contains("--touch-controls-preview")
         let touchActive = touchControlsAvailable && stoppedPanel == nil && (previewing || !((hasController || pcControls) && GameSettings.shared.hideTouchWithController))
-        touchControls.isHidden = !touchActive
+        let overlayVisible=ManualPadLayout.overlayVisible(available:touchControlsAvailable,stopped:stoppedPanel != nil)
+        touchControls.utilityOnly=ManualPadLayout.utilityOnly(external:hasController || pcControls,hide:GameSettings.shared.hideTouchWithController,preview:previewing)
+        touchControls.isHidden = !overlayVisible
         var vehicle = touchActive ? PGCurrentTouchContext() : 0
         var pauseMenu = PGPauseMenuActive()
         // Debug: --preview-context <vehicle type + 1 | menu> to review a layout.
