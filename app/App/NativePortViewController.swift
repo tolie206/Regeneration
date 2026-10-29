@@ -115,6 +115,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
     private let gyro = GyroInput()
     private var engineStarted = false
     private let playStats = PlayStats()
+    private var bootedMSRMode = GameSettings.shared.msrMode
     private var bootedPreset = GameSettings.shared.graphicsPreset
     private var bootedMode: GameMode?
     private var stableTimer: Timer?
@@ -633,6 +634,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         placeFPSLabel()
         appendLog("Game mode: \(mode.title)\(mode == .sandbox ? " on " + GameSettings.sandboxMapTitles[GameSettings.shared.sandboxMap] : "")")
         bootedPreset = GameSettings.shared.graphicsPreset
+        bootedMSRMode = GameSettings.shared.msrMode
         // A TV already connected gets the picture from the start, in its own shape.
         let tvScreen = ProcessInfo.processInfo.arguments.contains("--no-tv") ? nil : UIScreen.screens.first(where: { $0 != UIScreen.main })
         appendLog("Graphics: " + GraphicsConfiguration.apply(GameSettings.shared, screen: tvScreen?.bounds.size ?? view.bounds.size, tv: tvScreen != nil))
@@ -1450,8 +1452,8 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         // On a TV the picture takes the TV's shape.
         let surface = tvWindow?.bounds.size ?? view.bounds.size
         let (width, height) = GraphicsConfiguration.size(for: bootedPreset, renderHeight: settings.renderHeight, screen: surface, matchScreenShape: tvWindow != nil || settings.matchScreenShape)
-        let (renderWidth,renderHeight)=settings.msrMode.renderSize(outputWidth:width,outputHeight:height)
-        PGConfigureMSR(Int32(settings.msrMode.rawValue),UInt32(width),UInt32(height))
+        let (renderWidth,renderHeight)=bootedMSRMode.renderSize(outputWidth:width,outputHeight:height)
+        PGConfigureMSR(Int32(bootedMSRMode.rawValue),UInt32(width),UInt32(height))
         PGSetBackBufferSize(Int32(renderWidth), Int32(renderHeight))
         appendLog("Graphics: live resize to \(width)×\(height)")
     }
