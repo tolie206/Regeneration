@@ -12,10 +12,12 @@ with tempfile.TemporaryDirectory() as folder:
  subprocess.run(['clang','-std=c11','-Wall','-Wextra','-Werror','-I',str(root/'app/Source'),str(c),'-o',str(tmp/'config')],check=True);subprocess.run([str(tmp/'config')],check=True)
  # Native renderer checked against the real device SDK before the expensive engine build.
  sdk=subprocess.check_output(['xcrun','--sdk','iphoneos','--show-sdk-path'],text=True).strip()
- subprocess.run(['xcrun','clang++','-fsyntax-only','-std=c++17','-fobjc-arc','-target','arm64-apple-ios16.0','-isysroot',sdk,'-I',str(root/'app/Source'),'-I',str(root/'app/Source/MetalRenderer'),str(root/'app/Source/MetalRenderer/MRRenderer.mm')],check=True)
- subprocess.run(['xcrun','clang++','-fsyntax-only','-std=c++17','-fobjc-arc','-target','arm64-apple-ios16.0','-isysroot',sdk,'-I',str(root/'app/Source'),'-I',str(root/'app/Source/MetalRenderer'),str(root/'app/Source/MetalRenderer/MRFrameReports.mm')],check=True)
+ failures=0
+ failures+=subprocess.run(['xcrun','clang++','-fsyntax-only','-std=c++20','-fobjc-arc','-target','arm64-apple-ios16.0','-isysroot',sdk,'-I',str(root/'app/Source'),'-I',str(root/'app/Source/MetalRenderer'),str(root/'app/Source/MetalRenderer/MRRenderer.mm')]).returncode != 0
+ failures+=subprocess.run(['xcrun','clang++','-fsyntax-only','-std=c++20','-fobjc-arc','-target','arm64-apple-ios16.0','-isysroot',sdk,'-I',str(root/'app/Source'),'-I',str(root/'app/Source/MetalRenderer'),str(root/'app/Source/MetalRenderer/MRFrameReports.mm')]).returncode != 0
  renderer=(root/'app/Source/MetalRenderer/MRRenderer.mm').read_text()
  start=renderer.index('R"(');end=renderer.index(')"',start)
  metal=tmp/'helpers.metal';metal.write_text(renderer[start+3:end])
- subprocess.run(['xcrun','-sdk','iphoneos','metal','-c',str(metal),'-o',str(tmp/'helpers.air')],check=True)
+ failures+=subprocess.run(['xcrun','-sdk','iphoneos','metal','-c',str(metal),'-o',str(tmp/'helpers.air')]).returncode != 0
+ if failures:sys.exit('V5 device renderer/Metal checks failed: '+str(failures))
 print('PASS: MSR C/Swift execution and iOS renderer/helper Metal compilation')

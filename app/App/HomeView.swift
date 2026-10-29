@@ -341,18 +341,6 @@ private final class ModeCard: UIControl {
         accessibilityLabel = title
         update()
     }
-    override func didMoveToWindow() {
-        super.didMoveToWindow()
-        guard window != nil, !UIAccessibility.isReduceMotionEnabled, !introduced else { return }
-        introduced = true
-        scroll.alpha = 0
-        scroll.transform = CGAffineTransform(translationX: -16, y: 0)
-        UIView.animate(withDuration: 0.35, delay: 0, options: [.beginFromCurrentState, .allowUserInteraction]) {
-            self.scroll.alpha = 1
-            self.scroll.transform = .identity
-        }
-    }
-    private var introduced = false
     required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
 
     func setTitle(_ title: String) {

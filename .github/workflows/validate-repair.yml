@@ -22,19 +22,8 @@ jobs:
         run: test "$GITHUB_REPOSITORY" = 'tolie206/Regeneration'
       - name: Metal compiler for V5 preflight
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
-      - name: Prepare matching macOS test library for runner CPU
-        run: python3 tools/prepare_ci_archive.py "$RUNNER_TEMP/host-archive"
       - name: V5 real scale, presets, device renderer and frame metrics
-        run: |
-          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/Theme.swift app/App/HomeView.swift app/Tests/V5HomeTypecheckStubs.swift
-          clang -fobjc-arc -framework Foundation app/Source/VisualEffects.m app/Tests/visual_effects.m -o "$RUNNER_TEMP/v5-visual"
-          (cd app && "$RUNNER_TEMP/v5-visual")
-          python3 tools/test_v5_stock_audio.py
-          python3 tools/test_v5_presets.py
-          python3 tools/test_v5_msr.py
-          clang++ -std=c++17 -Wall -Wextra -I app/Source app/Tests/v5_frame_metrics.cpp -o "$RUNNER_TEMP/v5-metrics"
-          "$RUNNER_TEMP/v5-metrics"
-          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/HomeView.swift app/App/Theme.swift app/App/SettingsViewController.swift app/App/MSRSettings.swift app/App/GraphicsOptions.swift
+        run: bash tools/v5_preflight.sh "$RUNNER_TEMP"
       - name: Drive-by input regression
         run: python3 tools/test_driveby_look.py "$RUNNER_TEMP/driveby.c"
       - name: Lazy CPU shadows (real implementation, sanitizers)
@@ -68,6 +57,8 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - name: Verify and assemble actual sample packages
         run: python3 tools/assemble_repair_inputs.py "$RUNNER_TEMP/repair-mods"
+      - name: Prepare matching macOS test library for runner CPU
+        run: python3 tools/prepare_ci_archive.py "$RUNNER_TEMP/host-archive"
       - name: Compile production importer and compatibility validator
         run: |
           cd app
