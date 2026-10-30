@@ -27,6 +27,7 @@ void PGConfigureEngine(const char *const *quality, unsigned count, int width, in
 // Changes the frame limit while the game runs (0 off, 1 60 FPS, 2 30 FPS).
 void PGSetFrameLimit(int frameLimit);
 // Settings › Memory cap in MB (0 automatic); call before the engine starts.
+void PGConfigureAudioDownmix(int enabled);
 void PGSetMemoryCap(int mb);
 // Before PGStartEngine: 1 Story Mode (the release startup: continues the
 // newest save in /userdata/Documents, else a new game from the Prologue),

@@ -158,7 +158,7 @@ final class SettingsViewController: UITableViewController {
         case .cheats: return engineRunning ? StoryCheats.all.count + storyCheatStart : 0
         case .gyro: return (settings.gyroAim == .off ? 1 : 3) + (settings.tiltSteer == .off ? 1 : 2)
         case .files: return engineRunning ? 0 : fileRows.count
-        case .device: return 9
+        case .device: return 10
         case .language: return 1
         }
     }
@@ -246,6 +246,12 @@ final class SettingsViewController: UITableViewController {
             content.text = mode.title + (mode == runningMode ? AppLanguage.choose(" (playing now)") : "")
             content.secondaryText = mode.detail
             cell.accessoryType = settings.gameModeChoice == mode ? .checkmark : .none
+        case .device where indexPath.row == 9:
+            content.text="Âm thanh 5.1 → stereo"
+            content.secondaryText="Giữ kênh giữa và phía sau khi phát trên iPhone. Tắt để so sánh đường âm thanh cũ. Áp dụng khi mở lại app."
+            let enabled=UserDefaults.standard.object(forKey:"V5AudioDownmix")==nil || UserDefaults.standard.bool(forKey:"V5AudioDownmix")
+            cell.accessoryView=toggle(enabled,label:"Âm thanh 5.1 → stereo"){UserDefaults.standard.set($0,forKey:"V5AudioDownmix")}
+            cell.selectionStyle = .none
         case .graphics where indexPath.row >= (engineRunning ? Self.liveGraphicsRows.count : presets.count + 7 + GraphicsDetail.all.count):
             let base = engineRunning ? Self.liveGraphicsRows.count : presets.count + 7 + GraphicsDetail.all.count
             let fxaa = indexPath.row == base + 2

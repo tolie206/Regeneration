@@ -47,6 +47,8 @@ jobs:
           "$RUNNER_TEMP/fix2-sound"
           "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/sandbox_map_runtime.c -o "$RUNNER_TEMP/fix2-map"
           "$RUNNER_TEMP/fix2-map"
+          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/audio_downmix.c -o "$RUNNER_TEMP/fix2-downmix"
+          "$RUNNER_TEMP/fix2-downmix"
           xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/MSRSettings.swift app/App/RendererFixOptions.swift app/Tests/FixSettingsTypecheckStubs.swift
           xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/SettingsViewController.swift app/App/NativePortViewController.swift app/App/GraphicsOptions.swift
           python3 -m unittest discover -s tests -p test_regeneration_preservation.py -v

@@ -216,6 +216,7 @@ enum GraphicsConfiguration {
         let own = GraphicsDetail.all.compactMap { detail in overrides[detail.option].map { "\(detail.option) \($0)" } }
         // The engine and renderer read PG_LITE when they start, after this. The Lite build always sets it.
         if preset == .lite { setenv("PG_LITE", "1", 1) } else if !Theme.isLite { unsetenv("PG_LITE") }
+        PGConfigureAudioDownmix(UserDefaults.standard.object(forKey:"V5AudioDownmix")==nil || UserDefaults.standard.bool(forKey:"V5AudioDownmix") ? 1:0)
         PGSetMemoryCap(Int32(settings.memoryCapMB))
         PGConfigureRendererFix(settings.fixQueryBatch,settings.fixEventFast ? 1:0,settings.fixFXAA ? 1:0,settings.fixTrace ? 1:0)
         PGSetSharperUpscaling(0)
