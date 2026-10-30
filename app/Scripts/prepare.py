@@ -73,6 +73,7 @@ if 'pg_record_trap' not in text:
         'extern void pg_record_trap(int) __attribute__((weak));\nvoid wasm_rt_trap(wasm_rt_trap_t code) {\n  if(pg_record_trap)pg_record_trap(code);')
     runtime.write_text(text)
 run('python3', 'Scripts/generate_imports.py')
+run('python3', 'Scripts/check_gpu_timer_flag.py')
 run('python3', 'Scripts/prepare_heap_diagnostics.py')
 run('python3', 'Scripts/prepare_memory_pressure.py')
 shutil.copyfile(options.mirror / 'data/manifest.json', root / 'Resources/manifest.json')

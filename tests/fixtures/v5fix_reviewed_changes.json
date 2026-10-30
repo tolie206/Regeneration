@@ -6,7 +6,7 @@
   },
   "app/App/GraphicsOptions.swift": {
     "base_v5_sha256": "59a643ce73319cbbe1052cd53b0656448c5afe46ad1ea4ec8110ca8e367bbe62",
-    "fix_sha256": "25c009365d78e9fe5ba6c7b65080989f36f19c6df5b23b2cc3d11f9a6cf6cfef",
+    "fix_sha256": "c22c7310e545c91f11e373081afa3d216b106dbda2cc0c83390fe8fd3a4e4bb2",
     "reason": "Configure FIX preferences at startup; existing preset values retained"
   }
 }
