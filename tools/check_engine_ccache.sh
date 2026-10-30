@@ -30,6 +30,7 @@ done
 ccache --show-stats --verbose
 if ! grep -Eq 'Result: (direct_cache_hit|preprocessed_cache_hit)' "$CCACHE_LOGFILE"; then
  echo 'ERROR: cache did not reuse the identical engine probe; stopping before expensive build.'
- tail -65 "$CCACHE_LOGFILE";tail -20 "$probe/xcode-2.log";exit 1
+ cat "$CCACHE_LOGFILE";tail -20 "$probe/xcode-2.log";exit 1
 fi
 echo 'PASS: actual repeated Xcode generated-C compile cached with unchanged iPhone compiler'
+

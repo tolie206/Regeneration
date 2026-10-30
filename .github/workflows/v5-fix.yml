@@ -52,6 +52,7 @@ jobs:
           xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/MSRSettings.swift app/App/RendererFixOptions.swift app/Tests/FixSettingsTypecheckStubs.swift
           xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/SettingsViewController.swift app/App/NativePortViewController.swift app/App/GraphicsOptions.swift
           python3 -m unittest discover -s tests -p test_regeneration_preservation.py -v
+          python3 -m unittest discover -s tests -p test_ccache_engine.py -v
       - name: Assemble and verify unchanged owner build inputs
         run: |
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/game-files"
