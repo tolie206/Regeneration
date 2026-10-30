@@ -1,0 +1,77 @@
+name: V5R1-FIX targeted checks and IPA
+on:
+  push:
+    branches: [mugoat-v5r1-fix]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: v5r1-fix-single-ipa
+  cancel-in-progress: true
+jobs:
+  release:
+    runs-on: macos-26-intel
+    timeout-minutes: 180
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+      PG_HOST_SAN_CC: /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
+      PG_INTEL_IOS_BUILD: '1'
+      PG_ENGINE_CCACHE: '1'
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_MAXSIZE: 3G
+      CCACHE_COMPILERCHECK: content
+      JOBS: '2'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify authorized repository and original iPhone toolchain
+        run: |
+          test "$GITHUB_REPOSITORY" = tolie206/Regeneration
+          xcodebuild -version | grep -Fx 'Xcode 26.2'
+          xcodebuild -version | grep -Fx 'Build version 17C52'
+          test "$(xcrun --sdk iphoneos --show-sdk-version)" = 26.2
+          python3 tools/release_metadata.py
+      - name: Host sanitizer controls (not iPhone compiler)
+        run: bash tools/check_host_sanitizer.sh "$RUNNER_TEMP"
+      - name: Metal compiler
+        run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
+      - name: Relevant renderer, query lifetime, speculative policy and settings checks
+        run: |
+          "$PG_HOST_SAN_CC" -std=c++20 -g -pthread -fsanitize=address,undefined -I app/Source app/Tests/fix_query_timeline.cpp -lc++ -o "$RUNNER_TEMP/fix-query"
+          "$RUNNER_TEMP/fix-query"
+          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined -I app/Source app/Tests/fix_speculative.c -o "$RUNNER_TEMP/fix-speculation"
+          "$RUNNER_TEMP/fix-speculation"
+          python3 tools/test_fix_renderer.py
+          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/MSRSettings.swift app/App/RendererFixOptions.swift app/Tests/FixSettingsTypecheckStubs.swift
+          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/SettingsViewController.swift app/App/NativePortViewController.swift app/App/GraphicsOptions.swift
+          python3 -m unittest discover -s tests -p test_regeneration_preservation.py -v
+      - name: Assemble and verify unchanged owner build inputs
+        run: |
+          python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/game-files"
+          python3 app/Scripts/check_game_files.py --mirror "$RUNNER_TEMP/game-files"
+      - name: Install build tools
+        run: brew install xcodegen cmake openssl@3 ccache
+      - uses: actions/cache@v4
+        with:
+          path: .ccache
+          key: engine-ios26.2-arm64-${{ github.sha }}
+          restore-keys: engine-ios26.2-arm64-
+      - name: Build single V5R1-FIX IPA
+        run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
+      - name: Verify target, release, entitlements and bundled features
+        run: |
+          python3 tools/verify_ipa.py GTA5Port.ipa
+          mv GTA5Port.ipa MUGOAT-V5R1-FIX.ipa
+          ccache --show-stats
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MUGOAT-V5R1-FIX
+          path: MUGOAT-V5R1-FIX.ipa
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: V5R1-FIX-diagnostics
+          path: app/Build/xcodebuild.log
+          retention-days: 3

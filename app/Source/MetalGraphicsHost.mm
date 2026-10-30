@@ -44,3 +44,5 @@ void PGNoteTextureRatio(int64_t gpuBytes, int64_t gameBytes) {
 	NSInteger old = [defaults integerForKey:textureRatioKey()];
 	[defaults setInteger:old >= 100 && old <= 400 ? (old * 3 + ratio) / 4 : ratio forKey:textureRatioKey()];
 }
+
+void PGConfigureRendererFix(double batch,int eventFast,int fxaa,int trace){PGMetalRendererConfigureFix(batch,eventFast,fxaa,trace);}

@@ -313,7 +313,7 @@ final class SettingsViewController: UITableViewController {
                     cell.accessoryView = button
                 } else if row == 6 {
                     content.text="MUGOAT Super Resolution (MSR)"
-                    content.secondaryText="Render thấp hơn, nâng ảnh bằng MetalFX Spatial nếu hỗ trợ; dự phòng nội suy tuyến tính. HUD đi cùng ảnh game. Áp dụng khi mở lại app."
+                    content.secondaryText="Render thấp hơn, nâng ảnh bằng MetalFX Spatial nếu hỗ trợ; dự phòng nội suy tuyến tính. HUD đi cùng ảnh game. FXAA giảm răng cưa nhưng có thể mềm chữ; không tăng độ phân giải. Áp dụng khi mở lại app."
                     let button=UIButton(type:.system)
                     button.setTitle(settings.msrMode.title+" ▾",for:.normal)
                     button.showsMenuAsPrimaryAction=true
@@ -325,7 +325,8 @@ final class SettingsViewController: UITableViewController {
                     let report=UIAction(title:"Báo cáo FPS cục bộ mỗi 15 giây",state:settings.offlinePerfReports ? .on : .off) { [weak self] _ in
                         guard let self else{return};self.settings.offlinePerfReports.toggle();self.tableView.reloadData()
                     }
-                    button.menu=UIMenu(children:modes.map { $0 as UIMenuElement }+[UIMenu(options:.displayInline,children:[report])])
+                    let fixItems=RendererFixOptions.items(settings:settings){[weak self] in self?.tableView.reloadData()}
+                    button.menu=UIMenu(children:modes.map{$0 as UIMenuElement}+[UIMenu(title:"Áp dụng khi mở lại app",options:.displayInline,children:fixItems+[report])])
                     button.sizeToFit();cell.accessoryView=button
                 } else if row == 3 {
                     content.text = AppLanguage.choose("Show FPS counter")

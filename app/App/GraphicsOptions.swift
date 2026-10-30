@@ -217,6 +217,7 @@ enum GraphicsConfiguration {
         // The engine and renderer read PG_LITE when they start, after this. The Lite build always sets it.
         if preset == .lite { setenv("PG_LITE", "1", 1) } else if !Theme.isLite { unsetenv("PG_LITE") }
         PGSetMemoryCap(Int32(settings.memoryCapMB))
+        PGConfigureRendererFix(settings.fixQueryBatch,settings.fixEventFast ? 1:0,settings.fixFXAA ? 1:0,settings.fixTrace ? 1:0)
         PGSetSharperUpscaling(0)
         PGConfigureMSR(Int32(settings.msrMode.rawValue),UInt32(outputWidth),UInt32(outputHeight))
         var pointers = options.map { strdup($0) }
@@ -226,6 +227,6 @@ enum GraphicsConfiguration {
                 PGConfigureEngine($0, UInt32(buffer.count), Int32(width), Int32(height), settings.frameRateCap == 0 ? 0 : settings.frameRateCap == 60 ? 1 : 2)
             }
         }
-        return "MSR requested=\(settings.msrMode.rawValue), render=\(width)x\(height), output=\(outputWidth)x\(outputHeight), HUD=scaled-with-scene; \(preset.title) \(width)×\(height) at \(GameSettings.frameRateTitle(settings.frameRateCap))" + (own.isEmpty ? "" : ", own settings: " + own.joined(separator: ", "))
+        return "V5R1-FIX fxaa=\(settings.fixFXAA), completedEventFast=\(settings.fixEventFast), queryBatchMs=\(settings.fixQueryBatch), trace=\(settings.fixTrace); MSR requested=\(settings.msrMode.rawValue), render=\(width)x\(height), output=\(outputWidth)x\(outputHeight), HUD=scaled-with-scene; \(preset.title) \(width)×\(height) at \(GameSettings.frameRateTitle(settings.frameRateCap))" + (own.isEmpty ? "" : ", own settings: " + own.joined(separator: ", "))
     }
 }

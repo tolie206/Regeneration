@@ -1,0 +1,26 @@
+id,verdict,evidence_or_callsite,retained_action,limit_or_blocker
+R01,PARTIAL_IMPLEMENTED,commit/execute/loop in MRRenderer.mm,Visibility epoch lifetime fix; completed EVENT fastpath; batch0/.25/.5/1 A/B,No real-device query mix or FPS result yet
+R02,PARTIAL_INSTRUMENTED,"waitSerial, commit, loop",Bounded frame/serial submit-schedule-complete stamps; no fence removal,Full engine wait graph not exposed by current host API
+R03,BLOCKED_WITH_REASON,PVS profiler samples; opcode-ring consumer,No PVS bypass shipped,No equivalent visibility algorithm source plus scene correctness benchmark
+R04,BLOCKED_WITH_REASON,ScanForEntitiesInRange freeze samples; generated engine,Critical scans unchanged,No safe invalidation/spatial-index contract or mission regression device
+R05,PARTIAL_INSTRUMENTED,present/drawInner/commit,Submission stamps; optional FXAA only,Per-pass GPU counter capture and safe sorting require device frame capture
+R06,AUDITED_UNCHANGED,EngineHost.c budget policy,App cap honored; no larger cache or removal of protection,No on-device jetsam/peak benchmark; changing reserve risks gray maps
+R07,OPTIONAL_AB,NativeAssets.m hint queue,Speculative-only OFF toggle; demand/normal unchanged,Device streaming latency and pop-in test pending
+R08,PARTIAL_DIAGNOSED,createShader/drawInner/pipeline,45 identical absent tuples; opt-in bound-use warning,Original missing shaders unavailable; no fabricated fallback
+R09,BLOCKED_WITH_REASON,GPU version warning/renderer buffer update path,Warnings remain visible; no cloth bypass,Guest version bookkeeping source contract and visual reproducer unavailable
+R10,PARTIAL_IMPLEMENTED,observeAudioSession/resumeAudio,Retry only active/noninterrupted; cancel inactive retries,Does not resolve/prove guest sm_UpdateFinishedSema pairing
+R11,AUDITED_UNCHANGED,present/frame limiter,Existing caps and frame fences retained,30/45/60/uncapped A/B requires same device/scene
+R12,OPTIONAL_AB,upscaled/present,Existing MetalFX retained; optional final FXAA,HUD part of scene; no independent HUD upscale or measured cost
+R13,AUDITED_UNCHANGED,uploadTextureInner/BC1ToASTC,No unverified texture format substitution,"Need CPU/GPU trace, alpha/normal/sRGB visual fixtures"
+R14,BLOCKED_WITH_REASON,AI/PlantsMgr/AnimQueue samples,Game-critical timing unchanged,Sampling alone cannot establish safe memoization/invalidation
+R15,AUDITED_UNCHANGED,NativeAssets/mod importer/Menyoo,User data preserved; no importer replay needed for unchanged code,Matched Menyoo/mod on/off device benchmark not available
+R16,OPEN,EngineHost argv; shader/path warnings,No blanket warning suppression; shader-use diagnostic added,Unknown -wgpu argument retained until generated-engine option semantics verified
+C01,AUDITED_UNCHANGED,present/frame limiter,No unmeasured scheduling replacement,Same-device display timing unavailable
+C02,PARTIAL_DIAGNOSED,async Metal pipeline lookup/createShader,Missing coverage inventoried; no comparison binary reuse,Absent shader source cannot be reconstructed from index
+C03,AUDITED_UNCHANGED,runtime memory policy,Existing app limit preserved,No evidence another cap/reserve solves these traces
+C04,AUDITED_UNCHANGED,BC decode/upload,Existing compatible path preserved,Need pixel fixtures and timing before format changes
+C05,PARTIAL_IMPLEMENTED,commit GPU callbacks,Bounded monotonic CPU stamps with frame/CB IDs and GPU start/end,"Trace is recent samples, not full simulation-to-display latency"
+C06,AUDITED_UNCHANGED,NativeThreads.c QoS initialization,Workers user-initiated; no priority inflation,Thermal/QoS experiment needs device counters
+C07,OPTIONAL_AB,MetalFX->present fragment->drawable,"Optional FXAA in final pass, no intermediate RT",Filtering composite HUD can soften text; OFF default
+C08,NOT_SHIPPED,GraphicsOptions.swift existing presets,No blanket quality/resolution reduction,Comparison852x392/density0 cannot justify equal-quality FPS claim
+C09,DEFERRED_WITH_REASON,Custom Metal ring renderer,No DXMT rewrite or copied dylib,No microbenchmark demonstrating rewrite necessary; comparison IPA absent

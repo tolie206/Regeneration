@@ -85,7 +85,7 @@ static bool assetStreamSimulation,assetConcurrentFills=true;
 static unsigned assetSimulatedLatencyMS;
 static _Thread_local bool assetPrefetchRead;
 static _Thread_local bool assetSpeculativeRead;
-static bool assetQueuedHints=true;
+static bool assetQueuedHints=true,assetSpeculationEnabled=true;
 static PGAssetHintQueue normalHints,lowHints;
 static uint64_t hintsNormalSeen,hintsLowSeen,hintsScheduled,hintsCached,hintsLapped;
 static _Thread_local double assetReadNetworkMS,assetReadLockMS;
@@ -508,6 +508,8 @@ void pg_assets_configure(const char *manifest,const char *root) {
     assetConcurrentFills=![NSProcessInfo.processInfo.arguments containsObject:@"--serialized-asset-fills"];
     assetQueuedHints=![NSProcessInfo.processInfo.arguments containsObject:@"--reference-asset-hints"];
     assetBalancedQOS=[NSProcessInfo.processInfo.arguments containsObject:@"--balanced-asset-qos"];
+    assetSpeculationEnabled=![[NSUserDefaults standardUserDefaults] boolForKey:@"V5FixNoSpeculation"];
+    pg_log(assetSpeculationEnabled?"FIX asset speculation: original (on).":"FIX asset speculation: off for A/B; normal hints and demand reads preserved.");
 #if TARGET_OS_SIMULATOR
     assetStreamSimulation=[NSProcessInfo.processInfo.arguments containsObject:@"--stream-assets"];
     const char *tag=getenv("PG_ASSET_CACHE_TAG");
@@ -1076,7 +1078,7 @@ void pg_assets_prewarm(void){
 }
 static void pumpAssetHints(void){
   PGAssetHint hint;
-  while(pg_asset_hint_next(&normalHints,&lowHints,(unsigned)atomic_load(&activePrefetch),(unsigned)atomic_load(&activeSpeculative),16,4,&hint)){
+  while(pg_asset_hint_next(&normalHints,&lowHints,(unsigned)atomic_load(&activePrefetch),(unsigned)atomic_load(&activeSpeculative),16,assetSpeculationEnabled?4:0,&hint)){
     if(hint.id>=assetFiles.count)continue;
     uint64_t size=[assetFiles[hint.id][1] unsignedLongLongValue];if(hint.offset>=size)continue;
     hint.length=(uint32_t)MIN((uint64_t)hint.length,size-hint.offset);

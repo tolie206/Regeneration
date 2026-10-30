@@ -1,0 +1,10 @@
+# Timing contract
+`renderer busy` in loop() accumulates CPU command-execution/encoding elapsed time. It is NOT GPU busy and excludes producer waits. `GPUEndTime-GPUStartTime` is GPU duration read after completion, aggregated in a different reporting window. Overlapping or unrelated windows must not be summed into one critical path.
+
+Opt-in trace uses a mutex-protected fixed1024-record ring shared by renderer/scheduled/completed callbacks. Each record has originating present-frame ID and command-buffer serial, commit reason0present/1fence/2readback/3idle, phase0submit/1scheduled/2complete/3present-request, CPU monotonic milliseconds and GPU timestamps where available. A frame can own several command buffers. Present-request does not equal actual display time. Only the last8records are printed at10s report; overwritten count is explicit. This is a bounded recent-window diagnostic, NOT a complete frame profiler and not adequate to derive global p99/input latency alone. Trace OFF has no per-CB ring writes/scheduled-handler allocation.
+
+The fixed callback count prevents immediate EVENT publication while any earlier result/fence callback is outstanding. Visibility rotation retains the old buffer in the existing completion capture. If new128KB allocation fails, renderer waits for all outstanding callbacks before reuse; it does not falsely mark GPU work done. Ongoing active occlusion prevents rotation. Existing active-query slot exhaustion/max-completed-serial assumptions are not refactored here and remain an audit concern.
+
+Full simulation/PVS/audio/streaming spans and actual displayed-time correlation require engine instrumentation or Instruments on the target device. Keep this limitation explicit.
+
+References: [Apple completion handlers](https://developer.apple.com/documentation/metal/mtlcommandbuffer/addcompletedhandler(_:)), [GPU end timestamp](https://developer.apple.com/documentation/Metal/MTLCommandBuffer/gpuEndTime), [Metal retained references](https://developer.apple.com/library/archive/documentation/Miscellaneous/Conceptual/MetalProgrammingGuide/Cmd-Submiss/Cmd-Submiss.html).

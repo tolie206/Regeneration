@@ -1,0 +1,8 @@
+# Confirmed facts vs hypotheses
+1. **Confirmed source lifetime hazard**: near-full visibility slots were reset during commit before all GPU/completion readers necessarily finished. New buffer epochs retain old storage through callback lifetime. This is a correctness repair; its contribution to observed FPS loss is NOT MEASURED. Model tests demonstrate the hazard, not real-device reproduction.
+2. **Confirmed submission symptom**: up to23.6 idle-query buffers/frame in the cited A16 window. Safe completed-EVENT fastpath avoids a GPU submission only when no work/callback/query is pending. Whether EVENTs account for those idle buffers is currently UNKNOWN; queryTypes/eventFast counters will establish this. Batching remains OFF until A/B.
+3. **Confirmed long waits, uncertain causality**: PVS/queued-frame and audio waits appear in samples. No proof that removing waits is safe. Keep all fences, physics, missions and critical scans. Audio lifecycle retry guard is narrower than a guest audio-worker fix.
+4. **Confirmed absent shader inputs and version warnings**: missing tuples cannot be regenerated without original shader material. No fake shader or warning suppression. Need actual bound-use/dirty-upload trace and device visual validation.
+5. **Confirmed resource/thermal variation**: A13 runs close to its app cap; A16 sometimes has high GPU workload. No evidence that increasing budgets, deleting reclamation or uniformly lowering graphics fixes submission stalls. Budgets/presets unchanged.
+
+Not established: pipeline-cache corruption, launcher animation cost during gameplay, universal GPU idleness, guaranteed60fps, a measured FXAA speedup, or a full replacement architecture being necessary. No claims of those fixes are made.

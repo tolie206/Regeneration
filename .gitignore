@@ -14,3 +14,5 @@ app/*.xcodeproj
 
 __pycache__/
 *.pyc
+
+.ccache/

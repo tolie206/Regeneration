@@ -2,10 +2,16 @@ import unittest,json,hashlib
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 class Baseline(unittest.TestCase):
- def test_renderer_streaming_and_turbo_unchanged(self):
+ def test_core_preserved_except_explicit_reviewed_changes(self):
   for path,sha in json.loads((ROOT/'tests/regeneration_perf_baseline.json').read_text()).items():
    data=(ROOT/path).read_bytes().replace(b'\r\n',b'\n')
    v5=json.loads((ROOT/'tests/fixtures/v5_reviewed_changes.json').read_text())
+   fixFile=ROOT/'tests/fixtures/v5fix_reviewed_changes.json'
+   fixes=json.loads(fixFile.read_text()) if fixFile.exists() else {}
+   if path in fixes:
+    self.assertEqual(fixes[path]['base_v5_sha256'],v5[path]['v5_sha256'],path)
+    self.assertEqual(hashlib.sha256(data).hexdigest(),fixes[path]['fix_sha256'],path)
+    continue
    if path in v5:
     self.assertEqual(hashlib.sha256(data).hexdigest(),v5[path]['v5_sha256'],path)
     continue # intentional V5 changes explicitly reviewed; other core hashes still enforced

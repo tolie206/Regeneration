@@ -43,7 +43,13 @@ xcrun --sdk iphoneos clang -fsyntax-only -fobjc-arc -target arm64-apple-ios16.0 
   -isysroot "$(xcrun --sdk iphoneos --show-sdk-path)" -I Source -I Generated \
   -I Tools/wabt-1.0.42/include -I Tools/wabt-1.0.42/share/wabt/wasm2c \
   Source/NativeAssets.m Source/VisualEffects.m
-xcodebuild -project PlayGTA5Native.xcodeproj -scheme PlayGTA5Native \
+CACHE_ARGS=()
+if [ "${PG_ENGINE_CCACHE:-0}" = 1 ]; then
+  export PG_REAL_CLANG="$(xcrun --sdk iphoneos --find clang)"
+  chmod +x ../tools/ccache_engine.sh
+  CACHE_ARGS+=("CC=$(cd .. && pwd)/tools/ccache_engine.sh")
+fi
+xcodebuild -project PlayGTA5Native.xcodeproj "${CACHE_ARGS[@]}" -scheme PlayGTA5Native \
   -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
   -derivedDataPath Build/Release -jobs "$JOBS" \
   GCC_OPTIMIZATION_LEVEL=2 SWIFT_OPTIMIZATION_LEVEL=-O DEBUG_INFORMATION_FORMAT=dwarf \

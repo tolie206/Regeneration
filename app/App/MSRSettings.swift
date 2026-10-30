@@ -21,3 +21,11 @@ extension GameSettings {
   set {UserDefaults.standard.set(newValue,forKey:"V5OfflinePerfReports")}
  }
 }
+
+extension GameSettings {
+ var fixNoSpeculation:Bool {get{UserDefaults.standard.bool(forKey:"V5FixNoSpeculation")}set{UserDefaults.standard.set(newValue,forKey:"V5FixNoSpeculation")}}
+ var fixFXAA:Bool {get{UserDefaults.standard.bool(forKey:"V5FixFXAA")}set{UserDefaults.standard.set(newValue,forKey:"V5FixFXAA")}}
+ var fixEventFast:Bool {get{UserDefaults.standard.object(forKey:"V5FixEventFast")==nil || UserDefaults.standard.bool(forKey:"V5FixEventFast")}set{UserDefaults.standard.set(newValue,forKey:"V5FixEventFast")}}
+ var fixQueryBatch:Double {get{let v=UserDefaults.standard.double(forKey:"V5FixQueryBatch");return [0,0.25,0.5,1].contains(v) ? v:0}set{UserDefaults.standard.set(newValue,forKey:"V5FixQueryBatch")}}
+ var fixTrace:Bool {get{UserDefaults.standard.bool(forKey:"V5FixTrace")}set{UserDefaults.standard.set(newValue,forKey:"V5FixTrace")}}
+}

@@ -14,6 +14,8 @@
 #include "BC1ToASTC.h"
 #include "NativeGraphics.h"
 #include "NativeMSR.h"
+#include "NativeQueryPolicy.h"
+#include "NativeRenderTimeline.h"
 #include "NativeFrameRate.h"
 #include "NativeGPUMetrics.h"
 #import <UIKit/UIKit.h>
@@ -242,7 +244,7 @@ struct Renderer {
 	id<MTLBuffer> zeroBuffer;
 	std::unordered_map<uint32_t, id<MTLTexture>> dummyTextures;
 	id<MTLSamplerState> dummySampler, dummyCompare;
-	id<MTLRenderPipelineState> blitPipe, capturePipe, scaledBlitPipe;
+	id<MTLRenderPipelineState> blitPipe, capturePipe, scaledBlitPipe, fxaaPipe;
 	id<MTLDepthStencilState> noDepth;
 
 	// game shader objects by program (the first object created for each), for program substitutions
@@ -308,16 +310,26 @@ static id<MTLBlitCommandEncoder> blitEncoder() {
 	R->blit = [commandBuffer() blitCommandEncoder];
 	return R->blit;
 }
+static std::atomic<double> gQueryBatchMs{0};
+static std::atomic<bool> gEventFast{true},gFixTrace{false},gFXAA{false};
+static PGRenderTimeline gRenderTimeline;
+static std::atomic<uint32_t> gCallbacksOutstanding{0};
+static uint64_t eventFastHits=0,queryEnds[6]={},visibilityEpochs=0;
+extern "C" void PGMetalRendererConfigureFix(double batch,int eventFast,int fxaa,int trace){
+ gQueryBatchMs.store(pg_query_batch_ms(batch));gEventFast.store(eventFast!=0);gFXAA.store(fxaa!=0);gFixTrace.store(trace!=0);
+}
+static void waitSerial(uint64_t);
 static void storeResult(uint64_t addr, uint64_t value, uint32_t seq);
 enum CommitReason { CPresent, CFence, CReadback, CIdle, CReasons };
 static const char *kCommitNames[CReasons] = {"present", "fence", "readback", "idle queries"};
 static void commit(CommitReason reason, id<CAMetalDrawable> drawable = nil) {
 	endEncoders();
+	bool rotateVisibility=R->visNext>OCCLUSION_SLOTS-1024&&!R->activeOcclusion;
 	if (!R->pendingQueries.empty()) {
 		std::vector<PendingQuery> list;
 		list.swap(R->pendingQueries);
 		id<MTLBuffer> vis = R->visibility;
-		R->onComplete.push_back([list, vis]() {
+		R->onComplete.push_back([list=std::move(list), vis]() {
 			const uint64_t *v = (const uint64_t *)vis.contents;
 			for (const PendingQuery &p : list) {
 				uint64_t result;
@@ -327,22 +339,29 @@ static void commit(CommitReason reason, id<CAMetalDrawable> drawable = nil) {
 				storeResult(p.addr, result, p.seq);
 			}
 		});
-		if (R->visNext > OCCLUSION_SLOTS - 1024 && !R->activeOcclusion) R->visNext = 0;
 	}
 	id<MTLCommandBuffer> cb = commandBuffer();
 	if (drawable) [cb presentDrawable:drawable];
 	uint64_t serial = R->serial++;
+ const uint64_t frameID=R->frame;const bool trace=gFixTrace.load();
+ if(trace){
+  gRenderTimeline.add({frameID,serial,(uint32_t)reason,0,nowMs(),0,0});
+  [cb addScheduledHandler:^(id<MTLCommandBuffer> scheduled){(void)scheduled;gRenderTimeline.add({frameID,serial,(uint32_t)reason,1,nowMs(),0,0});}];
+ }
 	auto *callbacks = new std::vector<std::function<void()>>();
 	callbacks->swap(R->onComplete);
 	Renderer *r = R;
+	gCallbacksOutstanding.fetch_add(1);
 	[cb addCompletedHandler:^(id<MTLCommandBuffer> done) {
 		if (done.status == MTLCommandBufferStatusError) logOnce("cmderr" + std::to_string(done.error.code), "Metal renderer: command buffer failed: %s", done.error.localizedDescription.UTF8String);
+		if(trace)gRenderTimeline.add({frameID,serial,(uint32_t)reason,2,nowMs(),done.GPUStartTime*1000,done.GPUEndTime*1000});
 		double gpu = done.GPUEndTime - done.GPUStartTime;
 		gGPUWork.record(gpu, reason == CPresent);
 		for (auto &f : *callbacks) f();
 		delete callbacks;
 		uint64_t prev = r->completed.load();
 		while (prev < serial && !r->completed.compare_exchange_weak(prev, serial)) {}
+		gCallbacksOutstanding.fetch_sub(1);
 		dispatch_semaphore_signal(r->completion);
 	}];
 	double c0 = nowMs();
@@ -352,6 +371,14 @@ static void commit(CommitReason reason, id<CAMetalDrawable> drawable = nil) {
 	R->lastCommitMs = nowMs();
 	R->commits++;
 	R->commitReasons[reason]++;
+ // A callback can still read the old visibility buffer after the next GPU
+ // command starts. Never zero/reuse its slots until that reader is finished.
+ if(rotateVisibility){
+  id<MTLBuffer> replacement=[R->device newBufferWithLength:OCCLUSION_SLOTS*8 options:MTLResourceStorageModeShared];
+  if(replacement)R->visibility=replacement;
+  else {double before=nowMs();while(gCallbacksOutstanding.load())dispatch_semaphore_wait(R->completion,dispatch_time(DISPATCH_TIME_NOW,2*NSEC_PER_MSEC));R->work.gpuWait+=nowMs()-before;}
+  R->visNext=0;visibilityEpochs++;
+ }
 }
 static void waitSerial(uint64_t s) {
 	while (R->completed.load() < s) dispatch_semaphore_wait(R->completion, dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_MSEC));
@@ -1544,7 +1571,9 @@ static void drawInner(const uint32_t *p) {
 	Shader *vs = R->objs.as<Shader>(R->shader[0], OShader);
 	Shader *ps = R->objs.as<Shader>(R->shader[1], OShader);
 	Layout *lay = R->objs.as<Layout>(R->layout, OLayout);
-	if (!vs || !vs->info || !lay || (ps && !ps->info)) { drawOutcome = "SKIP-shader"; R->skipped++; R->skipReasons[(!vs || !lay) ? 0 : 1]++; return; }
+	if (!vs || !vs->info || !lay || (ps && !ps->info)) {
+  if(gFixTrace.load())for(Shader *missing : {vs,ps})if(missing&&!missing->info)logOnce("missinguse"+missing->hash,"[FixShader] missing shader actually bound for draw hash=%s stage=%u",missing->hash.c_str(),missing->stage);
+  drawOutcome = "SKIP-shader"; R->skipped++; R->skipReasons[(!vs || !lay) ? 0 : 1]++; return; }
 	bool maskSwap = minimapMaskSwap(vs, ps);
 	if (maskSwap != R->lastMaskSwap) { R->lastMaskSwap = maskSwap; R->pipeDirty = true; }
 	if (maskSwap) drawOutcome = "ok-maskswap";
@@ -2096,9 +2125,10 @@ static void present(uint32_t texId) {
             if(outW<t->width || outH<t->height){outW=t->width;outH=t->height;}
         }
         id<MTLTexture> scaled=upscaled(t,outW,outH);
+        bool fxaa=gFXAA.load()&&R->fxaaPipe;
         bool bilinear=!scaled && (outW!=t->width || outH!=t->height) && R->scaledBlitPipe;
         id<MTLTexture> picture=scaled ?: t->tex;
-        if(!scaled && !bilinear){outW=t->width;outH=t->height;}
+        if(!scaled && !bilinear && !fxaa){outW=t->width;outH=t->height;}
         const int backend=scaled?2:bilinear?1:0;
         static uint64_t lastConfig=UINT64_MAX;static int lastBackend=-1;static uint32_t lastInputW=0,lastInputH=0;
         if(lastConfig!=msr || lastBackend!=backend || lastInputW!=t->width || lastInputH!=t->height){
@@ -2112,8 +2142,8 @@ static void present(uint32_t texId) {
 			MTLRenderPassDescriptor *rp = [MTLRenderPassDescriptor renderPassDescriptor];
 			rp.colorAttachments[0].texture = drawable.texture; rp.colorAttachments[0].loadAction = MTLLoadActionDontCare; rp.colorAttachments[0].storeAction = MTLStoreActionStore;
 			id<MTLRenderCommandEncoder> e = [commandBuffer() renderCommandEncoderWithDescriptor:rp];
-            [e setRenderPipelineState:bilinear?R->scaledBlitPipe:R->blitPipe];[e setFragmentTexture:picture atIndex:0];
-            if(bilinear){float dimensions[2]={(float)outW,(float)outH};[e setFragmentBytes:dimensions length:sizeof dimensions atIndex:0];}
+            [e setRenderPipelineState:fxaa?R->fxaaPipe:(bilinear?R->scaledBlitPipe:R->blitPipe)];[e setFragmentTexture:picture atIndex:0];
+            if(bilinear||fxaa){float dimensions[2]={(float)outW,(float)outH};[e setFragmentBytes:dimensions length:sizeof dimensions atIndex:0];}
 			[e drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
 			[e endEncoding];
 			t->lastUse = R->serial;
@@ -2142,6 +2172,7 @@ static void present(uint32_t texId) {
 	commit(CPresent, drawable);
 	f.lastSerial = R->serial - 1;
 	R->presents++;
+ if(gFixTrace.load())gRenderTimeline.add({R->frame,R->serial-1,4,3,nowMs(),0,0});
 	double now = CACurrentMediaTime();
 	if (R->statPresentAt) { double gap = (now - R->statPresentAt) * 1000; if (gap > 50) R->longFrames++; if (gap > R->worstFrameMs) R->worstFrameMs = gap; }
 	R->statPresentAt = now;
@@ -2390,6 +2421,12 @@ static void execute(uint32_t op, const uint32_t *p, uint32_t n) {
 		Query *q = R->objs.as<Query>(p[0], OQuery);
 		if (!q) break;
 		q->seq = p[1];
+  if(q->type<6)queryEnds[q->type]++;
+  // EVENT means prior GPU work has completed, not a visibility/timestamp result.
+  // Publish only when completion is already observed; never bypass pending work.
+  if(gEventFast.load()&&pg_completed_event_fast(q->type,R->cmd!=nil,!R->onComplete.empty()||gCallbacksOutstanding.load()!=0,!R->pendingQueries.empty(),R->completed.load(),R->serial-1)){
+   storeResult(q->addr,1,p[1]);eventFastHits++;break;
+  }
 		if (q->type == 1 || q->type == 5) { if (R->activeOcclusion == q) { endOcclusionInPass(); R->activeOcclusion = nullptr; } }
 		R->pendingQueries.push_back({q, p[1], q->slots, q->type, q->addr});
 		q->slots.clear();
@@ -2434,6 +2471,13 @@ static void report() {
 	     (long long)gBufferStats.count.load(), gBufferStats.bytes / MB, gBufferStats.pages / MB, (long long)gBufferStats.meshCount.load(),
 	     gBufferStats.meshBytes / MB, gSlabs.size(), ring / MB, ringBig / MB);
 	if (gSkipTopMip || gSkipBigTopMip) logf("[metal] %s: %lld textures without their largest level; %llu copies or readbacks needed one", gSkipTopMip ? "Lite" : "Big textures", (long long)gTextureStats.halfSize.load(), (unsigned long long)gTextureStats.missingLevel.load());
+ logf("[FixQuery] frame=%llu eventFast=%llu queryTypes=%llu,%llu,%llu,%llu,%llu,%llu visibilityEpochs=%llu batchMs=%.3f fxaaRequested=%d fxaaEffective=%d",
+ (unsigned long long)R->frame,(unsigned long long)eventFastHits,(unsigned long long)queryEnds[0],(unsigned long long)queryEnds[1],(unsigned long long)queryEnds[2],(unsigned long long)queryEnds[3],(unsigned long long)queryEnds[4],(unsigned long long)queryEnds[5],(unsigned long long)visibilityEpochs,gQueryBatchMs.load(),gFXAA.load(),gFXAA.load()&&R->fxaaPipe!=nil);
+ if(gFixTrace.load()){
+  std::array<PGRenderStamp,1024> samples;uint64_t dropped=0;size_t n=gRenderTimeline.drain(samples,dropped);
+  logf("[FixTrace] recentEvents=%zu overwritten=%llu cpuClock=CACurrentMediaTime gpuClock=MetalTimestamp; frame/serial correlate, do not sum unlike windows",n,(unsigned long long)dropped);
+  for(size_t i=n>8?n-8:0;i<n;i++){const auto &v=samples[i];logf("[FixTrace] frame=%llu cb=%llu kind=%u phase=%u cpuMs=%.3f gpuStartMs=%.3f gpuEndMs=%.3f",(unsigned long long)v.frame,(unsigned long long)v.serial,v.kind,v.phase,v.cpuMs,v.gpuStartMs,v.gpuEndMs);}
+ }
 	memset(R->commitReasons, 0, sizeof R->commitReasons); memset(R->skipReasons, 0, sizeof R->skipReasons);
 	R->statT = now; R->statDraws = R->draws; R->statPresents = R->presents; R->statSkips = R->skipped; R->statPending = R->pendingSkips; R->statCommits = R->commits; R->busyMs = 0;
 }
@@ -2460,12 +2504,12 @@ static void loop() {
 				// nobody is producing: queries the engine may be polling must reach the GPU
 				// (at most every 2 ms: the engine issues dozens of occlusion queries per frame between short ring gaps)
 				// PG_QUERY_COMMIT_MS=0 sends them at once (GTA-92 A/B: idle-query buffers separate 60-FPS from 35-FPS windows).
-				static double queryCommitMs = getenv("PG_QUERY_COMMIT_MS") ? atof(getenv("PG_QUERY_COMMIT_MS")) : 0;	// 0 since v1.4.3; 2 was the old wait
+				double queryCommitMs = gQueryBatchMs.load();	// 0 since v1.4.3; 2 was the old wait
 				bool waiting = !R->pendingQueries.empty();
 				if (waiting && nowMs() - R->lastCommitMs >= queryCommitMs) { commit(CIdle); waiting = false; }
 				hdr[5].store(1);
 				double i0 = nowMs();
-				if (hdr[0].load() == tail) PGGraphicsWait(R->ring, tail, (waiting ? 2 : 100) * 1000000ll);
+				if (hdr[0].load() == tail) PGGraphicsWait(R->ring, tail, pg_query_wait_ns(waiting,queryCommitMs,nowMs()-R->lastCommitMs));
 				R->work.idle += nowMs() - i0;
 				hdr[5].store(0);
 				report();
@@ -2507,6 +2551,26 @@ fragment float4 pg_blit_scaled(V in [[stage_in]], texture2d<float> t [[texture(0
  constexpr sampler linearSampler(coord::normalized,address::clamp_to_edge,filter::linear);
  return t.sample(linearSampler,in.p.xy/size);
 }
+// Directional fast approximate AA. Composite HUD is filtered too; optional.
+fragment float4 pg_blit_fxaa(V in [[stage_in]],texture2d<float> t [[texture(0)]],constant float2 &outputSize [[buffer(0)]]) {
+ constexpr sampler linearSampler(coord::normalized,address::clamp_to_edge,filter::linear);
+ float2 uv=in.p.xy/outputSize,px=1.0/float2(t.get_width(),t.get_height());
+ float3 nw=t.sample(linearSampler,uv+float2(-1,-1)*px).rgb;
+ float3 ne=t.sample(linearSampler,uv+float2(1,-1)*px).rgb;
+ float3 sw=t.sample(linearSampler,uv+float2(-1,1)*px).rgb;
+ float3 se=t.sample(linearSampler,uv+float2(1,1)*px).rgb;
+ float4 center=t.sample(linearSampler,uv);
+ const float3 luma=float3(.299,.587,.114);
+ float a=dot(nw,luma),b=dot(ne,luma),c=dot(sw,luma),d=dot(se,luma),m=dot(center.rgb,luma);
+ float low=min(m,min(min(a,b),min(c,d))),high=max(m,max(max(a,b),max(c,d)));
+ if(high-low<max(.0312,high*.125))return center;
+ float2 dir=float2(-((a+b)-(c+d)),(a+c)-(b+d));
+ float reduce=max((a+b+c+d)*(.25*.125),1.0/128.0);
+ dir=clamp(dir/(min(abs(dir.x),abs(dir.y))+reduce),float2(-8),float2(8))*px;
+ float3 aa=.5*(t.sample(linearSampler,uv+dir*(-1.0/6)).rgb+t.sample(linearSampler,uv+dir*(1.0/6)).rgb);
+ float3 ab=aa*.5+.25*(t.sample(linearSampler,uv+dir*(-.5)).rgb+t.sample(linearSampler,uv+dir*.5).rgb);
+ float l=dot(ab,luma);return float4(l<low||l>high?aa:ab,center.a);
+}
 fragment float4 pg_alpha(V in [[stage_in]], texture2d<float> t [[texture(0)]]) { float a = t.read(uint2(in.p.xy)).a; return float4(a, a, a, 1); }
 fragment float4 pg_ds(V in [[stage_in]], depth2d<float> d [[texture(0)]], texture2d<uint> s [[texture(1)]]) { float z = d.read(uint2(in.p.xy)); uint st = s.read(uint2(in.p.xy)).r; return float4(z != 0 ? 1.0 : 0.0, saturate(z * 20.0), st != 0 ? 1.0 : 0.0, 1); }
 struct D { float depth [[depth(any)]]; };
@@ -2544,6 +2608,7 @@ static bool setup() {
 	R->zeroBuffer = [R->device newBufferWithLength:65536 options:MTLResourceStorageModeShared];
 	memset(R->zeroBuffer.contents, 0, 65536);
 	R->visibility = [R->device newBufferWithLength:OCCLUSION_SLOTS * 8 options:MTLResourceStorageModeShared];
+ if(!R->visibility){logf("Metal: visibility allocation failed; renderer not started.");return false;}
 	MTLSamplerDescriptor *sd = [MTLSamplerDescriptor new];
 	R->dummySampler = [R->device newSamplerStateWithDescriptor:sd];
 	sd.compareFunction = MTLCompareFunctionAlways;
@@ -2562,6 +2627,11 @@ static bool setup() {
     pd.fragmentFunction=[helpers newFunctionWithName:@"pg_blit_scaled"];
     R->scaledBlitPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];
     if(!R->scaledBlitPipe)logf("MSR bilinear pipeline unavailable; original present path retained.");
+    if(gFXAA.load()){
+    pd.fragmentFunction=[helpers newFunctionWithName:@"pg_blit_fxaa"];
+    R->fxaaPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];
+    if(!R->fxaaPipe)logf("FXAA unavailable; original presentation retained.");
+    }
 #if MR_TRACE
 	pd.fragmentFunction = [helpers newFunctionWithName:@"pg_alpha"];
 	T.alphaPipe = [R->device newRenderPipelineStateWithDescriptor:pd error:&error];

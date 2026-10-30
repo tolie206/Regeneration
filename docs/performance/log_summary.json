@@ -1,0 +1,34 @@
+{
+  "logs": [
+    {
+      "file": "native-port(2).log",
+      "lines": 25505,
+      "device": "Device: iPhone12,1 · 3 GB · app limit 2348 MB",
+      "missing_unique": 45,
+      "missing_occurrences": 45,
+      "renderer_windows": 29,
+      "gpu_buffer_warnings": 80
+    },
+    {
+      "file": "native-port(3).log",
+      "lines": 17094,
+      "device": "Device: iPhone15,3 · 5 GB · app limit 4096 MB",
+      "missing_unique": 45,
+      "missing_occurrences": 45,
+      "renderer_windows": 9,
+      "gpu_buffer_warnings": 47
+    },
+    {
+      "file": "native-port-previous (1).log",
+      "lines": 19670,
+      "device": "Device: iPhone14,2 · 5 GB · app limit 4096 MB",
+      "missing_unique": 45,
+      "missing_occurrences": 45,
+      "renderer_windows": 16,
+      "gpu_buffer_warnings": 48
+    }
+  ],
+  "identical_missing_sets": true,
+  "index_entries": 4920,
+  "notice": "Aggregated observations, not matched device benchmark; no raw logs included."
+}

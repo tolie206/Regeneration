@@ -71,6 +71,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
     private var preloadLabel: UILabel { home.preloadLabel }
     private var controllerLabel: UILabel { home.controllerLabel }
     private var diagnosticsOverlay: UIView? { home }
+    private var audioInterrupted = false
     private let audioEngine = AVAudioEngine()
     private var audioSource: AVAudioSourceNode?
     private lazy var loadingPill: UILabel = {
@@ -881,16 +882,18 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         center.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: .main) { [weak self] note in
             let type = (note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt).flatMap(AVAudioSession.InterruptionType.init)
             self?.appendLog("Audio interruption \(type == .began ? "began" : "ended").")
-            if type == .ended { self?.resumeAudio(reason: "interruption ended") }
+            if type == .began {self?.audioInterrupted=true;self?.audioRetry?.cancel()}
+            if type == .ended {self?.audioInterrupted=false;self?.resumeAudio(reason: "interruption ended")}
         }
+        center.addObserver(forName:UIApplication.willResignActiveNotification,object:nil,queue:.main){[weak self] _ in self?.audioRetry?.cancel()}
         center.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in self?.resumeAudio(reason: "app active") }
         center.addObserver(forName: .AVAudioEngineConfigurationChange, object: audioEngine, queue: .main) { [weak self] _ in self?.resumeAudio(reason: "audio configuration changed") }
-        center.addObserver(forName: AVAudioSession.mediaServicesWereResetNotification, object: nil, queue: .main) { [weak self] _ in self?.resumeAudio(reason: "media services reset") }
+        center.addObserver(forName: AVAudioSession.mediaServicesWereResetNotification, object: nil, queue: .main) { [weak self] _ in self?.audioInterrupted=false;self?.resumeAudio(reason: "media services reset") }
     }
     /// Activation fails while a call or Siri still holds the audio ("Session activation failed", logs 666 and
     /// 752), so a failed restart is tried again a few times, 0.5 to 8 s apart, while the app is in front (GTA-132).
     private func resumeAudio(reason: String, attempt: Int = 0) {
-        guard audioSource != nil, !audioEngine.isRunning, !audioShutDown else { return }
+        guard UIApplication.shared.applicationState == .active, !audioInterrupted, audioSource != nil, !audioEngine.isRunning, !audioShutDown else { return }
         do {
             try AVAudioSession.sharedInstance().setActive(true)
             try audioEngine.start()
