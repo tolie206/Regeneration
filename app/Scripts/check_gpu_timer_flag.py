@@ -11,7 +11,7 @@ for p in sorted((root/'Generated').glob('game_*.c')):
  text=p.read_text()
  for n,markers in list(checks.items()):
   import re
-  m=re.search(r'(?:void|u32|u64) w2c_game_f'+str(n)+r'\([^;]*?\) \{',text)
+  m=re.search(r'(?:void|u32|u64|f32|f64) w2c_game_f'+str(n)+r'\([^;]*?\) \{',text)
   if not m:continue
   body=text[m.start():text.index('\n}',m.end())]
   if not all(s in body for s in markers):raise RuntimeError('Pinned noGPUTimers guard changed')
