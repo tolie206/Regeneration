@@ -61,7 +61,9 @@ static void pg_sound_mod_tick(w2c_game *instance){
    u64 stack=instance->w2c_g0;instance->w2c_g0-=64;
    snprintf(pg_pointer(&env,instance->w2c_g0,64),64,"%s",profile);
    PG_FN_FORCE_AUDIO(instance,vehicle,instance->w2c_g0);instance->w2c_g0=stack;applied=true;
-   char line[128];snprintf(line,sizeof line,"Vehicle audio: %s model %08x uses %s.",stock?"original profile rebind":"custom",model,profile);pg_log(line);
+   char line[240];
+   unsigned granular=0;if(env.memory.size>6753748)granular=atomic_load_explicit((const _Atomic unsigned char *)((const unsigned char *)(void *)env.memory.data+6753748),memory_order_relaxed);
+   snprintf(line,sizeof line,"Vehicle audio: profile requested (%s) vehicle=%u model=%08x profile=%s granularEnabled=%u; audible playback not yet verified.",stock?"stock":"custom",vehicle,model,profile,granular);pg_log(line);
   }else if(attempts==10&&!stock)pg_log("Sound mod: profile not mounted after 10 startup attempts; restart after importing/enabling the sound pack. Original sound kept.");
  }
  pg_asi_leave_script(instance,previous);

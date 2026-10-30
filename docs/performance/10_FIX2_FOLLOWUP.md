@@ -1,0 +1,18 @@
+# V5R1-FIX2 follow-up
+Rollback:36fe189, checkpoint-v5r1-fix-36fe189. No raw tester log, game asset, comparison binary or credential added. Original E:/game unchanged. Device benchmark pending.
+
+Both new sessions: A16/iOS18.6.1/Sandbox, MSR3,1044x482->1560x720,60cap. One FXAAon, one off, different routes: NOT a controlled A/B. OfflinePerf disabled, so no reliable whole-session p99/1%low. Final query counters: >1million timestamps in one session, eventFast only1–2hits. Event optimization alone cannot explain an FPS improvement. FIX2 adds completed-work-only host-emulated timestamp resolution; all pending GPU/callback/readback/occlusion work keeps its existing synchronization. New timestampFast counter; batching stays0ms.
+
+Implemented: independent FXAA row (startup/in-game; applies next restart); Sandbox display-only FoW hide through engine native (1Hz check, write only if reset); keep Story/test map and saved exploration untouched. No global graphics downgrade or memory-policy change.
+
+Build measured:48m44s build step = about12m42 preparation +36min Xcode/package. ccache0/64cacheable,64uncacheable, saved0objects. Disable Release indexing and generated-C modules only; add a real repeated Xcode compile cache probe BEFORE long compilation, verbose stats and host-tool/library cache. Jobs2->3; identical iPhone compiler/O2. Wall-time gain NOT MEASURED, first working cache is cold. Probe failure stops expensive build.
+
+## Audio NOT FIXED
+Stock mesa/gresley/taco profile requests appear but player high-quality granular bank loads do not. NPC banks load. Comparison run.log loads high-quality V_TWIN_2 after an explicit BATI fallback for unsupported add-on; it also warns another supercar bank is not in a slot. Not proof of a universally correct comparison implementation.
+Pinned-engine source audit: ForceUseGameObject changes profile/dirty flag, not playback confirmation. Car focus/engine QualitySettingChanged gate granular setup on flag6753748. Initial module data sets it1; disablegranular parameter can clear it, but this host does not pass that parameter. Blindly forcing the flag/mixer is unjustified. New bounded audio diagnostic records its actual runtime value on takeover and labels a force-profile call as a request, not audible success. No guessed global audio reset or generic stock-car substitution shipped. Next device log needed to confirm this runtime branch and bank path.
+
+## Frame interpolation NOT INTEGRATED
+Apple MetalFX interpolation requires iOS26+, two color frames, verified motion+depth, correct presentation/HUD handling. Current tests run18.6.1; final-present only exposes composited color. Spatial does not expose temporal inputs. No zero-filled motion/depth, duplicate-frame FPS inflation or blending disguised as interpolation. Engine temporal-buffer contract and compatible target device are prerequisites.
+References: https://developer.apple.com/videos/play/wwdc2025/211/ ; https://developer.apple.com/documentation/metalfx/mtlfxframeinterpolatordescriptor
+
+Targeted CI: renderer/Metal/Swift; sanitized timestamp/event policy, trace, priority, sound retries, Sandbox FoW; actual Xcode ccache probe; full Release/IPA checks. Untouched importer/save suites skipped as authorized. All gameplay/audio/visual acceptance remains NOT DEVICE TESTED. Do not claim stable60fps or stock audio fixed.

@@ -1,12 +1,12 @@
 {
   "app/Source/MetalRenderer/MRRenderer.mm": {
     "base_v5_sha256": "64a439cde427e0a4231bb0b91fe0dadef84ced1b9f46b0a08e118924fcd3af34",
-    "fix_sha256": "cbc33887734793f0a9bc6d22e34ef178a2f152e7e5cb959e7618bceaaa08a7a3",
+    "fix_sha256": "d354d1240b1c44c5274f8083a43c33830a8afdb03dda7eb6ad5d15103c33bbec",
     "reason": "FIX reviewed query lifetime/event/trace/optional FXAA"
   },
   "app/App/GraphicsOptions.swift": {
     "base_v5_sha256": "59a643ce73319cbbe1052cd53b0656448c5afe46ad1ea4ec8110ca8e367bbe62",
-    "fix_sha256": "85f2a1c84ef56a436b38575bdf98136fd588cd08756a0843403467d8b3f39e11",
+    "fix_sha256": "6e46dab3d8998647b748215084eaae6a40fb03bdb2897e8ed769597936a90e24",
     "reason": "Configure FIX preferences at startup; existing preset values retained"
   }
 }

@@ -227,6 +227,6 @@ enum GraphicsConfiguration {
                 PGConfigureEngine($0, UInt32(buffer.count), Int32(width), Int32(height), settings.frameRateCap == 0 ? 0 : settings.frameRateCap == 60 ? 1 : 2)
             }
         }
-        return "V5R1-FIX fxaa=\(settings.fixFXAA), completedEventFast=\(settings.fixEventFast), queryBatchMs=\(settings.fixQueryBatch), trace=\(settings.fixTrace); MSR requested=\(settings.msrMode.rawValue), render=\(width)x\(height), output=\(outputWidth)x\(outputHeight), HUD=scaled-with-scene; \(preset.title) \(width)×\(height) at \(GameSettings.frameRateTitle(settings.frameRateCap))" + (own.isEmpty ? "" : ", own settings: " + own.joined(separator: ", "))
+        return "V5R1-FIX2 fxaa=\(settings.fixFXAA), completedEventFast=\(settings.fixEventFast), queryBatchMs=\(settings.fixQueryBatch), trace=\(settings.fixTrace); MSR requested=\(settings.msrMode.rawValue), render=\(width)x\(height), output=\(outputWidth)x\(outputHeight), HUD=scaled-with-scene; \(preset.title) \(width)×\(height) at \(GameSettings.frameRateTitle(settings.frameRateCap))" + (own.isEmpty ? "" : ", own settings: " + own.joined(separator: ", "))
     }
 }

@@ -153,7 +153,7 @@ final class SettingsViewController: UITableViewController {
         switch sectionKind(section) {
         // While the game runs, settings that only take effect at the next start are hidden.
         case .mode: return engineRunning ? 0 : importSaveRow + 1
-        case .graphics: return (engineRunning ? Self.liveGraphicsRows.count : settings.tier.allowed.count + 7 + GraphicsDetail.all.count) + 2
+        case .graphics: return (engineRunning ? Self.liveGraphicsRows.count : settings.tier.allowed.count + 7 + GraphicsDetail.all.count) + 3
         case .controls: return controlsRows.count
         case .cheats: return engineRunning ? StoryCheats.all.count + storyCheatStart : 0
         case .gyro: return (settings.gyroAim == .off ? 1 : 3) + (settings.tiltSteer == .off ? 1 : 2)
@@ -248,11 +248,12 @@ final class SettingsViewController: UITableViewController {
             cell.accessoryType = settings.gameModeChoice == mode ? .checkmark : .none
         case .graphics where indexPath.row >= (engineRunning ? Self.liveGraphicsRows.count : presets.count + 7 + GraphicsDetail.all.count):
             let base = engineRunning ? Self.liveGraphicsRows.count : presets.count + 7 + GraphicsDetail.all.count
+            let fxaa = indexPath.row == base + 2
             let sun = indexPath.row == base
-            let key = sun ? "NewGenDisableSunRays" : "NewGenLightExplosions"
-            let title = sun ? "Tắt tia nắng và loé ống kính" : "Vụ nổ nhẹ hơn"
+            let key = fxaa ? "V5FixFXAA" : (sun ? "NewGenDisableSunRays" : "NewGenLightExplosions")
+            let title = fxaa ? "Khử răng cưa FXAA" : (sun ? "Tắt tia nắng và loé ống kính" : "Vụ nổ nhẹ hơn")
             content.text = title
-            content.secondaryText = sun ? "Áp dụng khi mở lại game; giữ ánh sáng môi trường." : "Giảm lớp tia lửa/hiệu ứng phụ của vụ nổ; giữ hình ảnh khác, sát thương và lửa gameplay. Áp dụng khi mở lại game."
+            content.secondaryText = fxaa ? "Bật độc lập với MSR. Làm mềm răng cưa, có thể mềm chữ và tăng tải GPU. Áp dụng khi mở lại app." : sun ? "Áp dụng khi mở lại game; giữ ánh sáng môi trường." : "Giảm lớp tia lửa/hiệu ứng phụ của vụ nổ; giữ hình ảnh khác, sát thương và lửa gameplay. Áp dụng khi mở lại game."
             cell.selectionStyle = .none
             cell.accessoryView = toggle(UserDefaults.standard.bool(forKey:key),label:title){ UserDefaults.standard.set($0,forKey:key) }
         case .graphics:

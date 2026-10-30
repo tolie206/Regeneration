@@ -7,7 +7,7 @@
 int main(){
  for(unsigned type=0;type<6;type++)for(unsigned bits=0;bits<8;bits++)for(unsigned completed=0;completed<8;completed++){
   bool result=pg_completed_event_fast(type,bits&1,bits&2,bits&4,completed,4);
-  assert(result==(type==0&&bits==0&&completed>=4));
+  assert(result==((type==0||type==2)&&bits==0&&completed>=4));
  }
  assert(pg_query_batch_ms(-1)==0&&pg_query_batch_ms(2)==0&&pg_query_batch_ms(.25)==.25);
  assert(pg_query_wait_ns(false,0,0)==100000000);

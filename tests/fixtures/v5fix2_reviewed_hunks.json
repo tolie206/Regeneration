@@ -1,0 +1,12 @@
+{
+  "app/Source/EngineHost.c": [
+    [
+      "#include \"NativeSoundMods.inc\"",
+      "#include \"NativeSoundMods.inc\"\n#include \"NativeSandboxMap.inc\""
+    ],
+    [
+      "  pg_sound_mod_tick(instance);",
+      "  pg_sound_mod_tick(instance);\n  pg_sandbox_map_tick(instance);"
+    ]
+  ]
+}

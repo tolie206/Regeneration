@@ -314,7 +314,7 @@ static std::atomic<double> gQueryBatchMs{0};
 static std::atomic<bool> gEventFast{true},gFixTrace{false},gFXAA{false};
 static PGRenderTimeline gRenderTimeline;
 static std::atomic<uint32_t> gCallbacksOutstanding{0};
-static uint64_t eventFastHits=0,queryEnds[6]={},visibilityEpochs=0;
+static uint64_t timestampFastHits=0,eventFastHits=0,queryEnds[6]={},visibilityEpochs=0;
 extern "C" void PGMetalRendererConfigureFix(double batch,int eventFast,int fxaa,int trace){
  gQueryBatchMs.store(pg_query_batch_ms(batch));gEventFast.store(eventFast!=0);gFXAA.store(fxaa!=0);gFixTrace.store(trace!=0);
 }
@@ -2422,10 +2422,11 @@ static void execute(uint32_t op, const uint32_t *p, uint32_t n) {
 		if (!q) break;
 		q->seq = p[1];
   if(q->type<6)queryEnds[q->type]++;
-  // EVENT means prior GPU work has completed, not a visibility/timestamp result.
+  // EVENT and host-emulated TIMESTAMP may resolve here only after all prior work completed.
   // Publish only when completion is already observed; never bypass pending work.
   if(gEventFast.load()&&pg_completed_event_fast(q->type,R->cmd!=nil,!R->onComplete.empty()||gCallbacksOutstanding.load()!=0,!R->pendingQueries.empty(),R->completed.load(),R->serial-1)){
-   storeResult(q->addr,1,p[1]);eventFastHits++;break;
+   if(q->type==2){storeResult(q->addr,(uint64_t)(CACurrentMediaTime()*1e9),p[1]);timestampFastHits++;}
+   else {storeResult(q->addr,1,p[1]);eventFastHits++;}break;
   }
 		if (q->type == 1 || q->type == 5) { if (R->activeOcclusion == q) { endOcclusionInPass(); R->activeOcclusion = nullptr; } }
 		R->pendingQueries.push_back({q, p[1], q->slots, q->type, q->addr});
@@ -2471,8 +2472,8 @@ static void report() {
 	     (long long)gBufferStats.count.load(), gBufferStats.bytes / MB, gBufferStats.pages / MB, (long long)gBufferStats.meshCount.load(),
 	     gBufferStats.meshBytes / MB, gSlabs.size(), ring / MB, ringBig / MB);
 	if (gSkipTopMip || gSkipBigTopMip) logf("[metal] %s: %lld textures without their largest level; %llu copies or readbacks needed one", gSkipTopMip ? "Lite" : "Big textures", (long long)gTextureStats.halfSize.load(), (unsigned long long)gTextureStats.missingLevel.load());
- logf("[FixQuery] frame=%llu eventFast=%llu queryTypes=%llu,%llu,%llu,%llu,%llu,%llu visibilityEpochs=%llu batchMs=%.3f fxaaRequested=%d fxaaEffective=%d",
- (unsigned long long)R->frame,(unsigned long long)eventFastHits,(unsigned long long)queryEnds[0],(unsigned long long)queryEnds[1],(unsigned long long)queryEnds[2],(unsigned long long)queryEnds[3],(unsigned long long)queryEnds[4],(unsigned long long)queryEnds[5],(unsigned long long)visibilityEpochs,gQueryBatchMs.load(),gFXAA.load(),gFXAA.load()&&R->fxaaPipe!=nil);
+ logf("[FixQuery] frame=%llu eventFast=%llu timestampFast=%llu queryTypes=%llu,%llu,%llu,%llu,%llu,%llu visibilityEpochs=%llu batchMs=%.3f fxaaRequested=%d fxaaEffective=%d",
+ (unsigned long long)R->frame,(unsigned long long)eventFastHits,(unsigned long long)timestampFastHits,(unsigned long long)queryEnds[0],(unsigned long long)queryEnds[1],(unsigned long long)queryEnds[2],(unsigned long long)queryEnds[3],(unsigned long long)queryEnds[4],(unsigned long long)queryEnds[5],(unsigned long long)visibilityEpochs,gQueryBatchMs.load(),gFXAA.load(),gFXAA.load()&&R->fxaaPipe!=nil);
  if(gFixTrace.load()){
   std::array<PGRenderStamp,1024> samples;uint64_t dropped=0;size_t n=gRenderTimeline.drain(samples,dropped);
   logf("[FixTrace] recentEvents=%zu overwritten=%llu cpuClock=CACurrentMediaTime gpuClock=MetalTimestamp; frame/serial correlate, do not sum unlike windows",n,(unsigned long long)dropped);

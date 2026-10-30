@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <cmath>
 static inline bool pg_completed_event_fast(uint32_t type,bool hasCommands,bool hasCallbacks,bool hasQueries,uint64_t completed,uint64_t submitted){
- return type==0&&!hasCommands&&!hasCallbacks&&!hasQueries&&completed>=submitted;
+ return (type==0||type==2)&&!hasCommands&&!hasCallbacks&&!hasQueries&&completed>=submitted;
 }
 static inline double pg_query_batch_ms(double requested){return requested>=0&&requested<=1?requested:0;}
 static inline int64_t pg_query_wait_ns(bool waiting,double batchMs,double elapsedMs){

@@ -8,6 +8,9 @@ class Baseline(unittest.TestCase):
    v5=json.loads((ROOT/'tests/fixtures/v5_reviewed_changes.json').read_text())
    fixFile=ROOT/'tests/fixtures/v5fix_reviewed_changes.json'
    fixes=json.loads(fixFile.read_text()) if fixFile.exists() else {}
+   fix2=json.loads((ROOT/'tests/fixtures/v5fix2_reviewed_hunks.json').read_text())
+   for old,new in fix2.get(path,[]):
+    self.assertEqual(data.count(new.encode()),1,path);data=data.replace(new.encode(),old.encode())
    if path in fixes:
     self.assertEqual(fixes[path]['base_v5_sha256'],v5[path]['v5_sha256'],path)
     self.assertEqual(hashlib.sha256(data).hexdigest(),fixes[path]['fix_sha256'],path)

@@ -53,7 +53,7 @@ xcodebuild -project PlayGTA5Native.xcodeproj "${CACHE_ARGS[@]}" -scheme PlayGTA5
   -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
   -derivedDataPath Build/Release -jobs "$JOBS" \
   GCC_OPTIMIZATION_LEVEL=2 SWIFT_OPTIMIZATION_LEVEL=-O DEBUG_INFORMATION_FORMAT=dwarf \
-  CODE_SIGNING_ALLOWED=NO CODE_SIGN_ENTITLEMENTS="$ENTITLEMENTS" build > Build/xcodebuild.log 2>&1 || {
+  COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGNING_ALLOWED=NO CODE_SIGN_ENTITLEMENTS="$ENTITLEMENTS" build > Build/xcodebuild.log 2>&1 || {
   grep -E 'error:' Build/xcodebuild.log | head -20
   echo "Build failed; the full log is app/Build/xcodebuild.log"; exit 1; }
 grep -E 'BUILD SUCCEEDED' Build/xcodebuild.log
