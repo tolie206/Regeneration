@@ -5,6 +5,9 @@ class Baseline(unittest.TestCase):
  def test_core_preserved_except_explicit_reviewed_changes(self):
   for path,sha in json.loads((ROOT/'tests/regeneration_perf_baseline.json').read_text()).items():
    data=(ROOT/path).read_bytes().replace(b'\r\n',b'\n')
+   color=json.loads((ROOT/'tests/fixtures/v5color_reviewed_hunks.json').read_text())
+   for old,new in color.get(path,[]):
+    self.assertEqual(data.count(new.encode()),1,path);data=data.replace(new.encode(),old.encode())
    v5=json.loads((ROOT/'tests/fixtures/v5_reviewed_changes.json').read_text())
    fixFile=ROOT/'tests/fixtures/v5fix_reviewed_changes.json'
    fixes=json.loads(fixFile.read_text()) if fixFile.exists() else {}

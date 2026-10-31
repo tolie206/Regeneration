@@ -657,6 +657,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         ModVehicleSupport.prepare(manifestPath:path,log:appendLog)
         ModVehicleSupport.prepareLargeResources(log:appendLog)
         SoundAssignments.resolveDuplicatePacks(log:appendLog)
+        ColorFilterSettings.apply()
         ExperienceSettings.apply()
         SoundAssignments.configure()
         noticeMods()

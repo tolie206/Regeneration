@@ -6,3 +6,5 @@ func PGSetFirstPersonWide(_ degrees:Float){}
 struct NativeCheatAction{let title:String;let command:PGCheatCommand;let value:Int32}
 enum ModInstaller{static var gameRunning=false}
 enum Theme{static func styleSettingsTable(_ table:UITableView){}}
+
+func PGSetColorFilter(_ mode:Int32){}

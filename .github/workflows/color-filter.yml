@@ -1,0 +1,32 @@
+name: Color filter prototype checks (no IPA)
+on:
+  push:
+    branches: [mugoat-color-filter]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mugoat-color-filter-checks
+  cancel-in-progress: true
+jobs:
+  color-checks:
+    runs-on: macos-26-intel
+    timeout-minutes: 20
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify original iPhone SDK
+        run: |
+          test "$GITHUB_REPOSITORY" = tolie206/Regeneration
+          test "$(xcrun --sdk iphoneos --show-sdk-version)" = 26.2
+      - name: Metal compiler
+        run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
+      - name: Only new color filter checks
+        run: |
+          python3 -m unittest discover -s tests -p test_color_filter.py -v
+          python3 tools/test_fix_renderer.py
+          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/ColorFilterSettings.swift app/Tests/ExperienceTypecheckStubs.swift
+          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/SettingsHomeViewController.swift app/App/NativePortViewController.swift

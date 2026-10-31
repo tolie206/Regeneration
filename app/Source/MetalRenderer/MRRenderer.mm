@@ -245,6 +245,7 @@ struct Renderer {
 	std::unordered_map<uint32_t, id<MTLTexture>> dummyTextures;
 	id<MTLSamplerState> dummySampler, dummyCompare;
 	id<MTLRenderPipelineState> blitPipe, capturePipe, scaledBlitPipe, fxaaPipe;
+    id<MTLRenderPipelineState> colorBlitPipe, colorScaledPipe, colorFXAAPipe;
 	id<MTLDepthStencilState> noDepth;
 
 	// game shader objects by program (the first object created for each), for program substitutions
@@ -311,6 +312,9 @@ static id<MTLBlitCommandEncoder> blitEncoder() {
 	return R->blit;
 }
 static std::atomic<double> gQueryBatchMs{0};
+#include "MRColorFilter.h"
+static std::atomic<uint32_t> gColorFilter{0};
+extern "C" void PGSetColorFilter(int mode){gColorFilter.store(mode>=0&&mode<=3?(uint32_t)mode:0);}
 static std::atomic<bool> gEventFast{true},gFixTrace{false},gFXAA{false};
 static PGRenderTimeline gRenderTimeline;
 static std::atomic<uint32_t> gCallbacksOutstanding{0};
@@ -2142,7 +2146,14 @@ static void present(uint32_t texId) {
 			MTLRenderPassDescriptor *rp = [MTLRenderPassDescriptor renderPassDescriptor];
 			rp.colorAttachments[0].texture = drawable.texture; rp.colorAttachments[0].loadAction = MTLLoadActionDontCare; rp.colorAttachments[0].storeAction = MTLStoreActionStore;
 			id<MTLRenderCommandEncoder> e = [commandBuffer() renderCommandEncoderWithDescriptor:rp];
-            [e setRenderPipelineState:fxaa?R->fxaaPipe:(bilinear?R->scaledBlitPipe:R->blitPipe)];[e setFragmentTexture:picture atIndex:0];
+            id<MTLRenderPipelineState> basePipe=fxaa?R->fxaaPipe:(bilinear?R->scaledBlitPipe:R->blitPipe);
+            uint32_t colorMode=gColorFilter.load();
+            id<MTLRenderPipelineState> colorPipe=fxaa?R->colorFXAAPipe:(bilinear?R->colorScaledPipe:R->colorBlitPipe);
+            bool colorActive=colorMode!=0&&colorPipe!=nil;
+            [e setRenderPipelineState:colorActive?colorPipe:basePipe];[e setFragmentTexture:picture atIndex:0];
+            if(colorActive){PGColorParams color=pg_color_params(colorMode);[e setFragmentBytes:&color length:sizeof color atIndex:1];}
+            static uint32_t lastColor=UINT32_MAX;
+            if(lastColor!=colorMode){logf("Color filter: requested=%u effective=%u, fused present; composite HUD included.",colorMode,colorActive?colorMode:0);lastColor=colorMode;}
             if(bilinear||fxaa){float dimensions[2]={(float)outW,(float)outH};[e setFragmentBytes:dimensions length:sizeof dimensions atIndex:0];}
 			[e drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
 			[e endEncoding];
@@ -2572,6 +2583,43 @@ fragment float4 pg_blit_fxaa(V in [[stage_in]],texture2d<float> t [[texture(0)]]
  float3 ab=aa*.5+.25*(t.sample(linearSampler,uv+dir*(-.5)).rgb+t.sample(linearSampler,uv+dir*.5).rgb);
  float l=dot(ab,luma);return float4(l<low||l>high?aa:ab,center.a);
 }
+// Display-referred, luminance-preserving vibrance, with a soft green hue mask.
+// This is color selection, not semantic tree detection. No texture/LUT lookup.
+float4 pg_color_grade(float4 sourceColor,constant float4 &p){
+ float3 c=sourceColor.rgb;
+ float hi=max(c.r,max(c.g,c.b)),lo=min(c.r,min(c.g,c.b));
+ float greenMask=saturate((c.g-max(c.r,c.b)-.015f)*5.0f);
+ float vibrance=(p.x-1.0f)*(1.0f-saturate(hi-lo))+(p.y-1.0f)*greenMask;
+ float l=dot(c,float3(.2126f,.7152f,.0722f));
+ c=l+(c-l)*(1.0f+p.w*vibrance);
+ c=(c-.5f)*(1.0f+(p.z-1.0f)*p.w)+.5f;
+ return float4(saturate(c),sourceColor.a);
+}
+fragment float4 pg_blit_color(V in [[stage_in]], texture2d<float> t [[texture(0)]], constant float4 &grade [[buffer(1)]]) { return pg_color_grade(t.read(uint2(in.p.xy)),grade); }
+fragment float4 pg_blit_scaled_color(V in [[stage_in]], texture2d<float> t [[texture(0)]], constant float2 &size [[buffer(0)]],constant float4 &grade [[buffer(1)]]) {
+ constexpr sampler linearSampler(coord::normalized,address::clamp_to_edge,filter::linear);
+ return pg_color_grade(t.sample(linearSampler,in.p.xy/size),grade);
+}
+// Directional fast approximate AA. Composite HUD is filtered too; optional.
+fragment float4 pg_blit_fxaa_color(V in [[stage_in]],texture2d<float> t [[texture(0)]],constant float2 &outputSize [[buffer(0)]],constant float4 &grade [[buffer(1)]]) {
+ constexpr sampler linearSampler(coord::normalized,address::clamp_to_edge,filter::linear);
+ float2 uv=in.p.xy/outputSize,px=1.0/float2(t.get_width(),t.get_height());
+ float3 nw=t.sample(linearSampler,uv+float2(-1,-1)*px).rgb;
+ float3 ne=t.sample(linearSampler,uv+float2(1,-1)*px).rgb;
+ float3 sw=t.sample(linearSampler,uv+float2(-1,1)*px).rgb;
+ float3 se=t.sample(linearSampler,uv+float2(1,1)*px).rgb;
+ float4 center=t.sample(linearSampler,uv);
+ const float3 luma=float3(.299,.587,.114);
+ float a=dot(nw,luma),b=dot(ne,luma),c=dot(sw,luma),d=dot(se,luma),m=dot(center.rgb,luma);
+ float low=min(m,min(min(a,b),min(c,d))),high=max(m,max(max(a,b),max(c,d)));
+ if(high-low<max(.0312,high*.125))return pg_color_grade(center,grade);
+ float2 dir=float2(-((a+b)-(c+d)),(a+c)-(b+d));
+ float reduce=max((a+b+c+d)*(.25*.125),1.0/128.0);
+ dir=clamp(dir/(min(abs(dir.x),abs(dir.y))+reduce),float2(-8),float2(8))*px;
+ float3 aa=.5*(t.sample(linearSampler,uv+dir*(-1.0/6)).rgb+t.sample(linearSampler,uv+dir*(1.0/6)).rgb);
+ float3 ab=aa*.5+.25*(t.sample(linearSampler,uv+dir*(-.5)).rgb+t.sample(linearSampler,uv+dir*.5).rgb);
+ float l=dot(ab,luma);return pg_color_grade(float4(l<low||l>high?aa:ab,center.a),grade);
+}
 fragment float4 pg_alpha(V in [[stage_in]], texture2d<float> t [[texture(0)]]) { float a = t.read(uint2(in.p.xy)).a; return float4(a, a, a, 1); }
 fragment float4 pg_ds(V in [[stage_in]], depth2d<float> d [[texture(0)]], texture2d<uint> s [[texture(1)]]) { float z = d.read(uint2(in.p.xy)); uint st = s.read(uint2(in.p.xy)).r; return float4(z != 0 ? 1.0 : 0.0, saturate(z * 20.0), st != 0 ? 1.0 : 0.0, 1); }
 struct D { float depth [[depth(any)]]; };
@@ -2634,6 +2682,16 @@ static bool setup() {
     if(!R->fxaaPipe)logf("FXAA unavailable; original presentation retained.");
     }
 #if MR_TRACE
+    // Small optional variants compiled once at startup; no gameplay PSO creation.
+    pd.fragmentFunction=[helpers newFunctionWithName:@"pg_blit_color"];
+    R->colorBlitPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];
+    pd.fragmentFunction=[helpers newFunctionWithName:@"pg_blit_scaled_color"];
+    R->colorScaledPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];
+    if(gFXAA.load()){
+      pd.fragmentFunction=[helpers newFunctionWithName:@"pg_blit_fxaa_color"];
+      R->colorFXAAPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];
+    }
+    if(!R->colorBlitPipe||!R->colorScaledPipe||(gFXAA.load()&&!R->colorFXAAPipe))logf("Color filter: optional pipeline unavailable; affected mode retains original present.");
 	pd.fragmentFunction = [helpers newFunctionWithName:@"pg_alpha"];
 	T.alphaPipe = [R->device newRenderPipelineStateWithDescriptor:pd error:&error];
 	pd.fragmentFunction = [helpers newFunctionWithName:@"pg_ds"];

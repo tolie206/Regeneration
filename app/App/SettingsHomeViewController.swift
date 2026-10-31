@@ -56,6 +56,7 @@ final class SettingsHomeViewController: UITableViewController {
             let count = ModInstaller.installed().filter(\.enabled).count
             return count == 0 ? AppLanguage.choose("Install car, skin and script mods") : AppLanguage.interpolate(AppLanguage.choose("{arg0} mods on"), [String(count)])
         }, sections: [], page: { ModsViewController() }))
+        list.append(Category(icon:"camera.filters",title:"Filter màu cảnh quan",summary:{ColorFilterSettings.titles[ColorFilterSettings.mode]},sections:[],page:{ColorFilterViewController()}))
         list.append(Category(icon:"speaker.wave.2",title:"Tiếng xe và góc nhìn",summary:{"Âm lượng động cơ · góc nhìn thứ nhất rộng"},sections:[],page:{[weak self] in
             let page=ExperienceSettingsViewController();page.cameraSelected=self?.nativeCheatSelected;return page
         }))

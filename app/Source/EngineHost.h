@@ -29,6 +29,7 @@ void PGSetFrameLimit(int frameLimit);
 // Settings › Memory cap in MB (0 automatic); call before the engine starts.
 void PGConfigureAudioDownmix(int enabled);
 void PGSetVehicleEngineGain(float db); // 0 original, 0...12 dB; engine components only
+void PGSetColorFilter(int mode); // live: 0 off,1 natural,2 foliage colors,3 vivid
 void PGSetFirstPersonWide(float degrees); // 0 original, 0...20 degrees; on foot only
 void PGSetMemoryCap(int mb);
 // Before PGStartEngine: 1 Story Mode (the release startup: continues the
