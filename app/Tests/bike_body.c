@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <stdio.h>
 typedef uint64_t u64;typedef uint32_t u32;typedef struct{int unused;} w2c_game;
-static bool gameplay=true,first=true,bike=true,paused,loading;static int status;static float wide=15;
+static bool gameplay=true,first=true,bike=true,occupied=true,paused,loading;static u32 vehicleView=4;static int status;static float wide=15;
 static u32 player=1,vehicle=10;
 static float pg_first_person_extra(void){return wide;}
 static int PGPauseMenuActive(void){return paused;}
@@ -18,11 +18,20 @@ static u32 PG_FN_GET_ENTITY_MODEL(w2c_game*i,u32 v){(void)i;return v+100;}
 static u64 PG_FN_TURBO_ENTITY_ADDRESS(w2c_game*i,u32 p){(void)i;return p*100;}
 static u32 PG_FN_BIKE_MODEL(w2c_game*i,u32 m){(void)i;(void)m;return bike;}
 static u32 PG_FN_GAMEPLAY_RENDERING(w2c_game*i){(void)i;return gameplay;}
-static u32 PG_FN_RENDERED_FIRST_PERSON(w2c_game*i){(void)i;return first;}
+static u32 PG_FN_VEHICLE_VIEW_MODE(w2c_game*i){(void)i;return vehicleView;}
+static u32 PG_FN_PED_OCCUPIED(w2c_game*i,u32 ped,u32 entering){(void)i;(void)ped;assert(entering==0);return occupied;}
 #include "../Source/NativeBikeBody.inc"
 int main(void){
  w2c_game game={0};pg_bike_body_tick(&game);assert(pg_hide_bike_body(&game,100));assert(!pg_hide_bike_body(&game,200)); // NPC untouched
- first=false;assert(!pg_hide_bike_body(&game,100));pg_bike_body_tick(&game);assert(!atomic_load(&bikeBodyPed));first=true;
+ // Reproduce actual failure: on foot, getter still returns the last bike, on-foot FP active.
+ occupied=false;first=true;assert(vehicle==10);assert(!pg_hide_bike_body(&game,100));assert(PGBikeBodyReason()==2);
+ // Mounted motorcycle context4 must work even when the unrelated generic FP query is false.
+ occupied=true;first=false;vehicleView=4;assert(pg_hide_bike_body(&game,100));
+ // All these transitions occur BEFORE the next script tick; stale cached eligibility must never hide.
+ occupied=false;assert(!pg_hide_bike_body(&game,100));occupied=true;
+ vehicleView=1;assert(!pg_hide_bike_body(&game,100));assert(PGBikeBodyReason()==5);vehicleView=4;
+ bike=false;assert(!pg_hide_bike_body(&game,100));assert(PGBikeBodyReason()==4);bike=true;
+ player=2;assert(!pg_hide_bike_body(&game,100));player=1;
  gameplay=false;pg_bike_body_tick(&game);assert(!pg_hide_bike_body(&game,100));gameplay=true;
  bike=false;pg_bike_body_tick(&game);assert(!pg_hide_bike_body(&game,100));bike=true;
  vehicle=0;pg_bike_body_tick(&game);assert(!pg_hide_bike_body(&game,100));vehicle=10;
@@ -32,5 +41,5 @@ int main(void){
  status=1;pg_bike_body_tick(&game);assert(!pg_hide_bike_body(&game,100));status=0;
  pg_bike_body_tick(&game);assert(pg_hide_bike_body(&game,100));PGSetHideBikeBody(0);assert(!pg_hide_bike_body(&game,100));
  PGSetHideBikeBody(1);player=2;pg_bike_body_tick(&game);assert(pg_hide_bike_body(&game,200)&&!pg_hide_bike_body(&game,100));
- puts("PASS only local bike/first-person/wide; restore on foot/car/third-person/pause/load/cutscene/off/respawn; NPC unaffected");
+ puts("PASS only local bike/first-person/wide; last-bike retained while walking, vehicle-FP with generic-FP false, stale cache between ticks, restore/off/respawn/NPC isolation");
 }

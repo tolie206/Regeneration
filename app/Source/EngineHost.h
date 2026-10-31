@@ -31,6 +31,7 @@ void PGConfigureAudioDownmix(int enabled);
 void PGSetVehicleEngineGain(float db); // 0 original, 0...12 dB; granular engine channels
 float PGVehicleGrainDiagnostics(uint64_t out[4]);
 uint64_t PGHiddenBikeDraws(void);
+unsigned PGBikeBodyReason(void);
 void PGSetHideBikeBody(int enabled); // only local player bike + first person + wide FOV
 void PGSetColorFilter(int mode); // live: 0 off,1 natural,2 foliage colors,3 vivid
 void PGSetFirstPersonWide(float degrees); // 0 original, 0...20 degrees; first-person output frames
