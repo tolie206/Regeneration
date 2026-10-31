@@ -1,0 +1,55 @@
+name: Lossless compact IPA (no engine rebuild)
+on:
+  push:
+    branches: [restore-0383-packaging]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: restore-0383-lossless-packaging
+  cancel-in-progress: true
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Test byte-for-byte preservation
+        run: python3 -m unittest discover -s tests -p test_lossless_repack.py -v
+      - name: Wait for already-running restored release (no macOS build minutes)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: python
+        run: |
+          import json,os,time,urllib.request
+          url='https://api.github.com/repos/tolie206/Regeneration/actions/runs/41175320934'
+          for attempt in range(150):
+              request=urllib.request.Request(url,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+              with urllib.request.urlopen(request) as response: run=json.load(response)
+              assert run['head_sha'].startswith('099b0da'),'Unexpected source build'
+              if run['status']=='completed':
+                  assert run['conclusion']=='success','Restored release did not succeed'
+                  print('Restored release succeeded; reuse its exact IPA');break
+              if attempt%10==0: print('Waiting for the existing release; this job does not compile the engine.')
+              time.sleep(30)
+          else: raise RuntimeError('Original release still not completed')
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: tolie206/Regeneration
+          run-id: 41175320934
+          name: MUGOAT-V5R1-FIX2-OPTIMIZER
+          path: incoming
+      - name: Repack exact signed files with standard DEFLATE9
+        run: python3 tools/lossless_repack_ipa.py incoming/MUGOAT-V5R1-FIX2-OPTIMIZER.ipa MUGOAT-V5R1-FIX2-OPTIMIZER-COMPACT.ipa --verify-release --report ipa-size.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MUGOAT-V5R1-FIX2-OPTIMIZER-COMPACT
+          path: |
+            MUGOAT-V5R1-FIX2-OPTIMIZER-COMPACT.ipa
+            ipa-size.json
+          compression-level: 0
+          retention-days: 14
