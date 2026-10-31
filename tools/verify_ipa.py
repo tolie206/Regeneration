@@ -1,4 +1,4 @@
-import zipfile,plistlib,sys,subprocess,tempfile,pathlib,struct
+import zipfile,plistlib,sys,subprocess,tempfile,pathlib,struct,hashlib
 from release_metadata import validate_sources
 expected=validate_sources()
 with zipfile.ZipFile(sys.argv[1]) as z, tempfile.TemporaryDirectory() as folder:
@@ -12,6 +12,7 @@ with zipfile.ZipFile(sys.argv[1]) as z, tempfile.TemporaryDirectory() as folder:
  executable=(app/info['CFBundleExecutable']).read_bytes()
  magic,cpu=struct.unpack_from('<II',executable)
  assert magic==0xfeedfacf and cpu==0x0100000c, 'IPA executable must be thin iPhone ARM64, regardless of build host'
+ assert hashlib.sha256((app/'Mugoat-PortLike-Traffic-v1.oiv').read_bytes()).hexdigest()=='bb62bf8f4489ad8ada764552aa03792618ad301c8fedda606af264d65ff0873c'
  assert (app/'VietnameseAccented.zip').is_file() and (app/'VietnamesePlain.zip').is_file()
  with zipfile.ZipFile(app/'BundledMenyoo.zip') as m:
   assert m.testzip() is None and 'menyooStuff/Language/Vietnamese.json' in m.namelist()

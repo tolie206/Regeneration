@@ -1,0 +1,12 @@
+{
+  "app/Source/EngineHost.c": [
+    [
+      "#include \"NativeTurbo.inc\"",
+      "#include \"NativeTurbo.inc\"\n#include \"NativeBikeBody.inc\""
+    ],
+    [
+      "  pg_turbo_tick(instance);",
+      "  pg_turbo_tick(instance);\n  pg_bike_body_tick(instance);"
+    ]
+  ]
+}

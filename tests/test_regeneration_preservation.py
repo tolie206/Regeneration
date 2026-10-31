@@ -5,6 +5,9 @@ class Baseline(unittest.TestCase):
  def test_core_preserved_except_explicit_reviewed_changes(self):
   for path,sha in json.loads((ROOT/'tests/regeneration_perf_baseline.json').read_text()).items():
    data=(ROOT/path).read_bytes().replace(b'\r\n',b'\n')
+   fix5=json.loads((ROOT/'tests/fixtures/v5fix5_reviewed_hunks.json').read_text())
+   for old,new in fix5.get(path,[]):
+    self.assertEqual(data.count(new.encode()),1,path);data=data.replace(new.encode(),old.encode())
    fix4=json.loads((ROOT/'tests/fixtures/v5fix4_reviewed_hunks.json').read_text())
    for old,new in fix4.get(path,[]):
     self.assertEqual(data.count(new.encode()),1,path);data=data.replace(new.encode(),old.encode())
@@ -40,6 +43,7 @@ class Baseline(unittest.TestCase):
    if path=='app/Source/EngineHost.c':
     fragments=json.loads((ROOT/'tests/fixtures/r004_reviewed_fragments.json').read_text())
     current=(ROOT/path).read_bytes().replace(b'\r\n',b'\n')
+    for old,new in fix5.get(path,[]): current=current.replace(new.encode(),old.encode())
     for old,new in r008.get(path,[]): current=current.replace(new.encode(),old.encode())
     for old,new in r007.get(path,[]): current=current.replace(new.encode(),old.encode())
     for old,new in reviewed.get(path,[]): current=current.replace(new.encode(),old.encode())

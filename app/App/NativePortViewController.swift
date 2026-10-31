@@ -649,6 +649,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         launchButton.setTitle(AppLanguage.choose("Loading…"), for: .disabled); launchButton.setNeedsUpdateConfiguration()
         appendLog("Native touch controls support held buttons, sprint and weapon selection.")
         installModsForTest()
+        do { appendLog(try BundledOptimizer.prepare()) } catch { appendLog("Built-in optimizer: \(error.localizedDescription)") }
         do { try BundledMenyoo.prepare() } catch { appendLog("Built-in Menyoo: \(error.localizedDescription)") }
         do { try SkinInstaller.updateMenyooList() } catch { appendLog("Menyoo addon skin list: \(error.localizedDescription)") }
         do { try BundledVietnamese.prepare() } catch { appendLog("Built-in translation: \(error.localizedDescription)") }
@@ -1242,8 +1243,8 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         playStats.health(fps: Double(PGRenderedFramesPerSecond()), thermal: ProcessInfo.processInfo.thermalState.rawValue, mission: story ? String(cString: name) : nil, failedScreen: replay == 1)
         var grainStats=[UInt64](repeating:0,count:4)
         let grainDB=PGVehicleGrainDiagnostics(&grainStats)
-        appendLog(String(format: "Health: memory %d MB used, %d MB free · guard stopped streaming growth %llu×, asked to evict %llu× · reads %llu (%.1f MB, avg %.1f ms, slow %llu, errors %llu) · %.0f FPS · thermal %@ · CPU %.2f cores · GPU tổng/frame %.1f ms · streaming %llu waiting (%llu over 10 s), loaded %llu (median %llu ms, 95%% %llu ms), remove calls %llu · at %.0f, %.0f, %.0f · grainGain %.0f dB calls %llu positive %llu probes %llu output %llu",
-                         used, free, d[0], d[7], d[1], Double(d[2]) / 1_048_576, avgMS, d[5], d[3], PGRenderedFramesPerSecond(), thermal, cores, gpuMS, stream[0], stream[1], stream[2], stream[3], stream[4], stream[5], position.0, position.1, position.2, grainDB, grainStats[0], grainStats[1], grainStats[2], grainStats[3]))
+        appendLog(String(format: "Health: memory %d MB used, %d MB free · guard stopped streaming growth %llu×, asked to evict %llu× · reads %llu (%.1f MB, avg %.1f ms, slow %llu, errors %llu) · %.0f FPS · thermal %@ · CPU %.2f cores · GPU tổng/frame %.1f ms · streaming %llu waiting (%llu over 10 s), loaded %llu (median %llu ms, 95%% %llu ms), remove calls %llu · at %.0f, %.0f, %.0f · grainGain %.0f dB calls %llu positive %llu probes %llu output %llu · bikeBodySkips %llu",
+                         used, free, d[0], d[7], d[1], Double(d[2]) / 1_048_576, avgMS, d[5], d[3], PGRenderedFramesPerSecond(), thermal, cores, gpuMS, stream[0], stream[1], stream[2], stream[3], stream[4], stream[5], position.0, position.1, position.2, grainDB, grainStats[0], grainStats[1], grainStats[2], grainStats[3], PGHiddenBikeDraws()))
     }
 
     @objc private func leftApp() {

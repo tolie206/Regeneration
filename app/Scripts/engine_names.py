@@ -20,6 +20,9 @@ HEADER = root / 'Generated/engine-functions.h'
 # Engine functions the host code calls directly (Source/*.c): each gets a macro in HEADER.
 HOST_FUNCTIONS = {
     'PG_FN_HIDE_MAP_FOW': 'hud_commands::CommandSetMinimapHideFoW(bool)',
+    'PG_FN_BIKE_MODEL': 'vehicle_commands::CommandIsThisModelABike(int)',
+    'PG_FN_GAMEPLAY_RENDERING': 'camera_commands::CommandIsGameplayCamRendering()',
+    'PG_FN_RENDERED_FIRST_PERSON': 'camInterface::IsDominantRenderedCameraAnyFirstPersonCamera()',
     'PG_FN_FIRST_PERSON_VEHICLE': 'camGameplayDirector::GetFirstPersonVehicleCamera(CEntity const*)',
     'PG_FN_CAMERA_PED_MODE': 'camera_commands::CommandSetFollowPedCamViewMode(int)',
     'PG_FN_CAMERA_VEHICLE_MODE': 'camera_commands::CommandSetFollowVehicleCamViewMode(int)',

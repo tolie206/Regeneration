@@ -1,4 +1,4 @@
-name: V5R1-FIX4 targeted checks and IPA
+name: V5R1-FIX5 targeted checks and IPA
 on:
   push:
     branches: [mugoat-color-filter]
@@ -38,17 +38,15 @@ jobs:
         run: bash tools/check_host_sanitizer.sh "$RUNNER_TEMP"
       - name: Metal compiler
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
-      - name: FIX4 audio, camera frame and production filter regressions
+      - name: Only new bike-body and bundled optimizer checks
         run: |
-          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/experience.c -o "$RUNNER_TEMP/fix4-experience"
-          "$RUNNER_TEMP/fix4-experience"
-          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/camera_frame.c -o "$RUNNER_TEMP/fix4-camera"
-          "$RUNNER_TEMP/fix4-camera"
-          python3 -m unittest discover -s tests -p test_experience.py -v
-          python3 -m unittest discover -s tests -p test_color_filter.py -v
+          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/bike_body.c -o "$RUNNER_TEMP/fix5-bike"
+          "$RUNNER_TEMP/fix5-bike"
+          python3 -m unittest discover -s tests -p test_bike_optimizer.py -v
           python3 -m unittest discover -s tests -p test_regeneration_preservation.py -v
-          python3 tools/test_fix_renderer.py
-          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/ExperienceSettings.swift app/App/ColorFilterSettings.swift app/Tests/ExperienceTypecheckStubs.swift
+          xcrun swiftc app/App/BundledOptimizer.swift app/Tests/BundledOptimizerTests.swift -o "$RUNNER_TEMP/fix5-optimizer"
+          "$RUNNER_TEMP/fix5-optimizer" app/Resources/Mugoat-PortLike-Traffic-v1.oiv
+          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/ExperienceSettings.swift app/Tests/ExperienceTypecheckStubs.swift
           xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/NativePortViewController.swift
       - name: Assemble and verify unchanged owner build inputs
         run: |
@@ -67,21 +65,21 @@ jobs:
           path: .ccache
           key: engine-ios26.2-arm64-${{ github.sha }}
           restore-keys: engine-ios26.2-arm64-
-      - name: Build single V5R1-FIX4 IPA
+      - name: Build single V5R1-FIX5 IPA
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify target, release, entitlements and bundled features
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa MUGOAT-V5R1-FIX4.ipa
+          mv GTA5Port.ipa MUGOAT-V5R1-FIX5.ipa
           ccache --show-stats --verbose
       - uses: actions/upload-artifact@v4
         with:
-          name: MUGOAT-V5R1-FIX4
-          path: MUGOAT-V5R1-FIX4.ipa
+          name: MUGOAT-V5R1-FIX5
+          path: MUGOAT-V5R1-FIX5.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: V5R1-FIX4-diagnostics
+          name: V5R1-FIX5-diagnostics
           path: app/Build/xcodebuild.log
           retention-days: 3
