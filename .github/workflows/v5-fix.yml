@@ -1,4 +1,4 @@
-name: V5R1-FIX3-FILTER targeted checks and IPA
+name: V5R1-FIX4 targeted checks and IPA
 on:
   push:
     branches: [mugoat-color-filter]
@@ -38,10 +38,18 @@ jobs:
         run: bash tools/check_host_sanitizer.sh "$RUNNER_TEMP"
       - name: Metal compiler
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
-      - name: Verify successful feature checks and unchanged tested source
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python3 tools/verify_filter_release.py
+      - name: FIX4 audio, camera frame and production filter regressions
+        run: |
+          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/experience.c -o "$RUNNER_TEMP/fix4-experience"
+          "$RUNNER_TEMP/fix4-experience"
+          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/camera_frame.c -o "$RUNNER_TEMP/fix4-camera"
+          "$RUNNER_TEMP/fix4-camera"
+          python3 -m unittest discover -s tests -p test_experience.py -v
+          python3 -m unittest discover -s tests -p test_color_filter.py -v
+          python3 -m unittest discover -s tests -p test_regeneration_preservation.py -v
+          python3 tools/test_fix_renderer.py
+          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/ExperienceSettings.swift app/App/ColorFilterSettings.swift app/Tests/ExperienceTypecheckStubs.swift
+          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/NativePortViewController.swift
       - name: Assemble and verify unchanged owner build inputs
         run: |
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/game-files"
@@ -59,21 +67,21 @@ jobs:
           path: .ccache
           key: engine-ios26.2-arm64-${{ github.sha }}
           restore-keys: engine-ios26.2-arm64-
-      - name: Build single V5R1-FIX3-FILTER IPA
+      - name: Build single V5R1-FIX4 IPA
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify target, release, entitlements and bundled features
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa MUGOAT-V5R1-FIX3-FILTER.ipa
+          mv GTA5Port.ipa MUGOAT-V5R1-FIX4.ipa
           ccache --show-stats --verbose
       - uses: actions/upload-artifact@v4
         with:
-          name: MUGOAT-V5R1-FIX3-FILTER
-          path: MUGOAT-V5R1-FIX3-FILTER.ipa
+          name: MUGOAT-V5R1-FIX4
+          path: MUGOAT-V5R1-FIX4.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: V5R1-FIX3-FILTER-diagnostics
+          name: V5R1-FIX4-diagnostics
           path: app/Build/xcodebuild.log
           retention-days: 3

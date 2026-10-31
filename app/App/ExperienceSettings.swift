@@ -20,7 +20,7 @@ final class ExperienceSettingsViewController: UITableViewController {
  override func tableView(_ tableView:UITableView,numberOfRowsInSection section:Int)->Int{[5,2,5][section]}
  override func tableView(_ tableView:UITableView,titleForHeaderInSection section:Int)->String?{["Âm lượng động cơ", "Đổi góc nhìn khi đang chơi", "Góc nhìn thứ nhất rộng (thử nghiệm)"][section]}
  override func tableView(_ tableView:UITableView,titleForFooterInSection section:Int)->String?{
-  ["Chỉ tăng tiếng động cơ xe gốc và xe mod, không tăng radio/hội thoại/còi. +6 dB khoảng gấp đôi biên độ. Nếu rè hãy giảm mức.","Camera native cho đi bộ và trong xe, giữ animation tay cầm súng/lái xe nếu model có hỗ trợ. Áp dụng sau khi đóng menu. Không ép camera cutscene.","Tăng FOV đi bộ, không thay zoom ngắm xa hoặc FOV trong xe. FOV rộng có thể tốn thêm GPU. Đây là chế độ native, không chạy plugin .asi Windows."][section]
+  ["Tăng kênh granular của động cơ xe gốc và xe mod, không tăng radio/hội thoại/còi. +6 dB khoảng gấp đôi biên độ. Nếu rè hãy giảm mức.","Camera native cho đi bộ và trong xe, giữ animation tay cầm súng/lái xe nếu model có hỗ trợ. Áp dụng sau khi đóng menu. Không ép camera cutscene.","Tăng FOV góc nhìn thứ nhất khi đi bộ và trong xe (kể cả xe máy). Giữ zoom ngắm xa, không ghi vào trạng thái camera gốc. FOV rộng có thể tốn thêm GPU. Đây là chế độ native, không chạy plugin .asi Windows."][section]
  }
  override func tableView(_ tableView:UITableView,cellForRowAt p:IndexPath)->UITableViewCell{
   let c=UITableViewCell(style:.default,reuseIdentifier:nil)

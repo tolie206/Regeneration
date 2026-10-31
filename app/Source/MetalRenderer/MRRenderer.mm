@@ -2681,7 +2681,6 @@ static bool setup() {
     R->fxaaPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];
     if(!R->fxaaPipe)logf("FXAA unavailable; original presentation retained.");
     }
-#if MR_TRACE
     // Small optional variants compiled once at startup; no gameplay PSO creation.
     pd.fragmentFunction=[helpers newFunctionWithName:@"pg_blit_color"];
     R->colorBlitPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];
@@ -2692,6 +2691,7 @@ static bool setup() {
       R->colorFXAAPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];
     }
     if(!R->colorBlitPipe||!R->colorScaledPipe||(gFXAA.load()&&!R->colorFXAAPipe))logf("Color filter: optional pipeline unavailable; affected mode retains original present.");
+#if MR_TRACE
 	pd.fragmentFunction = [helpers newFunctionWithName:@"pg_alpha"];
 	T.alphaPipe = [R->device newRenderPipelineStateWithDescriptor:pd error:&error];
 	pd.fragmentFunction = [helpers newFunctionWithName:@"pg_ds"];

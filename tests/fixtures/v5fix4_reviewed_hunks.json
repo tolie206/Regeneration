@@ -1,0 +1,12 @@
+{
+  "app/Source/MetalRenderer/MRRenderer.mm": [
+    [
+      "    R->fxaaPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];\n    if(!R->fxaaPipe)logf(\"FXAA unavailable; original presentation retained.\");\n    }\n#if MR_TRACE\n    // Small optional variants compiled once at startup; no gameplay PSO creation.\n    pd.fragmentFunction=[helpers newFunctionWithName:@\"pg_blit_color\"];\n    R->colorBlitPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];\n",
+      "    R->fxaaPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];\n    if(!R->fxaaPipe)logf(\"FXAA unavailable; original presentation retained.\");\n    }\n    // Small optional variants compiled once at startup; no gameplay PSO creation.\n    pd.fragmentFunction=[helpers newFunctionWithName:@\"pg_blit_color\"];\n    R->colorBlitPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];\n"
+    ],
+    [
+      "      R->colorFXAAPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];\n    }\n    if(!R->colorBlitPipe||!R->colorScaledPipe||(gFXAA.load()&&!R->colorFXAAPipe))logf(\"Color filter: optional pipeline unavailable; affected mode retains original present.\");\n\tpd.fragmentFunction = [helpers newFunctionWithName:@\"pg_alpha\"];\n\tT.alphaPipe = [R->device newRenderPipelineStateWithDescriptor:pd error:&error];\n\tpd.fragmentFunction = [helpers newFunctionWithName:@\"pg_ds\"];\n",
+      "      R->colorFXAAPipe=[R->device newRenderPipelineStateWithDescriptor:pd error:&error];\n    }\n    if(!R->colorBlitPipe||!R->colorScaledPipe||(gFXAA.load()&&!R->colorFXAAPipe))logf(\"Color filter: optional pipeline unavailable; affected mode retains original present.\");\n#if MR_TRACE\n\tpd.fragmentFunction = [helpers newFunctionWithName:@\"pg_alpha\"];\n\tT.alphaPipe = [R->device newRenderPipelineStateWithDescriptor:pd error:&error];\n\tpd.fragmentFunction = [helpers newFunctionWithName:@\"pg_ds\"];\n"
+    ]
+  ]
+}

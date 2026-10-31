@@ -8,7 +8,7 @@ enum Theme {
     static let telegramURL = URL(string: "https://github.com/Living-NG/GTA-NEW-GEN-2")!
     static let appVersion: String = {
         // Each release has one build number, so the marketing version alone identifies it.
-        return "V5R1-FIX3-FILTER" + (isLite ? " Lite" : "")
+        return "V5R1-FIX4" + (isLite ? " Lite" : "")
     }()
     /// The Lite build for iPhones with little memory: Info.plist PGLiteMode (build_ipa.sh --lite), or PG_LITE=1.
     static let isLite: Bool = (Bundle.main.object(forInfoDictionaryKey: "PGLiteMode") as? Bool ?? false)
