@@ -20,3 +20,10 @@ Chạy công cụ bằng Python 3.14 (hoặc cài zstandard trên Python cũ):
 Không chọn E:/GTAV_IOS nguyên bản trong app; chỉ dùng bộ đã chuyển và có marker sau kiểm tra đầy đủ.
 
 Bản riêng chỉ dùng local data. Preloader không khởi tạo cache bằng manifest gốc trước engine (NativeAssets chỉ configure một lần). Không dùng tải cache nền/server data trong bản này.
+
+Sau chuyển đổi chạy:
+
+    python tools/port_data/finalize_data.py --data E:/thu-muc-moi/data --base-manifest E:/game/data/manifest.json
+    python tools/port_data/verify_data.py E:/thu-muc-moi/data
+
+Finalizer giữ archive gốc nếu số entry/kích thước bảng tên khác. Không tuyên bố so được tên trong bảng NG-encrypted của data cũ. Chỉ tạo marker sau checksum toàn bộ. Kiểm định độc lập đọc lại mọi resource đã chuyển; bộ data chỉ được coi là ứng viên offline, chưa xác nhận gameplay trên iPhone.

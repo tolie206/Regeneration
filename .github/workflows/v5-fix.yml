@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-          fetch-depth: 5
+          fetch-depth: 12
       - name: Verify authorized repository and original iPhone toolchain
         run: |
           test "$GITHUB_REPOSITORY" = tolie206/Regeneration
