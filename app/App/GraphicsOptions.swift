@@ -198,6 +198,8 @@ enum GraphicsConfiguration {
     static func apply(_ settings: GameSettings, screen: CGSize, tv: Bool = false) -> String {
         let preset = settings.graphicsPreset
         let portProfile = PortDataPerformance.mode
+        if portProfile == .original { unsetenv("PG_PORTDATA_RATIO_FLOOR") }
+        else { setenv("PG_PORTDATA_RATIO_FLOOR", "200", 1) }
         let requestedHeight = settings.renderHeight > 0 ? settings.renderHeight : preset.height
         let effectiveHeight = PortDataPerformance.height(requestedHeight, mode: portProfile)
         let (outputWidth,outputHeight) = size(for:preset,renderHeight:effectiveHeight,screen:screen,matchScreenShape:tv || settings.matchScreenShape)

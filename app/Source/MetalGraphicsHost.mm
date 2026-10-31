@@ -3,6 +3,7 @@
 #include "MetalRenderer/MetalRenderer.h"
 #import <Metal/Metal.h>
 #include <stdlib.h>
+#include "PortDataTextureBudget.h"
 
 extern "C" void pg_log(const char *);
 
@@ -28,13 +29,15 @@ int PGGPUReadsBC(void) {
 // first measurement: 140 with BC3 as ASTC, 200 with BC3 decoded (simulator soaks: 1.33 and 2.15).
 static NSString *textureRatioKey(void) {
 	bool astc3 = !(getenv("PG_ASTC_BC3") && atoi(getenv("PG_ASTC_BC3")) == 0);
-	return astc3 ? @"pgTextureRatioASTC3" : @"pgTextureRatioDecoded";
+	NSString *key=astc3 ? @"pgTextureRatioASTC3" : @"pgTextureRatioDecoded";
+    return getenv("PG_PORTDATA_RATIO_FLOOR") ? [key stringByAppendingString:@".PortDataPerfV2"] : key;
 }
 int PGTextureRatioPercent(void) {
 	if (PGGPUReadsBC()) return 100;
 	NSInteger stored = [[NSUserDefaults standardUserDefaults] integerForKey:textureRatioKey()];
-	if (stored >= 100 && stored <= 400) return (int)stored;
-	return [textureRatioKey() isEqualToString:@"pgTextureRatioASTC3"] ? 140 : 200;
+    bool astc3=!(getenv("PG_ASTC_BC3") && atoi(getenv("PG_ASTC_BC3"))==0);
+    const char *floor=getenv("PG_PORTDATA_RATIO_FLOOR");
+    return pg_port_texture_ratio(0,(int)stored,astc3,floor?atoi(floor):0);
 }
 void PGNoteTextureRatio(int64_t gpuBytes, int64_t gameBytes) {
 	if (PGGPUReadsBC() || gameBytes < (128ll << 20) || gpuBytes <= 0) return;		// too little loaded to say

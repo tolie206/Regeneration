@@ -44,7 +44,9 @@ jobs:
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
       - name: Check converted manifest and unchanged renderer
         run: |
-          test -z "$(git diff --name-only 099b0da -- app/Source app/Scripts inputs)"
+          python3 tools/verify_portdata_engine.py
+          xcrun clang -std=c11 -Wall -Wextra -Werror app/Tests/PortDataTextureBudgetTests.c -o "$RUNNER_TEMP/texture-budget-tests"
+          "$RUNNER_TEMP/texture-budget-tests"
           xcrun swiftc app/App/PortDataManifest.swift app/Tests/PortDataManifestTests.swift -o "$RUNNER_TEMP/port-data-tests"
           "$RUNNER_TEMP/port-data-tests"
           xcrun swiftc app/App/PortDataRPFNormalizer.swift app/Tests/PortDataRPFNormalizerTests.swift -o "$RUNNER_TEMP/rpf-open-tests"

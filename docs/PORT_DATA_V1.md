@@ -43,3 +43,5 @@ Thêm profile Tối ưu PortData (mặc định Ổn định FPS): đầu ra t�
 Data V2 là tuỳ chọn riêng: dictionary YTD legacy phù hợp giới hạn mip có sẵn256 và gói lại physical thành một page hợp lệ, đổi GraphicsFlags trong cả resource header và RPF entry, cập nhật GraphicsPagesCount. Giữ tên/hash, loại texture, các byte mip còn lại; không giảm số mesh/hình học/collision/script. File/layout lạ hoặc HUD/phông/chức năng UI nhận diện được giữ nguyên. Tắt profile app không thể phục hồi mip đã bỏ: chọn lại data V1 để rollback đồ hoạ data.
 
 Không nói phần dữ liệu mượt tương đương engine port: chuyển ETC2/EAC về BC làm Mugoat tiếp tục transcode sang ASTC. Chưa có A/B iPhone đo FPS/frame pacing sau FIX2.
+
+Ngân sách boot: log dùng129% để tính1779MiB video trong khi BC cuối lượt có368/185~199%. Profile hiệu năng dùng cache riêng và floor200% (1148MiB ở limit4096), giữ số đo cao hơn nếu có. Tắt profile dùng lại cache/cách tính cũ; GPU đọc BC native giữ100%. Không thêm memory cap hay thay ngưỡng thu hồi. Renderer/draw/visibility/query và game.wasm không đổi.
