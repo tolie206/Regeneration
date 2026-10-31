@@ -46,6 +46,7 @@ class Tests(unittest.TestCase):
   with tempfile.TemporaryDirectory() as d:
    p=Path(d);b=resource();flags=struct.unpack_from('<II',b,8)
    archive(p/'child.rpf',[('t.ytd',b,flags),('a.bin',b'unchanged',None)])
+   child=bytearray((p/'child.rpf').read_bytes());struct.pack_into('<I',child,12,0);(p/'child.rpf').write_bytes(child)
    archive(p/'input.rpf',[('nested.rpf',(p/'child.rpf').read_bytes(),None)])
    original=bytearray((p/'input.rpf').read_bytes());struct.pack_into('<I',original,12,0);(p/'input.rpf').write_bytes(original)
    before=hashlib.sha256((p/'input.rpf').read_bytes()).hexdigest();r=c.Rpf(p/'input.rpf')
