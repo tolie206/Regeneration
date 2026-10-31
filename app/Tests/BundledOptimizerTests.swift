@@ -14,6 +14,10 @@ enum ModInstaller{static var modsFolder:URL {FileManager.default.temporaryDirect
   d.removeObject(forKey:BundledOptimizer.installedKey);try fm.createDirectory(at:on,withIntermediateDirectories:true)
   let custom=on.appendingPathComponent("custom.txt");try Data("keep".utf8).write(to:custom)
   _=try BundledOptimizer.prepare(source:source,root:root,defaults:d);assert(fm.fileExists(atPath:custom.path));assert(!fm.fileExists(atPath:on.appendingPathComponent(BundledOptimizer.file).path))
-  print("PASS bundled optimizer exact bytes, disabled/removal honored, existing mod never overwritten")
+  try fm.removeItem(at:on);d.removeObject(forKey:BundledOptimizer.installedKey)
+  let imported=root.appendingPathComponent("MyOptimizer.off");try fm.createDirectory(at:imported,withIntermediateDirectories:true)
+  try original.write(to:imported.appendingPathComponent(BundledOptimizer.file))
+  _=try BundledOptimizer.prepare(source:source,root:root,defaults:d);assert(!fm.fileExists(atPath:on.path));assert(fm.fileExists(atPath:imported.path))
+  print("PASS bundled optimizer exact bytes, disabled/removal honored, existing mod never overwritten, differently named disabled import honored")
  }
 }

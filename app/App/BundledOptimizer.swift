@@ -10,6 +10,17 @@ enum BundledOptimizer {
  static func prepare(source:URL?=Bundle.main.url(forResource:"Mugoat-PortLike-Traffic-v1",withExtension:"oiv"),root:URL=ModInstaller.modsFolder,defaults:UserDefaults = .standard)throws->String {
   let fm=FileManager.default,on=root.appendingPathComponent(name),off=root.appendingPathComponent(name+".off")
   if fm.fileExists(atPath:on.path)||fm.fileExists(atPath:off.path){defaults.set(true,forKey:installedKey);return "Optimizer: gói đã có, giữ trạng thái bật/tắt và dữ liệu hiện tại."}
+  // Imported OIVs can live under a different mod name, including a disabled folder.
+  var candidates=[root.appendingPathComponent(file)]
+  for folder in (try? fm.contentsOfDirectory(at:root,includingPropertiesForKeys:[.isDirectoryKey],options:.skipsHiddenFiles)) ?? [] {
+   if (try? folder.resourceValues(forKeys:[.isDirectoryKey]).isDirectory)==true {candidates.append(folder.appendingPathComponent(file))}
+  }
+  for candidate in candidates where fm.fileExists(atPath:candidate.path) {
+   if let bytes=try? Data(contentsOf:candidate),bytes.count==701,
+      SHA256.hash(data:bytes).map({String(format:"%02x",$0)}).joined()==sha {
+    defaults.set(true,forKey:installedKey);return "Optimizer: đã nhập trước đó, giữ bản hiện có và trạng thái bật/tắt."
+   }
+  }
   if defaults.bool(forKey:installedKey){return "Optimizer: đã gỡ; không tự cài lại."}
   guard let source else{throw ModError("Thiếu optimizer tích hợp.")}
   let data=try Data(contentsOf:source)
