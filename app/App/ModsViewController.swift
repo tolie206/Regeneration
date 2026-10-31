@@ -26,7 +26,7 @@ final class ModsViewController: UITableViewController, UIDocumentPickerDelegate 
     override func numberOfSections(in tableView: UITableView) -> Int { 2 }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { section == 0 ? 8 : max(mods.count, 1) }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        section == 1 ? AppLanguage.choose("Installed") : nil
+        section == 1 ? "Đã cài: \(mods.count) · đang bật: \(mods.filter(\.enabled).count)" : "Nhập và thiết lập mod"
     }
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         section == 0

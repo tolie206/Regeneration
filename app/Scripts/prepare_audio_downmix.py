@@ -18,7 +18,16 @@ def main():
  from engine_names import fn
  root=Path(__file__).resolve().parents[1]
  number=fn('rage::audMixerDeviceWasmDiscard::MixThread(void*)');mix=fn('rage::audMixerDevice::MixBuffers()')
- for p in sorted((root/'Generated').glob('game_*.c')):
+ files=sorted((root/'Generated').glob('game_*.c'))
+ layout=False
+ for file in files:
+  data=file.read_text();m=re.search(r'\n(?:static )?void w2c_game_f'+str(mix)+r'\([^;]+\) \{',data)
+  if m:
+   body=data[m.start():data.index('\n}\n',m.start())]
+   if '75484u' not in body or '75424u' not in body or '75420u' not in body:raise RuntimeError('Mixer output layout changed')
+   layout=True;break
+ if not layout:raise RuntimeError('MixBuffers missing: cannot verify output channel count')
+ for p in files:
   result=patch(p.read_text(),number,mix)
   if result is not None:p.write_text(result);print('Audio downmix patched',p.name);return
  raise RuntimeError('Pinned mixer thread missing')

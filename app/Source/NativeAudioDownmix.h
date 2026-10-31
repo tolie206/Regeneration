@@ -20,10 +20,12 @@ static inline bool pg_downmix_planar_stereo(float *pcm,unsigned channels,unsigne
 }
 
 static inline bool pg_downmix_memory(void *base,uint64_t size,uint64_t mixer){
- if(!base||mixer>size||size-mixer<75432)return false;
- unsigned channels;uint64_t output;unsigned char *memory=base;
- memcpy(&channels,memory+mixer+75420,4);memcpy(&output,memory+mixer+75424,8);
- if((channels!=6&&channels!=8)||!output||output%4)return false;
+ if(!base||mixer>size||size-mixer<75488)return false;
+ unsigned enabled,channels;uint64_t output;unsigned char *memory=base;
+ // +75420 is the output-enabled flag, NOT channel count. MixBuffers loops +75484.
+ memcpy(&enabled,memory+mixer+75420,4);
+ memcpy(&channels,memory+mixer+75484,4);memcpy(&output,memory+mixer+75424,8);
+ if(!enabled||(channels!=6&&channels!=8)||!output||output%4)return false;
  uint64_t bytes=(uint64_t)channels*256*4;
  if(output>size||bytes>size-output)return false;
  return pg_downmix_planar_stereo((float *)(void *)(memory+output),channels,256);

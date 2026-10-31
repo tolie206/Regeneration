@@ -1,4 +1,4 @@
-name: V5R1-FIX2 targeted checks and IPA
+name: V5R1-FIX3 targeted checks and IPA
 on:
   push:
     branches: [mugoat-v5r1-fix]
@@ -36,23 +36,15 @@ jobs:
         run: bash tools/check_host_sanitizer.sh "$RUNNER_TEMP"
       - name: Metal compiler
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
-      - name: Relevant renderer, query lifetime, speculative policy and settings checks
+      - name: New audio, first-person and launcher checks
         run: |
-          "$PG_HOST_SAN_CC" -std=c++20 -g -pthread -fsanitize=address,undefined -I app/Source app/Tests/fix_query_timeline.cpp -lc++ -o "$RUNNER_TEMP/fix-query"
-          "$RUNNER_TEMP/fix-query"
-          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined -I app/Source app/Tests/fix_speculative.c -o "$RUNNER_TEMP/fix-speculation"
-          "$RUNNER_TEMP/fix-speculation"
-          python3 tools/test_fix_renderer.py
-          "$PG_HOST_SAN_CC" -std=c11 -pthread -fsanitize=address,undefined app/Tests/sound_runtime.c -o "$RUNNER_TEMP/fix2-sound"
-          "$RUNNER_TEMP/fix2-sound"
-          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/sandbox_map_runtime.c -o "$RUNNER_TEMP/fix2-map"
-          "$RUNNER_TEMP/fix2-map"
-          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/audio_downmix.c -o "$RUNNER_TEMP/fix2-downmix"
-          "$RUNNER_TEMP/fix2-downmix"
-          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/MSRSettings.swift app/App/RendererFixOptions.swift app/Tests/FixSettingsTypecheckStubs.swift
-          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/SettingsViewController.swift app/App/NativePortViewController.swift app/App/GraphicsOptions.swift
-          python3 -m unittest discover -s tests -p test_regeneration_preservation.py -v
-          python3 -m unittest discover -s tests -p test_ccache_engine.py -v
+          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/audio_downmix.c -o "$RUNNER_TEMP/fix3-downmix"
+          "$RUNNER_TEMP/fix3-downmix"
+          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/experience.c -o "$RUNNER_TEMP/fix3-experience"
+          "$RUNNER_TEMP/fix3-experience"
+          python3 -m unittest discover -s tests -p test_experience.py -v
+          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/ExperienceSettings.swift app/Tests/ExperienceTypecheckStubs.swift
+          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/ExperienceSettings.swift app/App/HomeView.swift app/App/ModsViewController.swift app/App/SettingsHomeViewController.swift app/App/NativePortViewController.swift
       - name: Assemble and verify unchanged owner build inputs
         run: |
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/game-files"
@@ -70,21 +62,21 @@ jobs:
           path: .ccache
           key: engine-ios26.2-arm64-${{ github.sha }}
           restore-keys: engine-ios26.2-arm64-
-      - name: Build single V5R1-FIX2 IPA
+      - name: Build single V5R1-FIX3 IPA
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify target, release, entitlements and bundled features
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa MUGOAT-V5R1-FIX2.ipa
+          mv GTA5Port.ipa MUGOAT-V5R1-FIX3.ipa
           ccache --show-stats --verbose
       - uses: actions/upload-artifact@v4
         with:
-          name: MUGOAT-V5R1-FIX2
-          path: MUGOAT-V5R1-FIX2.ipa
+          name: MUGOAT-V5R1-FIX3
+          path: MUGOAT-V5R1-FIX3.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: V5R1-FIX2-diagnostics
+          name: V5R1-FIX3-diagnostics
           path: app/Build/xcodebuild.log
           retention-days: 3

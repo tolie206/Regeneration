@@ -8,5 +8,11 @@
       "  pg_sound_mod_tick(instance);",
       "  pg_sound_mod_tick(instance);\n  pg_sandbox_map_tick(instance);"
     ]
+  ],
+  "app/App/GraphicsOptions.swift": [
+    [
+      "V5R1-FIX2 gpuTimers",
+      "V5R1-FIX3 gpuTimers"
+    ]
   ]
 }

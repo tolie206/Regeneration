@@ -14,8 +14,11 @@ int main(void){
  float stereo[2]={.5f,-.4f};assert(!pg_downmix_planar_stereo(stereo,2,1));assert(stereo[0]==.5f&&stereo[1]==-.4f);
  memset(p,0,8*256*sizeof(float));p[512]=NAN;pg_downmix_planar_stereo(p,6,256);assert(isfinite(p[0]));
  unsigned char *m=calloc(1,90000);unsigned channels=6;uint64_t output=80000;
- memcpy(m+75420,&channels,4);memcpy(m+75424,&output,8);float *pcm=(float *)(void *)(m+output);pcm[512]=.25f;
+ unsigned enabled=1;memcpy(m+75420,&enabled,4);memcpy(m+75484,&channels,4);memcpy(m+75424,&output,8);float *pcm=(float *)(void *)(m+output);pcm[512]=.25f;
  assert(pg_downmix_memory(m,90000,0)&&pcm[0]>0&&pcm[256]>0);
+ enabled=0;memcpy(m+75420,&enabled,4);assert(!pg_downmix_memory(m,90000,0));
+ enabled=1;memcpy(m+75420,&enabled,4);channels=2;memcpy(m+75484,&channels,4);assert(!pg_downmix_memory(m,90000,0));
+ channels=6;memcpy(m+75484,&channels,4);assert(!pg_downmix_memory(m,75487,0));
  assert(!pg_downmix_memory(m,85000,0));assert(!pg_downmix_memory(m,90000,UINT64_MAX));
  output=89999;memcpy(m+75424,&output,8);assert(!pg_downmix_memory(m,90000,0));free(m);
  puts("PASS every channel reaches stereo, front level preserved, peak bounded, stereo unchanged, guards intact");

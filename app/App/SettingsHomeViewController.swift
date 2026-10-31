@@ -56,6 +56,9 @@ final class SettingsHomeViewController: UITableViewController {
             let count = ModInstaller.installed().filter(\.enabled).count
             return count == 0 ? AppLanguage.choose("Install car, skin and script mods") : AppLanguage.interpolate(AppLanguage.choose("{arg0} mods on"), [String(count)])
         }, sections: [], page: { ModsViewController() }))
+        list.append(Category(icon:"speaker.wave.2",title:"Tiếng xe và góc nhìn",summary:{"Âm lượng động cơ · góc nhìn thứ nhất rộng"},sections:[],page:{[weak self] in
+            let page=ExperienceSettingsViewController();page.cameraSelected=self?.nativeCheatSelected;return page
+        }))
         list.append(Category(icon:"puzzlepiece.extension",title:"Plugin Menyoo",summary:{"Bật/tắt Menyoo tích hợp, hướng dẫn nút điều khiển"},sections:[],page:{BundledMenyooViewController()}))
         list.append(Category(icon:"flame",title:"Turbo và lửa bô (thử nghiệm)",summary:{"Turbo, boost theo số, anti-lag, âm thanh và đồng hồ"},sections:[],page:{TurboSettingsViewController()}))
         list.append(Category(icon:"memorychip",title:"RAM và quyền bộ nhớ",summary:{"Kiểm tra quyền tăng RAM, bỏ cap riêng và xuất entitlement"},sections:[],page:{MemoryAccessViewController(engineRunning:running)}))
