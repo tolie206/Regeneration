@@ -1,4 +1,4 @@
-name: PORT-DATA-V1 checks and IPA
+name: PORT-DATA-V1-FIX1 checks and IPA
 on:
   push:
     branches: [port-data-v1]
@@ -47,6 +47,8 @@ jobs:
           test -z "$(git diff --name-only 099b0da -- app/Source app/Scripts inputs)"
           xcrun swiftc app/App/PortDataManifest.swift app/Tests/PortDataManifestTests.swift -o "$RUNNER_TEMP/port-data-tests"
           "$RUNNER_TEMP/port-data-tests"
+          xcrun swiftc app/App/PortDataRPFNormalizer.swift app/Tests/PortDataRPFNormalizerTests.swift -o "$RUNNER_TEMP/rpf-open-tests"
+          "$RUNNER_TEMP/rpf-open-tests"
           xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/NativePortViewController.swift app/App/GameFiles.swift app/App/HomeView.swift app/App/AssetPreloader.swift
       - name: Assemble and verify unchanged owner build inputs
         if: github.event_name == 'workflow_dispatch' && inputs.build_ipa
@@ -70,24 +72,24 @@ jobs:
           path: .ccache
           key: engine-ios26.2-arm64-${{ github.sha }}
           restore-keys: engine-ios26.2-arm64-
-      - name: Build single PORT-DATA-V1 IPA
+      - name: Build single PORT-DATA-V1-FIX1 IPA
         if: github.event_name == 'workflow_dispatch' && inputs.build_ipa
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify target, release, entitlements and bundled features
         if: github.event_name == 'workflow_dispatch' && inputs.build_ipa
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa MUGOAT-PORT-DATA-V1.ipa
+          mv GTA5Port.ipa MUGOAT-PORT-DATA-V1-FIX1.ipa
           ccache --show-stats --verbose
       - uses: actions/upload-artifact@v4
         if: github.event_name == 'workflow_dispatch' && inputs.build_ipa
         with:
-          name: MUGOAT-PORT-DATA-V1
-          path: MUGOAT-PORT-DATA-V1.ipa
+          name: MUGOAT-PORT-DATA-V1-FIX1
+          path: MUGOAT-PORT-DATA-V1-FIX1.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: PORT-DATA-V1-diagnostics
+          name: PORT-DATA-V1-FIX1-diagnostics
           path: app/Build/xcodebuild.log
           retention-days: 3

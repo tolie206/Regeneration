@@ -603,6 +603,9 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         updatePlayEnabled()
     }
 
+    private var portDataPreparedPath: String?
+    private var portDataPreparing = false
+
     @objc private func startEngine() {
         if GameSettings.shared.gameModeChoice == nil {
             // Automated launches without a choice keep the old sandbox start.
@@ -619,7 +622,33 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         var path = bundledManifestPath
         if let folder = GameFolder.open(), PortDataManifest.hasMarker(folder) {
             do {
-                path = try PortDataManifest.load(folder: folder, baseManifest: URL(fileURLWithPath: path)).url.path
+                let converted = try PortDataManifest.load(folder: folder, baseManifest: URL(fileURLWithPath: path))
+                path = converted.url.path
+                if portDataPreparedPath != path {
+                    guard !portDataPreparing else { return }
+                    portDataPreparing = true
+                    launchButton.isEnabled = false
+                    appendLog("Port data: checking RPF headers before startup; engine has not started.")
+                    DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                        do {
+                            let fixed = try PortDataRPFNormalizer.prepare(folder: folder, files: converted.files)
+                            DispatchQueue.main.async {
+                                guard let self else { return }
+                                self.portDataPreparing = false; self.portDataPreparedPath = converted.url.path
+                                self.appendLog("Port data: RPF header check complete; normalized \(fixed) NONE headers to OPEN.")
+                                self.launchButton.isEnabled = true; self.startEngine()
+                            }
+                        } catch {
+                            DispatchQueue.main.async {
+                                guard let self else { return }
+                                self.portDataPreparing = false; self.launchButton.isEnabled = true
+                                self.appendLog("Port data header check failed: \(error.localizedDescription)")
+                                self.showWhenFree(title: "Chưa thể chuẩn hoá data", message: error.localizedDescription)
+                            }
+                        }
+                    }
+                    return
+                }
                 appendLog("Port data: offline converted resource/texture dataset; using its verified manifest.")
             } catch {
                 appendLog("Port data refused: \(error.localizedDescription)")

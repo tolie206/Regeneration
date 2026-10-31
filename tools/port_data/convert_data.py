@@ -86,6 +86,7 @@ def convert_rpf(r,target):
  # Preserve original table hierarchy and names. Only payload positions/sizes change.
  n,names=struct.unpack_from('<II',r.data,r.base+4);end=16+n*16+names
  table=bytearray(r.data[r.base:r.base+end])
+ struct.pack_into('<I',table,12,0x4e45504f) # Engine rejects key 0; existing OpenIV path accepts OPEN.
  with open(target,'wb') as f:
   f.write(table);align(f)
   for e in r.entries:

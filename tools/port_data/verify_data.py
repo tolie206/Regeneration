@@ -16,6 +16,7 @@ def main():
   stats['resources_readback']+=1
  def walk(r,depth=0):
   if depth>16:raise ValueError('deep archive')
+  if struct.unpack_from('<I',r.data,r.base+12)[0]!=0x4e45504f:raise ValueError('engine-incompatible RPF key; expected OPEN')
   for e in r.entries:
    if e.encrypted:raise ValueError('encrypted converted entry')
    if e.resource:check_resource(r.raw(e),e.system,e.graphics)

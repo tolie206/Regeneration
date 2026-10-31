@@ -27,3 +27,10 @@ Sau chuyển đổi chạy:
     python tools/port_data/verify_data.py E:/thu-muc-moi/data
 
 Finalizer giữ archive gốc nếu số entry/kích thước bảng tên khác. Không tuyên bố so được tên trong bảng NG-encrypted của data cũ. Chỉ tạo marker sau checksum toàn bộ. Kiểm định độc lập đọc lại mọi resource đã chuyển; bộ data chỉ được coi là ứng viên offline, chưa xác nhận gameplay trên iPhone.
+
+## FIX1 — lỗi startup NONE archives
+Log thiết bị dừng rõ tại platform:/dlcPacks/mpBeach/dlc.rpf: Unencrypted archives no longer supported. Converter V1 giữ header key 0 của port; engine chỉ có nhánh OpenIV OPEN được vá sẵn trong prepare_mod_archives.py. Các test offline V1 đã cho phép cả NONE lẫn OPEN nên không bắt được lỗi này.
+
+FIX1 ghi OPEN cho mọi RPF dựng lại và validator từ chối NONE. App chuẩn hóa key 0 -> OPEN cho bộ PortData có marker hợp lệ ngay trước startup, trên background queue. Quét cả RPF lồng, không động archive mã hoá hoặc payload, không bỏ DLC/điều kiện nhiệm vụ. Có journal các edit 4 byte để đối chiếu/rollback. Data V1 đang có trên điện thoại dùng lại được nếu thư mục cho phép ghi; không phải chép lại toàn bộ.
+
+Bài test mới tái hiện NONE root/nested, OPEN parent chứa NONE child, giữ NG/byte payload, lặp an toàn và không ghi nếu phát hiện bảng lỗi khi lập kế hoạch. Chưa xác nhận gameplay sau FIX1 trên iPhone.

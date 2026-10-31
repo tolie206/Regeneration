@@ -51,7 +51,7 @@ final class HomeView: UIView {
         title.adjustsFontSizeToFitWidth = true
         title.minimumScaleFactor = 0.7
         let subtitle = brandSubtitle
-        subtitle.text = "PORT-DATA-V1  ·  CHƠI OFFLINE"
+        subtitle.text = "PORT-DATA-V1-FIX1  ·  CHƠI OFFLINE"
         subtitle.font = Theme.body(14, .medium)
         subtitle.textColor = Theme.secondaryText
         subtitle.numberOfLines = 2		// long translations keep the version visible
@@ -196,7 +196,7 @@ final class HomeView: UIView {
     private let secondary = UIStackView()
     func refreshLanguage() {
         brandTitle.text = "MUGOAT"
-        brandSubtitle.text = "PORT-DATA-V1  ·  CHƠI OFFLINE"
+        brandSubtitle.text = "PORT-DATA-V1-FIX1  ·  CHƠI OFFLINE"
         mapTitle.text = AppLanguage.choose("Map")
         playButton.configuration?.title = AppLanguage.choose("Play")
         // The top-right buttons are icons in every language (long titles overlapped the column, GTA-47);
