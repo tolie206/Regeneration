@@ -1,6 +1,6 @@
 """Drop optional test map, finalize engine-bound marker, verify every generated file."""
 from pathlib import Path
-import argparse,json,hashlib
+import argparse,json,hashlib,struct,shutil
 from convert_data import sha
 from resource_codec import resource
 from rpf_reader import Rpf
@@ -20,6 +20,15 @@ def main():
    if p.is_file():p.unlink()
    removed.append(dict(path=name,bytes=size));continue
   if p.stat().st_size!=size or sha(p)!=lookup[name]['sha256']:raise ValueError('candidate checksum mismatch '+name)
+  # The current data has NG-encrypted tables, so don't pretend names were compared.
+  # Preserve current engine's archive when entry count/name-table size differs.
+  if name.endswith('.rpf') and lookup[name]['source']!='mugoat':
+   old=base.parent/name
+   with p.open('rb') as f:head=f.read(16)
+   with old.open('rb') as f:oldhead=f.read(16)
+   if head[:4]==b'7FPR' and oldhead[:4]==b'7FPR' and struct.unpack_from('<II',head,4)!=struct.unpack_from('<II',oldhead,4):
+    shutil.copyfile(old,p);size=p.stat().st_size;row[1]=size
+    lookup[name].update(source='mugoat',reason='archive layout differs from current engine data; preserve compatible archive',size=size,sha256=sha(p))
   kept.append(row)
  manifest['files']=kept;raw=json.dumps(manifest,separators=(',',':')).encode();(data/'manifest.json').write_bytes(raw)
  marker=dict(profile='mugoat-port-converted-v1',baseManifestSHA256=hashlib.sha256(base.read_bytes()).hexdigest(),manifestSHA256=hashlib.sha256(raw).hexdigest(),hybrid=True,deviceTested=False,optionalTestMapRemoved=True)

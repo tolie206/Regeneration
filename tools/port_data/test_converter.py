@@ -33,6 +33,13 @@ class Tests(unittest.TestCase):
    self.assertEqual(c.convert_resource(b),b)
  def test_unsupported_volume_not_silently_accepted(self):
   with self.assertRaises(ValueError):c.convert_resource(resource(depth=2))
+ def test_channel_order_and_eac_components(self):
+  bgra=bytes([30,100,200,255]*16)
+  for channels,encoder,decoder,expected in [(1,c.enc.compress_blocks_bc4,c.dec.decode_bc4,[0,0,200,255]),(2,c.enc.compress_blocks_bc5,c.dec.decode_bc5,[0,100,200,255])]:
+   out=decoder(encoder(c.surface(bgra,4,4,channels)),4,4)
+   self.assertEqual(list(out[:4]),expected)
+  out=c.dec.decode_bc3(c.enc.compress_blocks_bc3(c.surface(bgra,4,4,4)),4,4)
+  self.assertLess(max(abs(a-b) for a,b in zip(out[:4],bgra[:4])),6)
  def test_bad_resource_rejected(self):
   with self.assertRaises(ValueError):c.convert_resource(b'RSC7'+bytes(100))
  def test_nested_archive_rebuilt_without_entry_loss_or_source_write(self):
