@@ -1,7 +1,5 @@
 name: Color filter prototype checks (no IPA)
 on:
-  push:
-    branches: [mugoat-color-filter]
   workflow_dispatch:
 permissions:
   contents: read
