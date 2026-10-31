@@ -10,6 +10,7 @@ final class HomeView: UIView {
     let settingsButton = Theme.glassButton(AppLanguage.choose("Settings"), symbol: "gearshape.fill")
     let layoutButton = Theme.glassButton(AppLanguage.choose("Controls layout"), symbol: "hand.tap.fill")
     let telegramButton = Theme.glassButton(AppLanguage.choose("Telegram"), symbol: "paperplane.fill")
+    let modsButton = Theme.glassButton("Quản lý mod", symbol: "shippingbox.fill")
     let preloadLabel = UILabel()
     let controllerLabel = UILabel()
     /// Taps on the game files card.
@@ -118,7 +119,7 @@ final class HomeView: UIView {
         let headerDivider = UIView()
         headerDivider.backgroundColor = Theme.accent.withAlphaComponent(0.7)
         headerDivider.heightAnchor.constraint(equalToConstant: 2).isActive = true
-        let column = UIStackView(arrangedSubviews: [header, headerDivider, modes, modeDetail, mapRow, filesCard, playButton, preloadLabel, controllerLabel])
+        let column = UIStackView(arrangedSubviews: [header, headerDivider, modes, modeDetail, mapRow, filesCard, playButton, modsButton, preloadLabel, controllerLabel])
         column.axis = .vertical
         column.spacing = 12
         column.setCustomSpacing(18, after: header)

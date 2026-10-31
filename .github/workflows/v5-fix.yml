@@ -41,6 +41,7 @@ jobs:
         run: |
           python3 tools/verify_restore.py
           python3 -m unittest discover -s tests -p test_restore_optimizer.py -v
+          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/Theme.swift app/App/HomeView.swift app/Tests/V5HomeTypecheckStubs.swift
           xcrun swiftc app/App/BundledOptimizer.swift app/Tests/BundledOptimizerTests.swift -o "$RUNNER_TEMP/restore-optimizer"
           "$RUNNER_TEMP/restore-optimizer" app/Resources/Mugoat-PortLike-Traffic-v1.oiv
           xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/NativePortViewController.swift app/App/HomeView.swift app/App/Theme.swift

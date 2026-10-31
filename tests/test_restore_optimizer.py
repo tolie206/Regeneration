@@ -11,4 +11,10 @@ class Optimizer(unittest.TestCase):
    changes=xml.findall('replace');self.assertEqual(len(changes),2)
    self.assertEqual([(e[0].tag,e[0].attrib['value']) for e in changes],[('VehicleUpperLimit','20'),('VehicleParkedUpperLimit','15')])
    for e in changes:self.assertIn("Item[Platforms='pc']",e.attrib['xpath'])
+ def test_home_mods_shortcut_reuses_existing_manager(self):
+  home=(ROOT/'app/App/HomeView.swift').read_text(encoding='utf-8');controller=(ROOT/'app/App/NativePortViewController.swift').read_text(encoding='utf-8')
+  self.assertIn('playButton, modsButton, preloadLabel',home)
+  body=controller.split('private func showMods() {')[1].split('private func showSettings()')[0]
+  self.assertIn('let page=ModsViewController()',body);self.assertIn('guard !engineStarted',body)
+  self.assertNotIn('PGStartEngine',body)
 if __name__=='__main__':unittest.main()

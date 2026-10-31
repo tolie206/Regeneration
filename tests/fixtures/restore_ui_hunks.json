@@ -1,0 +1,30 @@
+{
+  "app/App/HomeView.swift": [
+    [
+      "    let preloadLabel = UILabel()",
+      "    let modsButton = Theme.glassButton(\"Quản lý mod\", symbol: \"shippingbox.fill\")\n    let preloadLabel = UILabel()"
+    ],
+    [
+      "filesCard, playButton, preloadLabel",
+      "filesCard, playButton, modsButton, preloadLabel"
+    ]
+  ],
+  "app/App/NativePortViewController.swift": [
+    [
+      "        do { try BundledMenyoo.prepare() }",
+      "        do { appendLog(try BundledOptimizer.prepare()) } catch { appendLog(\"Built-in optimizer: \\(error.localizedDescription)\") }\n        do { try BundledMenyoo.prepare() }"
+    ],
+    [
+      "        home.settingsButton.addAction",
+      "        home.modsButton.addAction(UIAction { [weak self] _ in self?.showMods() }, for: .touchUpInside)\n        home.settingsButton.addAction"
+    ],
+    [
+      "        home.settingsButton.isHidden = true",
+      "        home.modsButton.isHidden = true\n        home.settingsButton.isHidden = true"
+    ],
+    [
+      "    private func showSettings() {",
+      "    private func showMods() {\n        guard !engineStarted, presentedViewController == nil else { return }\n        let page=ModsViewController()\n        page.navigationItem.rightBarButtonItem=UIBarButtonItem(title:\"Đóng\",primaryAction:UIAction { [weak page] _ in page?.dismiss(animated:true) })\n        let navigation=UINavigationController(rootViewController:page)\n        Theme.styleNavigation(navigation)\n        present(navigation,animated:true)\n    }\n\n    private func showSettings() {"
+    ]
+  ]
+}

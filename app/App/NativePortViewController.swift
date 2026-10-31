@@ -232,6 +232,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         output.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
         output.layer.cornerRadius = 12
         NotificationCenter.default.addObserver(self, selector: #selector(languageChanged), name: AppLanguage.changed, object: nil)
+        home.modsButton.addAction(UIAction { [weak self] _ in self?.showMods() }, for: .touchUpInside)
         home.settingsButton.addAction(UIAction { [weak self] _ in self?.showSettings() }, for: .touchUpInside)
         home.layoutButton.addAction(UIAction { [weak self] _ in self?.showLayoutEditor() }, for: .touchUpInside)
         home.onFiles = { [weak self] in self?.showGameFiles() }
@@ -618,6 +619,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         PGAttachMetalLayer(Unmanaged.passUnretained(metalView.layer).toOpaque())
         DispatchQueue.main.async { [weak self] in self?.updateExternalDisplay(resize: false) }
         launchButton.isEnabled = false
+        home.modsButton.isHidden = true
         home.settingsButton.isHidden = true
         home.layoutButton.isHidden = true
         engineStarted = true
@@ -1333,6 +1335,15 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         navigation.modalPresentationStyle = .fullScreen
         present(navigation, animated: true)
         appendLog("Send log opened after the engine stopped.")
+    }
+
+    private func showMods() {
+        guard !engineStarted, presentedViewController == nil else { return }
+        let page=ModsViewController()
+        page.navigationItem.rightBarButtonItem=UIBarButtonItem(title:"Đóng",primaryAction:UIAction { [weak page] _ in page?.dismiss(animated:true) })
+        let navigation=UINavigationController(rootViewController:page)
+        Theme.styleNavigation(navigation)
+        present(navigation,animated:true)
     }
 
     private func showSettings() {
