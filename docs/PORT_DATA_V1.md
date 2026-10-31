@@ -34,3 +34,12 @@ Log thiết bị dừng rõ tại platform:/dlcPacks/mpBeach/dlc.rpf: Unencrypte
 FIX1 ghi OPEN cho mọi RPF dựng lại và validator từ chối NONE. App chuẩn hóa key 0 -> OPEN cho bộ PortData có marker hợp lệ ngay trước startup, trên background queue. Quét cả RPF lồng, không động archive mã hoá hoặc payload, không bỏ DLC/điều kiện nhiệm vụ. Có journal các edit 4 byte để đối chiếu/rollback. Data V1 đang có trên điện thoại dùng lại được nếu thư mục cho phép ghi; không phải chép lại toàn bộ.
 
 Bài test mới tái hiện NONE root/nested, OPEN parent chứa NONE child, giữ NG/byte payload, lặp an toàn và không ghi nếu phát hiện bảng lỗi khi lập kế hoạch. Chưa xác nhận gameplay sau FIX1 trên iPhone.
+
+## FIX2 — tải cảnh và data
+Log A16: mẫu Health lượt dài xuống 6 FPS, đạt 3.904/4.095 MB, 1.391 lần chặn tăng streaming, 23 yêu cầu thu hồi; tất cả mẫu ghi thermal serious. Lượt ngắn vẫn 23–38 FPS khi còn hơn 1 GB headroom, nên RAM không giải thích toàn bộ. Mesh GPU cuối lượt dài ~747 MB, các cửa sổ lên ~4.155 draw/frame ở lượt trước. Không có lỗi đọc/slow-read >250 ms trong các mẫu. Pipeline có tác động từng cửa sổ, nhưng FPS thấp cả cửa sổ không chờ pipeline. Menyoo có overhead đo được; không tự tắt mod của người chơi.
+
+Thêm profile Tối ưu PortData (mặc định Ổn định FPS): đầu ra tối đa720p, texture0, bóng tắt, cỏ/reflection/particle thấp, LOD tối đa0.15, cityDensity tối đa0.2. Chế độ tối đa540p/LOD0; Tắt trả lại thiết lập cũ. Chi tiết thấp hơn vẫn giữ nguyên, shader≥1, script/mission/collision/thu hồi và query/readback không sửa. Đây là giảm chất lượng có chủ đích, không phải tăng FPS miễn phí. Log ghi đầy đủ giá trị effective.
+
+Data V2 là tuỳ chọn riêng: dictionary YTD legacy phù hợp giới hạn mip có sẵn256 và gói lại physical thành một page hợp lệ, đổi GraphicsFlags trong cả resource header và RPF entry, cập nhật GraphicsPagesCount. Giữ tên/hash, loại texture, các byte mip còn lại; không giảm số mesh/hình học/collision/script. File/layout lạ hoặc HUD/phông/chức năng UI nhận diện được giữ nguyên. Tắt profile app không thể phục hồi mip đã bỏ: chọn lại data V1 để rollback đồ hoạ data.
+
+Không nói phần dữ liệu mượt tương đương engine port: chuyển ETC2/EAC về BC làm Mugoat tiếp tục transcode sang ASTC. Chưa có A/B iPhone đo FPS/frame pacing sau FIX2.

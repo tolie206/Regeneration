@@ -33,6 +33,7 @@ final class SettingsHomeViewController: UITableViewController {
                 AppLanguage.choose("Camera, buttons, layout, gyro, controller and keyboard")
             }, sections: [.controls, .gyro]),
         ]
+        list.insert(Category(icon: "speedometer", title: "Tối ưu PortData", summary: { PortDataPerformance.mode.title }, sections: [], page: { PortDataPerformanceViewController() }), at: 1)
         if engineRunning {
             list.append(Category(icon: "car.fill", title: "Gọi xe mod", summary: { "Chỉ hiện những xe mod đang bật" }, sections: [], page: { [weak self] in
                 let page = VehicleSpawnViewController()

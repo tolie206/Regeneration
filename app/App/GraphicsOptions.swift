@@ -197,7 +197,10 @@ enum GraphicsConfiguration {
     /// Pass the chosen settings to the engine. Call before PGStartEngine.
     static func apply(_ settings: GameSettings, screen: CGSize, tv: Bool = false) -> String {
         let preset = settings.graphicsPreset
-        let (outputWidth,outputHeight) = size(for:preset,renderHeight:settings.renderHeight,screen:screen,matchScreenShape:tv || settings.matchScreenShape)
+        let portProfile = PortDataPerformance.mode
+        let requestedHeight = settings.renderHeight > 0 ? settings.renderHeight : preset.height
+        let effectiveHeight = PortDataPerformance.height(requestedHeight, mode: portProfile)
+        let (outputWidth,outputHeight) = size(for:preset,renderHeight:effectiveHeight,screen:screen,matchScreenShape:tv || settings.matchScreenShape)
         let (width,height)=settings.msrMode.renderSize(outputWidth:outputWidth,outputHeight:outputHeight)
         setenv("PG_V5_LIGHT_SHADOWS", preset == .lite ? "0" : "1", 1)
         setenv("PG_PERF_LOCAL",settings.offlinePerfReports ? "1" : "0",1)
@@ -207,6 +210,7 @@ enum GraphicsConfiguration {
             let name = String(option.dropFirst().prefix { $0 != "=" })
             return overrides[name].map { "-\(name)=\($0)" } ?? option
         }
+        options = PortDataPerformance.options(options, mode: portProfile)
         // The pinned engine exposes MaxLODScale independently of the ordinary lodScale.
         if let value = StreamingSettings.distanceScale {
             options.append("-MaxLODScale=\(value)")
@@ -231,6 +235,6 @@ enum GraphicsConfiguration {
                 PGConfigureEngine($0, UInt32(buffer.count), Int32(width), Int32(height), settings.frameRateCap == 0 ? 0 : settings.frameRateCap == 60 ? 1 : 2)
             }
         }
-        return "V5R1-FIX2 gpuTimers=\(keepGPUTimers), fxaa=\(settings.fixFXAA), completedEventFast=\(settings.fixEventFast), queryBatchMs=\(settings.fixQueryBatch), trace=\(settings.fixTrace); MSR requested=\(settings.msrMode.rawValue), render=\(width)x\(height), output=\(outputWidth)x\(outputHeight), HUD=scaled-with-scene; \(preset.title) \(width)×\(height) at \(GameSettings.frameRateTitle(settings.frameRateCap))" + (own.isEmpty ? "" : ", own settings: " + own.joined(separator: ", "))
+        return "PortData FIX2 profile=\(portProfile.rawValue), effectiveOptions=\(options.joined(separator: ",")); gpuTimers=\(keepGPUTimers), fxaa=\(settings.fixFXAA), completedEventFast=\(settings.fixEventFast), queryBatchMs=\(settings.fixQueryBatch), trace=\(settings.fixTrace); MSR requested=\(settings.msrMode.rawValue), render=\(width)x\(height), output=\(outputWidth)x\(outputHeight), HUD=scaled-with-scene; \(preset.title) \(width)×\(height) at \(GameSettings.frameRateTitle(settings.frameRateCap))" + (own.isEmpty ? "" : ", own settings: " + own.joined(separator: ", "))
     }
 }
