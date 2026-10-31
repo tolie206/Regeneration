@@ -18,3 +18,5 @@ Chạy công cụ bằng Python 3.14 (hoặc cài zstandard trên Python cũ):
     python tools/port_data/convert_data.py --source E:/GTAV_IOS --fallback E:/game/data --output E:/thu-muc-moi/data
 
 Không chọn E:/GTAV_IOS nguyên bản trong app; chỉ dùng bộ đã chuyển và có marker sau kiểm tra đầy đủ.
+
+Bản riêng chỉ dùng local data. Preloader không khởi tạo cache bằng manifest gốc trước engine (NativeAssets chỉ configure một lần). Không dùng tải cache nền/server data trong bản này.

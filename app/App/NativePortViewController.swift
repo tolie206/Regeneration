@@ -612,6 +612,10 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
             appendLog("Asset manifest is missing from the app bundle.")
             return
         }
+        guard GameFolder.isChosen else {
+            showWhenFree(title: "Chọn data trên máy", message: "Bản PortData cần thư mục data đã chuyển đổi hoặc data Mugoat trên iPhone.")
+            return
+        }
         var path = bundledManifestPath
         if let folder = GameFolder.open(), PortDataManifest.hasMarker(folder) {
             do {

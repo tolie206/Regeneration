@@ -87,6 +87,7 @@ final class AssetPreloader {
     }
 
     var phase: Phase {
+        if PortDataManifest.localOnly { return .unavailable("Bản PortData chỉ dùng data đã chép vào máy.") }
         if GameFolder.isChosen {
             return .unavailable(AppLanguage.interpolate(AppLanguage.choose("The game files are already on this iPhone (folder \"{arg0}\"), so nothing needs downloading."), [String(describing: GameFolder.name)]))
         }
@@ -113,7 +114,7 @@ final class AssetPreloader {
 
     /// Opens the cache the way the engine will. Cheap after the first call.
     func prepare() {
-        guard !prepared, let manifest = EnginePaths.manifest else { return }
+        guard !PortDataManifest.localOnly, !prepared, let manifest = EnginePaths.manifest else { return }
         let root = EnginePaths.filesRoot().path
         manifest.withCString { m in root.withCString { PGAssetCachePrepare(m, $0) } }
         prepared = true
@@ -121,6 +122,7 @@ final class AssetPreloader {
 
     /// Re-reads how much is on the device (presence maps only).
     func refresh(completion: (() -> Void)? = nil) {
+        if PortDataManifest.localOnly { measured = true; completion?(); return }
         prepare()
         guard PGAssetPreloadSupported() else { measured = true; notify(); completion?(); return }
         let filter = self.filter
@@ -149,6 +151,7 @@ final class AssetPreloader {
     /// Starts or resumes. Returns a message when the download cannot start.
     @discardableResult
     func start() -> String? {
+        if PortDataManifest.localOnly { return "Bản PortData chỉ dùng thư mục data trên máy." }
         prepare()
         guard !GameSettings.shared.assetServer.isEmpty else { return AppLanguage.choose("Set your game file server first (Play screen).") }
         PGSetAssetServer(GameSettings.shared.assetServer)
@@ -225,6 +228,7 @@ final class AssetPreloader {
     /// App launch and return to the foreground: continue an unfinished
     /// download unless the player paused it.
     func resumeIfNeeded() {
+        guard !PortDataManifest.localOnly else { return }
         prepare()
         refresh { [weak self] in
             guard let self, !self.removing, PGAssetPreloadSupported(), self.wanted, !self.userPaused, !self.running,

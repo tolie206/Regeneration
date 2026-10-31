@@ -47,7 +47,7 @@ jobs:
           test -z "$(git diff --name-only 099b0da -- app/Source app/Scripts inputs)"
           xcrun swiftc app/App/PortDataManifest.swift app/Tests/PortDataManifestTests.swift -o "$RUNNER_TEMP/port-data-tests"
           "$RUNNER_TEMP/port-data-tests"
-          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/NativePortViewController.swift app/App/GameFiles.swift app/App/HomeView.swift
+          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/NativePortViewController.swift app/App/GameFiles.swift app/App/HomeView.swift app/App/AssetPreloader.swift
       - name: Assemble and verify unchanged owner build inputs
         if: github.event_name == 'workflow_dispatch' && inputs.build_ipa
         run: |

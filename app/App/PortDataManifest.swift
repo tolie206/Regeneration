@@ -5,6 +5,7 @@ import CoreFoundation
 /// Opt-in offline converted data. Original data folders still use the bundled manifest.
 /// Never accepts arbitrary paths or a different engine's file list.
 enum PortDataManifest {
+    static let localOnly = true
     static let markerName = "mugoat-port-data.json"
     struct Loaded { let url: URL; let files: [(String, UInt64)] }
     static func hasMarker(_ folder: URL) -> Bool {
