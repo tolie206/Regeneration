@@ -21,7 +21,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>5.1.2</string>
 	<key>CFBundleVersion</key>
-	<string>5003</string>
+	<string>5009</string>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>

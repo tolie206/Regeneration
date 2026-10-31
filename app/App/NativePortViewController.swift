@@ -647,6 +647,7 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
         launchButton.setTitle(AppLanguage.choose("Loading…"), for: .disabled); launchButton.setNeedsUpdateConfiguration()
         appendLog("Native touch controls support held buttons, sprint and weapon selection.")
         installModsForTest()
+        do { appendLog(try BundledOptimizer.prepare()) } catch { appendLog("Built-in optimizer: \(error.localizedDescription)") }
         do { try BundledMenyoo.prepare() } catch { appendLog("Built-in Menyoo: \(error.localizedDescription)") }
         do { try SkinInstaller.updateMenyooList() } catch { appendLog("Menyoo addon skin list: \(error.localizedDescription)") }
         do { try BundledVietnamese.prepare() } catch { appendLog("Built-in translation: \(error.localizedDescription)") }

@@ -1,7 +1,7 @@
-name: V5R1-FIX2 targeted checks and IPA
+name: V5R1-FIX2-OPTIMIZER targeted checks and IPA
 on:
   push:
-    branches: [mugoat-v5r1-fix]
+    branches: [restore-0383-optimizer]
   workflow_dispatch:
 permissions:
   contents: read
@@ -25,6 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 5
       - name: Verify authorized repository and original iPhone toolchain
         run: |
           test "$GITHUB_REPOSITORY" = tolie206/Regeneration
@@ -36,23 +37,13 @@ jobs:
         run: bash tools/check_host_sanitizer.sh "$RUNNER_TEMP"
       - name: Metal compiler
         run: xcrun -sdk iphoneos metal --version > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
-      - name: Relevant renderer, query lifetime, speculative policy and settings checks
+      - name: Exact rollback identity and only new optimizer checks
         run: |
-          "$PG_HOST_SAN_CC" -std=c++20 -g -pthread -fsanitize=address,undefined -I app/Source app/Tests/fix_query_timeline.cpp -lc++ -o "$RUNNER_TEMP/fix-query"
-          "$RUNNER_TEMP/fix-query"
-          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined -I app/Source app/Tests/fix_speculative.c -o "$RUNNER_TEMP/fix-speculation"
-          "$RUNNER_TEMP/fix-speculation"
-          python3 tools/test_fix_renderer.py
-          "$PG_HOST_SAN_CC" -std=c11 -pthread -fsanitize=address,undefined app/Tests/sound_runtime.c -o "$RUNNER_TEMP/fix2-sound"
-          "$RUNNER_TEMP/fix2-sound"
-          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/sandbox_map_runtime.c -o "$RUNNER_TEMP/fix2-map"
-          "$RUNNER_TEMP/fix2-map"
-          "$PG_HOST_SAN_CC" -std=c11 -fsanitize=address,undefined app/Tests/audio_downmix.c -o "$RUNNER_TEMP/fix2-downmix"
-          "$RUNNER_TEMP/fix2-downmix"
-          xcrun swiftc -typecheck -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/MSRSettings.swift app/App/RendererFixOptions.swift app/Tests/FixSettingsTypecheckStubs.swift
-          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/SettingsViewController.swift app/App/NativePortViewController.swift app/App/GraphicsOptions.swift
-          python3 -m unittest discover -s tests -p test_regeneration_preservation.py -v
-          python3 -m unittest discover -s tests -p test_ccache_engine.py -v
+          python3 tools/verify_restore.py
+          python3 -m unittest discover -s tests -p test_restore_optimizer.py -v
+          xcrun swiftc app/App/BundledOptimizer.swift app/Tests/BundledOptimizerTests.swift -o "$RUNNER_TEMP/restore-optimizer"
+          "$RUNNER_TEMP/restore-optimizer" app/Resources/Mugoat-PortLike-Traffic-v1.oiv
+          xcrun swiftc -frontend -parse -target arm64-apple-ios16.0-simulator -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" app/App/NativePortViewController.swift app/App/HomeView.swift app/App/Theme.swift
       - name: Assemble and verify unchanged owner build inputs
         run: |
           python3 tools/assemble_inputs.py --inputs inputs --out "$RUNNER_TEMP/game-files"
@@ -70,21 +61,22 @@ jobs:
           path: .ccache
           key: engine-ios26.2-arm64-${{ github.sha }}
           restore-keys: engine-ios26.2-arm64-
-      - name: Build single V5R1-FIX2 IPA
+      - name: Build single V5R1-FIX2-OPTIMIZER IPA
         run: bash build_ipa.sh --mirror "$RUNNER_TEMP/game-files"
       - name: Verify target, release, entitlements and bundled features
         run: |
           python3 tools/verify_ipa.py GTA5Port.ipa
-          mv GTA5Port.ipa MUGOAT-V5R1-FIX2.ipa
+          python3 tools/verify_restore.py --ipa GTA5Port.ipa
+          mv GTA5Port.ipa MUGOAT-V5R1-FIX2-OPTIMIZER.ipa
           ccache --show-stats --verbose
       - uses: actions/upload-artifact@v4
         with:
-          name: MUGOAT-V5R1-FIX2
-          path: MUGOAT-V5R1-FIX2.ipa
+          name: MUGOAT-V5R1-FIX2-OPTIMIZER
+          path: MUGOAT-V5R1-FIX2-OPTIMIZER.ipa
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: V5R1-FIX2-diagnostics
+          name: V5R1-FIX2-OPTIMIZER-diagnostics
           path: app/Build/xcodebuild.log
           retention-days: 3
