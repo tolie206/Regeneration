@@ -51,7 +51,7 @@ final class HomeView: UIView {
         title.adjustsFontSizeToFitWidth = true
         title.minimumScaleFactor = 0.7
         let subtitle = brandSubtitle
-        subtitle.text = "V5R1-FIX2-OPTIMIZER  ·  CHƠI OFFLINE"
+        subtitle.text = "PORT-DATA-V1  ·  CHƠI OFFLINE"
         subtitle.font = Theme.body(14, .medium)
         subtitle.textColor = Theme.secondaryText
         subtitle.numberOfLines = 2		// long translations keep the version visible
@@ -196,7 +196,7 @@ final class HomeView: UIView {
     private let secondary = UIStackView()
     func refreshLanguage() {
         brandTitle.text = "MUGOAT"
-        brandSubtitle.text = "V5R1-FIX2-OPTIMIZER  ·  CHƠI OFFLINE"
+        brandSubtitle.text = "PORT-DATA-V1  ·  CHƠI OFFLINE"
         mapTitle.text = AppLanguage.choose("Map")
         playButton.configuration?.title = AppLanguage.choose("Play")
         // The top-right buttons are icons in every language (long titles overlapped the column, GTA-47);
@@ -281,7 +281,7 @@ final class HomeView: UIView {
     /// Marks the chosen mode (nil: none yet) and shows its description.
     /// Shows the map choice (Sandbox) instead of the mode description, with `index` selected.
     func setMap(_ index: Int, visible: Bool, enabled: Bool, testMapAvailable: Bool = true) {
-        mapRow.isHidden = !visible
+        mapRow.isHidden = true
         modeDetail.isHidden = visible
         for (i, chip) in mapChips.enumerated() {
             let selected = i == index

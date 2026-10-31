@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Mugoat NewGen</string>
+	<string>Mugoat PortData</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -21,7 +21,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>5.1.2</string>
 	<key>CFBundleVersion</key>
-	<string>5009</string>
+	<string>5010</string>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>

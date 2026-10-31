@@ -597,9 +597,9 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
     private func refreshModeChoice() {
         let choice = GameSettings.shared.gameModeChoice
         home.setMode(choice.flatMap { GameMode.allCases.firstIndex(of: $0) }, detail: choice?.detail ?? AppLanguage.choose("Choose Story mode or Sandbox to play."), enabled: !engineStarted)
-        let testMap = GameFolder.isChosen && GameFolder.testMapAvailable
+        let testMap = false // This release contains only the GTA V map.
         if !testMap && GameSettings.shared.sandboxMap == 1 { GameSettings.shared.sandboxMap = 0 }
-        home.setMap(GameSettings.shared.sandboxMap, visible: choice == .sandbox, enabled: !engineStarted, testMapAvailable: testMap)
+        home.setMap(GameSettings.shared.sandboxMap, visible: false, enabled: !engineStarted, testMapAvailable: testMap)
         updatePlayEnabled()
     }
 
@@ -608,10 +608,22 @@ final class NativePortViewController: UIViewController, MTKViewDelegate {
             // Automated launches without a choice keep the old sandbox start.
             guard ProcessInfo.processInfo.arguments.contains("--boot-engine") else { return }
         }
-        guard let path = EnginePaths.manifest else {
+        guard let bundledManifestPath = EnginePaths.manifest else {
             appendLog("Asset manifest is missing from the app bundle.")
             return
         }
+        var path = bundledManifestPath
+        if let folder = GameFolder.open(), PortDataManifest.hasMarker(folder) {
+            do {
+                path = try PortDataManifest.load(folder: folder, baseManifest: URL(fileURLWithPath: path)).url.path
+                appendLog("Port data: offline converted resource/texture dataset; using its verified manifest.")
+            } catch {
+                appendLog("Port data refused: \(error.localizedDescription)")
+                showWhenFree(title: "Data chuyển đổi chưa hợp lệ", message: error.localizedDescription)
+                return
+            }
+        }
+        GameSettings.shared.sandboxMap = 0
         metalView.isPaused = true
         metalView.delegate = nil
         // Dawn owns the drawable size from here; MTKView must not reset it on layout.

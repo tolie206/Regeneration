@@ -115,7 +115,14 @@ enum GameFiles {
 
     /// Checks every file of the game in `data` (presence and exact size). Takes well under a second.
     static func check(_ data: URL) -> Report {
-        let list = manifest.filter { !isTestMapFile($0.0) }
+        var list = manifest.filter { !isTestMapFile($0.0) }
+        if PortDataManifest.hasMarker(data) {
+            guard let basePath = EnginePaths.manifest,
+                  let converted = try? PortDataManifest.load(folder: data, baseManifest: URL(fileURLWithPath: basePath)) else {
+                return Report(data: data, fileCount: 1, totalBytes: 1, problems: [Problem(path: PortDataManifest.markerName, expected: 1, kind: .wrongSize(actual: 0))])
+            }
+            list = converted.files.filter { !$0.0.hasPrefix("common/non_final/www/") }
+        }
         var problems: [Problem] = []
         var total: UInt64 = 0
         let base = data.path
